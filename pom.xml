@@ -4,7 +4,8 @@
   <parent>
     <groupId>org.activiti.cloud</groupId>
     <artifactId>activiti-cloud-parent</artifactId>
-    <version>7-201711-EA-SNAPSHOT</version>
+    <!-- TODO revert before merging-->
+    <version>7-201711-EA-salaboy_1560_parent_deps_link-SNAPSHOT</version>
   </parent>
 
   <artifactId>activiti-cloud-query-service-parent</artifactId>
@@ -19,8 +20,7 @@
   </modules>
 
   <properties>
-    <version.activiti>7-201711-EA-SNAPSHOT</version.activiti>
-    <version.activiti.cloud>7-201711-EA-SNAPSHOT</version.activiti.cloud>
+    <version.activiti.cloud.query>${project.version}</version.activiti.cloud.query>
   </properties>
 
   <repositories>
