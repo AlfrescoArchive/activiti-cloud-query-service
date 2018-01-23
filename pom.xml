@@ -86,9 +86,9 @@
     <url>http://bamboo.ci.codehaus.org/browse/ACT</url>
   </ciManagement>
   <scm>
-    <url>https://github.com/Activiti/activiti-build</url>
-    <connection>scm:git:https://github.com/Activiti/activiti-build.git</connection>
-    <developerConnection>scm:git:https://github.com/Activiti/activiti-build.git</developerConnection>
+    <url>https://github.com/Activiti/activiti-cloud-query-service</url>
+    <connection>scm:git:https://github.com/Activiti/activiti-cloud-query-service.git</connection>
+    <developerConnection>scm:git:https://github.com/Activiti/activiti-cloud-query-service.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
   <developers>

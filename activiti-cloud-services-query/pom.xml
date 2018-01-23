@@ -17,9 +17,6 @@
     <module>activiti-cloud-services-query-repo</module>
     <module>activiti-cloud-services-query-rest</module>
     <module>activiti-cloud-services-query-graphql</module>
-    <module>activiti-cloud-services-query-notifications</module>
-    <module>activiti-cloud-services-query-graphql-ws</module>
-    <module>activiti-cloud-services-query-stomp</module>
     <module>activiti-cloud-services-query-graphiql</module>
   </modules>
 
