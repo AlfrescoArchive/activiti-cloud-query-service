@@ -15,26 +15,28 @@
  */
 package org.activiti.cloud.services.query.graphql.autoconfigure;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.introproventures.graphql.jpa.query.schema.GraphQLExecutor;
 import com.introproventures.graphql.jpa.query.schema.GraphQLSchemaBuilder;
 import com.introproventures.graphql.jpa.query.schema.impl.GraphQLJpaExecutor;
 import com.introproventures.graphql.jpa.query.schema.impl.GraphQLJpaSchemaBuilder;
+import org.activiti.cloud.services.query.graphql.web.ActivitiGraphQLController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-    properties={"spring.activiti.cloud.services.query.graphql.enabled=true"},
+    properties={"spring.activiti.cloud.services.query.graphql.enabled=false"},
     webEnvironment = WebEnvironment.NONE
 )
-public class EnableActivitiGraphQLQueryServiceTest {
+public class DisableActivitiGraphQLQueryServiceTest {
 
     @Autowired(required = false)
     private ActivitiGraphQLSchemaProperties graphQLProperties;
@@ -45,6 +47,9 @@ public class EnableActivitiGraphQLQueryServiceTest {
     @Autowired(required = false)
     private GraphQLSchemaBuilder graphQLSchemaBuilder;
 
+    @Autowired(required = false)
+    private ActivitiGraphQLController graphQLController;
+
     @SpringBootApplication
     @EnableActivitiGraphQLQueryService
     static class Application {
@@ -52,13 +57,14 @@ public class EnableActivitiGraphQLQueryServiceTest {
 
     @Test
     public void contextIsConfigured() {
-        assertThat(graphQLExecutor).isInstanceOf(GraphQLJpaExecutor.class);
-        assertThat(graphQLSchemaBuilder).isInstanceOf(GraphQLJpaSchemaBuilder.class);
+        assertThat(graphQLExecutor).isNull();
+        assertThat(graphQLSchemaBuilder).isNull();
+        assertThat(graphQLController).isNull();
         assertThat(graphQLProperties).isNotNull();
 
         assertThat(graphQLProperties.getName()).isEqualTo("Query");
         assertThat(graphQLProperties.getPath()).isEqualTo("/graphql");
-        assertThat(graphQLProperties.isEnabled()).isEqualTo(true);
+
     }
 
 }
