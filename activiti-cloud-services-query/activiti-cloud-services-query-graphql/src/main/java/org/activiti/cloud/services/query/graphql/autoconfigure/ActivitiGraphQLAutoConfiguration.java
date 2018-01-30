@@ -31,6 +31,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportAware;
@@ -56,6 +57,7 @@ public class ActivitiGraphQLAutoConfiguration {
     @Import(ActivitiGraphQLController.class)
     @EntityScan(basePackageClasses = ProcessInstance.class)
     @EnableConfigurationProperties(ActivitiGraphQLSchemaProperties.class)
+    @ConditionalOnProperty(name = "spring.activiti.cloud.services.query.graphql.enabled", matchIfMissing = true)
     public static class DefaultActivitiGraphQLJpaConfiguration implements ImportAware {
 
         @Autowired

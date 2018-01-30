@@ -38,10 +38,14 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import org.springframework.web.socket.messaging.SubProtocolWebSocketHandler;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 
 @Configuration
 @EnableWebSocket
 @EnableWebSocketMessageBroker
+@ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
+@ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
 public class GraphQLWebSocketMessageBrokerConfiguration extends GraphQLWebSocketMessageBrokerConfigurationSupport
 												implements  WebSocketMessageBrokerConfigurer {
 
@@ -84,6 +88,8 @@ public class GraphQLWebSocketMessageBrokerConfiguration extends GraphQLWebSocket
     }
 
     @Bean
+    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
+    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
     public ReactorNettyTcpStompClient stompClient() {
         ReactorNettyTcpStompClient stompClient = new ReactorNettyTcpStompClient(relayHost, relayPort);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
@@ -92,6 +98,8 @@ public class GraphQLWebSocketMessageBrokerConfiguration extends GraphQLWebSocket
     }
 
     @Bean
+    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
+    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
     public StompRelayPublisherFactory stompRelayPublisherFactory(ReactorNettyTcpStompClient stompClient) {
         return new StompRelayPublisherFactory(stompClient)
             .login(login)
@@ -102,6 +110,8 @@ public class GraphQLWebSocketMessageBrokerConfiguration extends GraphQLWebSocket
 
 
 	@Bean
+    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
+    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
 	public MessageHandler graphQLBrokerMessageHandler(SubscribableChannel clientInboundChannel,
                                             			MessageChannel clientOutboundChannel,
                                             			SubscribableChannel brokerChannel,
@@ -118,6 +128,8 @@ public class GraphQLWebSocketMessageBrokerConfiguration extends GraphQLWebSocket
 
     @Override
 	@Bean
+    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
+    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
     public WebSocketHandler subProtocolWebSocketHandler() {
     	SubProtocolWebSocketHandler handler = new SubProtocolWebSocketHandler(clientInboundChannel(), clientOutboundChannel());
     	handler.addProtocolHandler(new GraphQLBrokerSubProtocolHandler());
