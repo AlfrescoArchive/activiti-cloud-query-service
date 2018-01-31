@@ -21,6 +21,8 @@ import org.activiti.cloud.services.query.qraphql.ws.datafetcher.StompRelayPublis
 import org.activiti.cloud.services.query.qraphql.ws.transport.GraphQLBrokerMessageHandler;
 import org.activiti.cloud.services.query.qraphql.ws.transport.GraphQLBrokerSubProtocolHandler;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.MessageChannel;
@@ -38,16 +40,13 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import org.springframework.web.socket.messaging.SubProtocolWebSocketHandler;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 
 @Configuration
 @EnableWebSocket
 @EnableWebSocketMessageBroker
-@ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-@ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
+@ConditionalOnGraphQLNotifications
 public class GraphQLWebSocketMessageBrokerConfiguration extends GraphQLWebSocketMessageBrokerConfigurationSupport
-												implements  WebSocketMessageBrokerConfigurer {
+        implements WebSocketMessageBrokerConfigurer {
 
     @Value("${spring.rabbitmq.host:rabbitmq}")
     private String relayHost;
@@ -71,70 +70,67 @@ public class GraphQLWebSocketMessageBrokerConfiguration extends GraphQLWebSocket
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry
-            .enableStompBrokerRelay()
-            .setRelayHost(relayHost)
-            .setClientLogin(login)
-            .setClientPasscode(passcode)
+                .enableStompBrokerRelay()
+                .setRelayHost(relayHost)
+                .setClientLogin(login)
+                .setClientPasscode(passcode)
         ;
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint(graphQLEndpoint)
-            .setHandshakeHandler(new DefaultHandshakeHandler())
-            .setAllowedOrigins(graphQLAllowedOrigins)
-            .addInterceptors(new HttpSessionHandshakeInterceptor())
-            ;
+                .setHandshakeHandler(new DefaultHandshakeHandler())
+                .setAllowedOrigins(graphQLAllowedOrigins)
+                .addInterceptors(new HttpSessionHandshakeInterceptor())
+        ;
     }
 
     @Bean
-    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
+    @ConditionalOnGraphQLNotifications
     public ReactorNettyTcpStompClient stompClient() {
-        ReactorNettyTcpStompClient stompClient = new ReactorNettyTcpStompClient(relayHost, relayPort);
+        ReactorNettyTcpStompClient stompClient = new ReactorNettyTcpStompClient(relayHost,
+                                                                                relayPort);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
         return stompClient;
     }
 
     @Bean
-    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
+    @ConditionalOnGraphQLNotifications
     public StompRelayPublisherFactory stompRelayPublisherFactory(ReactorNettyTcpStompClient stompClient) {
         return new StompRelayPublisherFactory(stompClient)
-            .login(login)
-            .passcode(passcode)
-            .destinationResolver(new ProcessEngineNotificationStompRelayDataFetcherDestinationResolver())
-        ;
+                .login(login)
+                .passcode(passcode)
+                .destinationResolver(new ProcessEngineNotificationStompRelayDataFetcherDestinationResolver())
+                ;
     }
 
+    @Bean
+    @ConditionalOnGraphQLNotifications
+    public MessageHandler graphQLBrokerMessageHandler(SubscribableChannel clientInboundChannel,
+                                                      MessageChannel clientOutboundChannel,
+                                                      SubscribableChannel brokerChannel,
+                                                      TaskScheduler messageBrokerTaskScheduler,
+                                                      GraphQLExecutor graphQLSubscriptionExecutor) {
+        GraphQLBrokerMessageHandler messageHandler = new GraphQLBrokerMessageHandler(clientInboundChannel,
+                                                                                     clientOutboundChannel,
+                                                                                     brokerChannel,
+                                                                                     graphQLSubscriptionExecutor);
 
-	@Bean
-    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
-	public MessageHandler graphQLBrokerMessageHandler(SubscribableChannel clientInboundChannel,
-                                            			MessageChannel clientOutboundChannel,
-                                            			SubscribableChannel brokerChannel,
-                                            			TaskScheduler messageBrokerTaskScheduler,
-                                            			GraphQLExecutor graphQLSubscriptionExecutor)
-	{
-		GraphQLBrokerMessageHandler messageHandler = new GraphQLBrokerMessageHandler(clientInboundChannel,
-				clientOutboundChannel, brokerChannel, graphQLSubscriptionExecutor);
+        messageHandler.setTaskScheduler(messageBrokerTaskScheduler);
 
-		messageHandler.setTaskScheduler(messageBrokerTaskScheduler);
-
-		return messageHandler;
-	}
+        return messageHandler;
+    }
 
     @Override
-	@Bean
-    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
+    @Bean
+    @ConditionalOnGraphQLNotifications
     public WebSocketHandler subProtocolWebSocketHandler() {
-    	SubProtocolWebSocketHandler handler = new SubProtocolWebSocketHandler(clientInboundChannel(), clientOutboundChannel());
-    	handler.addProtocolHandler(new GraphQLBrokerSubProtocolHandler());
+        SubProtocolWebSocketHandler handler = new SubProtocolWebSocketHandler(clientInboundChannel(),
+                                                                              clientOutboundChannel());
+        handler.addProtocolHandler(new GraphQLBrokerSubProtocolHandler());
 
         return handler;
     }
-
 }

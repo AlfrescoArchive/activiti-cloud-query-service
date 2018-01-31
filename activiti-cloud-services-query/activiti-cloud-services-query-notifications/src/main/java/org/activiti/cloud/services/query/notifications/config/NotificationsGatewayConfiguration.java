@@ -29,8 +29,6 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.IntegrationComponentScan;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 
 /**
  * Notification Gateway configuration that enables messaging channel bindings
@@ -41,23 +39,24 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 @EnableBinding(NotificationsGatewayChannels.class)
 @IntegrationComponentScan(basePackageClasses=NotificationsGateway.class)
 @EnableConfigurationProperties(ActivitiNotificationsGatewayProperties.class)
-@ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-@ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
+@ConditionalOnGraphQLNotifications
 public class NotificationsGatewayConfiguration {
 
+    private final ActivitiNotificationsGatewayProperties properties;
+
     @Autowired
-    private ActivitiNotificationsGatewayProperties properties;
+    public NotificationsGatewayConfiguration(ActivitiNotificationsGatewayProperties properties) {
+        this.properties = properties;
+    }
 
     @Bean
-    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
+    @ConditionalOnGraphQLNotifications
     public RoutingKeyResolver routingKeyResolver() {
         return new SpELTemplateRoutingKeyResolver();
     }
 
     @Bean
-    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
+    @ConditionalOnGraphQLNotifications
     public ProcessEngineNotificationTransformer processEngineEventNotificationTransformer() {
         return new GraphQLProcessEngineNotificationTransformer(
             Arrays.asList(properties.getProcessEngineEventAttributeKeys().split(",")),
@@ -66,8 +65,7 @@ public class NotificationsGatewayConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
+    @ConditionalOnGraphQLNotifications
     public NotificationsConsumerChannelHandler notificationsConsumerChannelHandler(
                NotificationsGateway notificationsGateway,
                ProcessEngineNotificationTransformer processEngineNotificationTransformer,

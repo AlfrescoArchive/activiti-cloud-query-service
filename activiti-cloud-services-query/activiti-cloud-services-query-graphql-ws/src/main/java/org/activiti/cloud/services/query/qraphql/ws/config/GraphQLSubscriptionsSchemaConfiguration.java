@@ -30,8 +30,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 
 @Configuration
 @EnableActivitiGraphQLQueryService
-@ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-@ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
+@ConditionalOnGraphQLNotifications
 public class GraphQLSubscriptionsSchemaConfiguration {
 
     private String graphQLSchemaFileName = "activiti.graphqls";
@@ -39,8 +38,7 @@ public class GraphQLSubscriptionsSchemaConfiguration {
     private String graphQLSchemaSubscriptionFieldName = "ProcessEngineNotification";
 
     @Bean
-    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
+    @ConditionalOnGraphQLNotifications
     public GraphQLSubscriptionSchemaBuilder graphqlSchemaBuilder(StompRelayPublisherFactory stompRelay) {
 
     	GraphQLSubscriptionSchemaBuilder schemaBuilder = new GraphQLSubscriptionSchemaBuilder(graphQLSchemaFileName);
@@ -51,8 +49,7 @@ public class GraphQLSubscriptionsSchemaConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name="spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-    @ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
+    @ConditionalOnGraphQLNotifications
     public GraphQLExecutor graphQLExecutor(GraphQLSchemaBuilder querySchemaBuilder,
                                            GraphQLSubscriptionSchemaBuilder subscriptionSchemaBuilder)
     {
