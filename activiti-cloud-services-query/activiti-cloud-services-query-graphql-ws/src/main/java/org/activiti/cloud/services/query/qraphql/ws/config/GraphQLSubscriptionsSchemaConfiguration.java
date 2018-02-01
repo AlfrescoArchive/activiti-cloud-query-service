@@ -25,8 +25,6 @@ import org.activiti.cloud.services.query.qraphql.ws.datafetcher.StompRelayPublis
 import org.activiti.cloud.services.query.qraphql.ws.schema.GraphQLSubscriptionSchemaBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 
 @Configuration
 @EnableActivitiGraphQLQueryService
