@@ -17,37 +17,42 @@
 package org.activiti.cloud.services.query.rest;
 
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
-import org.activiti.cloud.services.query.model.ProcessInstanceVariables;
 import org.activiti.cloud.services.query.model.QVariable;
-import org.activiti.cloud.services.query.model.Variables;
-import org.activiti.cloud.services.query.resources.VariablesResource;
-import org.activiti.cloud.services.query.rest.assembler.ProcessInstanceVariablesResourceAssembler;
+import org.activiti.cloud.services.query.model.Variable;
+import org.activiti.cloud.services.query.resources.VariableResource;
+import org.activiti.cloud.services.query.rest.assembler.VariableResourceAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/v1/process-instances/{processInstanceId}/variables", produces = MediaTypes.HAL_JSON_VALUE)
+@RequestMapping(value = "/v1/process-instances/{processInstanceId}", produces = MediaTypes.HAL_JSON_VALUE)
 public class ProcessInstanceVariableController {
 
     private final VariableRepository variableRepository;
 
-    private ProcessInstanceVariablesResourceAssembler processInstanceVariablesResourceAssembler;
+    private VariableResourceAssembler variableResourceAssembler;
 
     @Autowired
-    public ProcessInstanceVariableController(ProcessInstanceVariablesResourceAssembler processInstanceVariablesResourceAssembler,
+    public ProcessInstanceVariableController(VariableResourceAssembler variableResourceAssembler,
                                              VariableRepository variableRepository) {
         this.variableRepository = variableRepository;
-        this.processInstanceVariablesResourceAssembler = processInstanceVariablesResourceAssembler;
+        this.variableResourceAssembler = variableResourceAssembler;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public Resource<VariablesResource> getVariables(@PathVariable String processInstanceId) {
-        return new Resource<VariablesResource>(processInstanceVariablesResourceAssembler.toResource(new ProcessInstanceVariables(processInstanceId,
-                                                                                                                                 new Variables(variableRepository.findAll(QVariable.variable.processInstanceId.eq(processInstanceId))))));
+    @RequestMapping(value = "/variables", method = RequestMethod.GET)
+    public PagedResources<VariableResource> getVariables(@PathVariable String processInstanceId,
+                                                         Pageable pageable,
+                                                         PagedResourcesAssembler<Variable> pagedResourcesAssembler) {
+        Page<Variable> variables = variableRepository.findAll(QVariable.variable.processInstanceId.eq(processInstanceId), pageable);
+
+        return pagedResourcesAssembler.toResource(variables, variableResourceAssembler);
     }
 }

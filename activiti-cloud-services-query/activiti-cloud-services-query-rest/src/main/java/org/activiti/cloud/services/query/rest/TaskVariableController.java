@@ -18,13 +18,15 @@ package org.activiti.cloud.services.query.rest;
 
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.QVariable;
-import org.activiti.cloud.services.query.model.TaskVariables;
-import org.activiti.cloud.services.query.model.Variables;
-import org.activiti.cloud.services.query.resources.VariablesResource;
-import org.activiti.cloud.services.query.rest.assembler.TaskVariablesResourceAssembler;
+import org.activiti.cloud.services.query.model.Variable;
+import org.activiti.cloud.services.query.resources.VariableResource;
+import org.activiti.cloud.services.query.rest.assembler.VariableResourceAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,21 +37,23 @@ public class TaskVariableController {
 
     private final VariableRepository variableRepository;
 
-    private TaskVariablesResourceAssembler taskVariablesResourceAssembler;
+    private VariableResourceAssembler variableResourceAssembler;
 
     @Autowired
     public TaskVariableController(VariableRepository variableRepository,
-                                  TaskVariablesResourceAssembler taskVariablesResourceAssembler) {
+                                  VariableResourceAssembler variableResourceAssembler) {
         this.variableRepository = variableRepository;
-        this.taskVariablesResourceAssembler = taskVariablesResourceAssembler;
+        this.variableResourceAssembler = variableResourceAssembler;
     }
 
     @RequestMapping("/variables")
-    public Resource<VariablesResource> getVariables(@PathVariable String taskId) {
+    public PagedResources<VariableResource> getVariables(@PathVariable String taskId,
+                                                         Pageable pageable,
+                                                         PagedResourcesAssembler<Variable> pagedResourcesAssembler) {
 
-        return new Resource<VariablesResource>(taskVariablesResourceAssembler.toResource(new TaskVariables(taskId,
-                                                                                                           new Variables(variableRepository.findAll(QVariable.variable.taskId.eq(taskId))))));
+        Page<Variable> variables = variableRepository.findAll(QVariable.variable.processInstanceId.eq(taskId), pageable);
 
+        return pagedResourcesAssembler.toResource(variables, variableResourceAssembler);
     }
 
 }

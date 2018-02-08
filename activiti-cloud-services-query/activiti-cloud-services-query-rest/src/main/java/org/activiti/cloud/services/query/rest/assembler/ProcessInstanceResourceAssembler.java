@@ -35,7 +35,7 @@ public class ProcessInstanceResourceAssembler implements ResourceAssembler<Proce
     public ProcessInstanceResource toResource(ProcessInstance entity) {
         Link selfRel = linkTo(methodOn(ProcessInstanceController.class).findById(entity.getProcessInstanceId())).withSelfRel();
         Link tasksRel = linkTo(methodOn(ProcessInstanceTasksController.class).getTasks(entity.getProcessInstanceId(), null, null)).withRel("tasks");
-        Link variablesRel = linkTo(methodOn(ProcessInstanceVariableController.class).getVariables(entity.getProcessInstanceId())).withRel("variables");
+        Link variablesRel = linkTo(methodOn(ProcessInstanceVariableController.class).getVariables(entity.getProcessInstanceId(),null,null)).withRel("variables");
         return new ProcessInstanceResource(entity, selfRel, tasksRel, variablesRel);
     }
 
