@@ -19,7 +19,6 @@ package org.activiti.cloud.services.query.rest;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.ProcessInstanceVariables;
 import org.activiti.cloud.services.query.model.QVariable;
-import org.activiti.cloud.services.query.model.Variable;
 import org.activiti.cloud.services.query.model.Variables;
 import org.activiti.cloud.services.query.resources.VariablesResource;
 import org.activiti.cloud.services.query.rest.assembler.ProcessInstanceVariablesResourceAssembler;

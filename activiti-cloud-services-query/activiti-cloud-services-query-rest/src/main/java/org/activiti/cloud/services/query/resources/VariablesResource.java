@@ -16,7 +16,6 @@
 
 package org.activiti.cloud.services.query.resources;
 
-import org.activiti.cloud.services.query.model.Variable;
 import org.activiti.cloud.services.query.model.Variables;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
