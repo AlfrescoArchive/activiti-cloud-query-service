@@ -16,9 +16,8 @@
 
 package org.activiti.cloud.services.query.rest;
 
-import java.util.Optional;
-
 import com.querydsl.core.types.Predicate;
+import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.model.Task;
 import org.activiti.cloud.services.query.resources.TaskResource;
@@ -44,30 +43,31 @@ public class TaskController {
 
     private PagedResourcesAssembler<Task> pagedResourcesAssembler;
 
+    private EntityFinder entityFinder;
+
     @Autowired
     public TaskController(TaskRepository taskRepository,
                           TaskResourceAssembler taskResourceAssembler,
-                          PagedResourcesAssembler<Task> pagedResourcesAssembler) {
+                          PagedResourcesAssembler<Task> pagedResourcesAssembler,
+                          EntityFinder entityFinder) {
         this.taskRepository = taskRepository;
         this.taskResourceAssembler = taskResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
+        this.entityFinder = entityFinder;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public PagedResources<TaskResource> findAll(@QuerydslPredicate(root = Task.class) Predicate predicate,
                                                 Pageable pageable) {
         return pagedResourcesAssembler.toResource(taskRepository.findAll(predicate,
-                                                                           pageable),
+                                                                         pageable),
                                                   taskResourceAssembler);
     }
 
     @RequestMapping(value = "/{taskId}", method = RequestMethod.GET)
     public TaskResource findById(@PathVariable String taskId) {
-        Optional<Task> findResult = taskRepository.findById(taskId);
-        if (!findResult.isPresent()) {
-            throw new RuntimeException("Unable to find task for the given id:'" + taskId + "'");
-        }
-        return taskResourceAssembler.toResource(findResult.get());
+        return taskResourceAssembler.toResource(entityFinder.findById(taskRepository,
+                                                                      taskId,
+                                                                      "Unable to find task for the given id:'" + taskId + "'"));
     }
-
 }

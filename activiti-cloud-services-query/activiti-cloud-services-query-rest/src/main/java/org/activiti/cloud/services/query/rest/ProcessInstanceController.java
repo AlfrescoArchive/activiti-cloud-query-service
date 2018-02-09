@@ -16,9 +16,8 @@
 
 package org.activiti.cloud.services.query.rest;
 
-import java.util.Optional;
-
 import com.querydsl.core.types.Predicate;
+import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.model.ProcessInstance;
 import org.activiti.cloud.services.query.resources.ProcessInstanceResource;
@@ -35,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/v1/" + ProcessInstanceRelProvider.COLLECTION_RESOURCE_REL , produces = MediaTypes.HAL_JSON_VALUE)
+@RequestMapping(value = "/v1/" + ProcessInstanceRelProvider.COLLECTION_RESOURCE_REL, produces = MediaTypes.HAL_JSON_VALUE)
 public class ProcessInstanceController {
 
     private final ProcessInstanceRepository processInstanceRepository;
@@ -44,30 +43,31 @@ public class ProcessInstanceController {
 
     private PagedResourcesAssembler<ProcessInstance> pagedResourcesAssembler;
 
+    private EntityFinder entityFinder;
+
     @Autowired
     public ProcessInstanceController(ProcessInstanceRepository processInstanceRepository,
                                      ProcessInstanceResourceAssembler processInstanceResourceAssembler,
-                                     PagedResourcesAssembler<ProcessInstance> pagedResourcesAssembler) {
+                                     PagedResourcesAssembler<ProcessInstance> pagedResourcesAssembler,
+                                     EntityFinder entityFinder) {
         this.processInstanceRepository = processInstanceRepository;
         this.processInstanceResourceAssembler = processInstanceResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
+        this.entityFinder = entityFinder;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public PagedResources<ProcessInstanceResource> findAll(@QuerydslPredicate(root = ProcessInstance.class) Predicate predicate,
                                                            Pageable pageable) {
         return pagedResourcesAssembler.toResource(processInstanceRepository.findAll(predicate,
-                                                                           pageable),
+                                                                                    pageable),
                                                   processInstanceResourceAssembler);
     }
 
     @RequestMapping(value = "/{processInstanceId}", method = RequestMethod.GET)
     public ProcessInstanceResource findById(@PathVariable String processInstanceId) {
-        Optional<ProcessInstance> findResult = processInstanceRepository.findById(processInstanceId);
-        if (!findResult.isPresent()) {
-            throw new RuntimeException("Unable to find processInstance for the given id:'" + processInstanceId + "'");
-        }
-        return processInstanceResourceAssembler.toResource(findResult.get());
+        return processInstanceResourceAssembler.toResource(entityFinder.findById(processInstanceRepository,
+                                                                                 processInstanceId,
+                                                                                 "Unable to find task for the given id:'" + processInstanceId + "'"));
     }
-
 }

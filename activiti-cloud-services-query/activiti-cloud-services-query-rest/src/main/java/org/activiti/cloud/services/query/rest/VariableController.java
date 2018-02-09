@@ -16,9 +16,8 @@
 
 package org.activiti.cloud.services.query.rest;
 
-import java.util.Optional;
-
 import com.querydsl.core.types.Predicate;
+import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.Variable;
 import org.activiti.cloud.services.query.resources.VariableResource;
@@ -42,20 +41,24 @@ public class VariableController {
 
     private VariableResourceAssembler variableResourceAssembler;
 
+    private EntityFinder entityFinder;
+
     private PagedResourcesAssembler<Variable> pagedResourcesAssembler;
 
     @Autowired
     public VariableController(VariableRepository variableRepository,
                                          VariableResourceAssembler variableResourceAssembler,
-                                         PagedResourcesAssembler<Variable> pagedResourcesAssembler) {
+                                         PagedResourcesAssembler<Variable> pagedResourcesAssembler, EntityFinder entityFinder) {
         this.variableRepository = variableRepository;
         this.variableResourceAssembler = variableResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
+        this.entityFinder = entityFinder;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public PagedResources<VariableResource> findAll(@QuerydslPredicate(root = Variable.class) Predicate predicate,
                                                     Pageable pageable) {
+
         return pagedResourcesAssembler.toResource(variableRepository.findAll(predicate,
                                                                            pageable),
                                                   variableResourceAssembler);
@@ -63,11 +66,11 @@ public class VariableController {
 
     @RequestMapping(value = "/{variableId}", method = RequestMethod.GET)
     public VariableResource findById(@PathVariable long variableId) {
-        Optional<Variable> findResult = variableRepository.findById(variableId);
-        if (!findResult.isPresent()) {
-            throw new RuntimeException("Unable to find variable for the given id:'" + variableId + "'");
-        }
-        return variableResourceAssembler.toResource(findResult.get());
+
+        return variableResourceAssembler.toResource(entityFinder.findById(variableRepository,
+                                                                          variableId,
+                                                                          "Unable to find processInstance for the given id:'" + variableId + "'"));
+
     }
 
 }

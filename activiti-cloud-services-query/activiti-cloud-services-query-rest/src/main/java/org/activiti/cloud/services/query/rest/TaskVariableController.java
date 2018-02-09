@@ -29,6 +29,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -46,14 +47,15 @@ public class TaskVariableController {
         this.variableResourceAssembler = variableResourceAssembler;
     }
 
-    @RequestMapping("/variables")
+    @RequestMapping(value = "/variables", method = RequestMethod.GET)
     public PagedResources<VariableResource> getVariables(@PathVariable String taskId,
                                                          Pageable pageable,
                                                          PagedResourcesAssembler<Variable> pagedResourcesAssembler) {
 
-        Page<Variable> variables = variableRepository.findAll(QVariable.variable.processInstanceId.eq(taskId), pageable);
+        Page<Variable> variables = variableRepository.findAll(QVariable.variable.taskId.eq(taskId),
+                                                              pageable);
 
-        return pagedResourcesAssembler.toResource(variables, variableResourceAssembler);
+        return pagedResourcesAssembler.toResource(variables,
+                                                  variableResourceAssembler);
     }
-
 }
