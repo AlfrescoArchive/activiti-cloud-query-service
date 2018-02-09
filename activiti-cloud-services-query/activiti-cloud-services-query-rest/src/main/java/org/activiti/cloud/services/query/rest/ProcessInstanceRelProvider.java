@@ -17,7 +17,6 @@
 package org.activiti.cloud.services.query.rest;
 
 import org.activiti.cloud.services.query.model.ProcessInstance;
-import org.activiti.cloud.services.query.model.Variable;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.hateoas.RelProvider;
