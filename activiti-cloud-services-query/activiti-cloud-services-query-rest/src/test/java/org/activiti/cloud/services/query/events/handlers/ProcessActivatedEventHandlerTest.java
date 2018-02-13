@@ -19,11 +19,12 @@ package org.activiti.cloud.services.query.events.handlers;
 import java.util.Date;
 import java.util.Optional;
 
-import org.activiti.engine.ActivitiException;
 import org.activiti.cloud.services.api.events.ProcessEngineEvent;
-import org.activiti.cloud.services.query.model.ProcessInstance;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
+import org.activiti.cloud.services.query.events.ProcessActivatedEvent;
 import org.activiti.cloud.services.query.events.ProcessCompletedEvent;
+import org.activiti.cloud.services.query.model.ProcessInstance;
+import org.activiti.engine.ActivitiException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,10 +37,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class ProcessCompletedEventHandlerTest {
+public class ProcessActivatedEventHandlerTest {
 
     @InjectMocks
-    private ProcessCompletedEventHandler handler;
+    private ProcessActivatedEventHandler handler;
 
     @Mock
     private ProcessInstanceRepository processInstanceRepository;
@@ -53,15 +54,15 @@ public class ProcessCompletedEventHandlerTest {
     }
 
     @Test
-    public void handleShouldUpdateCurrentProcessInstanceStateToCompleted() throws Exception {
+    public void handleShouldUpdateCurrentProcessInstanceStateToRunning() throws Exception {
         //given
-        ProcessCompletedEvent event = new ProcessCompletedEvent(System.currentTimeMillis(),
-                                                                                "ProcessCompletedEvent",
-                                                                                "10",
-                                                                                "100",
-                                                                                "200",
-                                                                                "runtime-bundle-a",
-                                                                                new ProcessInstance());
+        ProcessActivatedEvent event = new ProcessActivatedEvent(System.currentTimeMillis(),
+                                                                      "ProcessActivatedEvent",
+                                                                      "10",
+                                                                      "100",
+                                                                      "200",
+                                                                      "runtime-bundle-a",
+                                                                      new ProcessInstance());
 
         ProcessInstance currentProcessInstance = mock(ProcessInstance.class);
         given(processInstanceRepository.findById("200")).willReturn(Optional.of(currentProcessInstance));
@@ -71,15 +72,15 @@ public class ProcessCompletedEventHandlerTest {
 
         //then
         verify(processInstanceRepository).save(currentProcessInstance);
-        verify(currentProcessInstance).setStatus("COMPLETED");
+        verify(currentProcessInstance).setStatus("RUNNING");
         verify(currentProcessInstance).setLastModified(any(Date.class));
     }
 
     @Test
     public void handleShouldThrowExceptionWhenRelatedProcessInstanceIsNotFound() throws Exception {
         //given
-        ProcessCompletedEvent event = new ProcessCompletedEvent(System.currentTimeMillis(),
-                                                                                "ProcessCompletedEvent",
+        ProcessActivatedEvent event = new ProcessActivatedEvent(System.currentTimeMillis(),
+                                                                                "ProcessActivatedEvent",
                                                                                 "10",
                                                                                 "100",
                                                                                 "200",
@@ -98,11 +99,11 @@ public class ProcessCompletedEventHandlerTest {
     }
 
     @Test
-    public void getHandledEventClassShouldReturnProcessCompletedEvent() throws Exception {
+    public void getHandledEventClassShouldReturnProcessActivatedEvent() throws Exception {
         //when
         Class<? extends ProcessEngineEvent> handledEventClass = handler.getHandledEventClass();
 
         //then
-        assertThat(handledEventClass).isEqualTo(ProcessCompletedEvent.class);
+        assertThat(handledEventClass).isEqualTo(ProcessActivatedEvent.class);
     }
 }

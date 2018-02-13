@@ -18,14 +18,14 @@ package org.activiti.cloud.services.query.events;
 
 import org.activiti.cloud.services.query.model.ProcessInstance;
 
-public class ProcessSuspendedEvent extends AbstractProcessEngineEvent {
+public class ProcessActivatedEvent extends AbstractProcessEngineEvent {
 
     private ProcessInstance processInstance;
 
-    public ProcessSuspendedEvent() {
+    public ProcessActivatedEvent() {
     }
 
-    public ProcessSuspendedEvent(Long timestamp,
+    public ProcessActivatedEvent(Long timestamp,
                                  String eventType,
                                  String executionId,
                                  String processDefinitionId,

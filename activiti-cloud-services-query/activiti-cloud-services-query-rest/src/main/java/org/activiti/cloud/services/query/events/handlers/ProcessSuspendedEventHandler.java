@@ -21,31 +21,30 @@ import java.util.Optional;
 
 import org.activiti.cloud.services.api.events.ProcessEngineEvent;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
-import org.activiti.cloud.services.query.events.ProcessActivatedEvent;
-import org.activiti.cloud.services.query.events.ProcessCompletedEvent;
+import org.activiti.cloud.services.query.events.ProcessSuspendedEvent;
 import org.activiti.cloud.services.query.model.ProcessInstance;
 import org.activiti.engine.ActivitiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProcessActivatedEventHandler implements QueryEventHandler {
+public class ProcessSuspendedEventHandler implements QueryEventHandler {
 
     private ProcessInstanceRepository processInstanceRepository;
 
     @Autowired
-    public ProcessActivatedEventHandler(ProcessInstanceRepository processInstanceRepository) {
+    public ProcessSuspendedEventHandler(ProcessInstanceRepository processInstanceRepository) {
         this.processInstanceRepository = processInstanceRepository;
     }
 
     @Override
-    public void handle(ProcessEngineEvent activatedEvent) {
-        String processInstanceId = activatedEvent.getProcessInstanceId();
+    public void handle(ProcessEngineEvent suspendedEvent) {
+        String processInstanceId = suspendedEvent.getProcessInstanceId();
         Optional<ProcessInstance> findResult = processInstanceRepository.findById(processInstanceId);
         if (findResult.isPresent()) {
             ProcessInstance processInstance = findResult.get();
-            processInstance.setStatus("RUNNING");
-            processInstance.setLastModified(new Date(activatedEvent.getTimestamp()));
+            processInstance.setStatus("SUSPENDED");
+            processInstance.setLastModified(new Date(suspendedEvent.getTimestamp()));
             processInstanceRepository.save(processInstance);
         } else {
             throw new ActivitiException("Unable to find process instance with the given id: " + processInstanceId);
@@ -54,7 +53,6 @@ public class ProcessActivatedEventHandler implements QueryEventHandler {
 
     @Override
     public Class<? extends ProcessEngineEvent> getHandledEventClass() {
-        return ProcessActivatedEvent.class;
+        return ProcessSuspendedEvent.class;
     }
-
 }

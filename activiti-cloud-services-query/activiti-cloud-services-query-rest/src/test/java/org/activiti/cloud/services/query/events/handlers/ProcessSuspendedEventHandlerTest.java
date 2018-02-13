@@ -23,6 +23,7 @@ import org.activiti.cloud.services.api.events.ProcessEngineEvent;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.events.ProcessActivatedEvent;
 import org.activiti.cloud.services.query.events.ProcessCompletedEvent;
+import org.activiti.cloud.services.query.events.ProcessSuspendedEvent;
 import org.activiti.cloud.services.query.model.ProcessInstance;
 import org.activiti.engine.ActivitiException;
 import org.junit.Before;
@@ -37,7 +38,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class ProcessActivatedEventHandlerTest {
+public class ProcessSuspendedEventHandlerTest {
 
     @InjectMocks
     private ProcessActivatedEventHandler handler;
@@ -54,15 +55,15 @@ public class ProcessActivatedEventHandlerTest {
     }
 
     @Test
-    public void handleShouldUpdateCurrentProcessInstanceStateToRunning() throws Exception {
+    public void handleShouldUpdateCurrentProcessInstanceStateToSuspended() throws Exception {
         //given
-        ProcessActivatedEvent event = new ProcessActivatedEvent(System.currentTimeMillis(),
-                                                                      "ProcessActivatedEvent",
-                                                                      "10",
-                                                                      "100",
-                                                                      "200",
-                                                                      "runtime-bundle-a",
-                                                                      new ProcessInstance());
+        ProcessSuspendedEvent event = new ProcessSuspendedEvent(System.currentTimeMillis(),
+                                                                "ProcessSuspendedEvent",
+                                                                "10",
+                                                                "100",
+                                                                "200",
+                                                                "runtime-bundle-a",
+                                                                new ProcessInstance());
 
         ProcessInstance currentProcessInstance = mock(ProcessInstance.class);
         given(processInstanceRepository.findById("200")).willReturn(Optional.of(currentProcessInstance));
@@ -72,15 +73,15 @@ public class ProcessActivatedEventHandlerTest {
 
         //then
         verify(processInstanceRepository).save(currentProcessInstance);
-        verify(currentProcessInstance).setStatus("RUNNING");
+        verify(currentProcessInstance).setStatus("SUSPENDED");
         verify(currentProcessInstance).setLastModified(any(Date.class));
     }
 
     @Test
     public void handleShouldThrowExceptionWhenRelatedProcessInstanceIsNotFound() throws Exception {
         //given
-        ProcessCompletedEvent event = new ProcessCompletedEvent(System.currentTimeMillis(),
-                                                                                "ProcessActivatedEvent",
+        ProcessSuspendedEvent event = new ProcessSuspendedEvent(System.currentTimeMillis(),
+                                                                                "ProcessSuspendedEvent",
                                                                                 "10",
                                                                                 "100",
                                                                                 "200",
@@ -104,6 +105,6 @@ public class ProcessActivatedEventHandlerTest {
         Class<? extends ProcessEngineEvent> handledEventClass = handler.getHandledEventClass();
 
         //then
-        assertThat(handledEventClass).isEqualTo(ProcessActivatedEvent.class);
+        assertThat(handledEventClass).isEqualTo(ProcessSuspendedEvent.class);
     }
 }
