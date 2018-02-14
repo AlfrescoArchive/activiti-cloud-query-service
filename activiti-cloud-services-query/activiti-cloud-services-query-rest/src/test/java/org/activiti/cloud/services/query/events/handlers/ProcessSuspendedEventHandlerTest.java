@@ -41,7 +41,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class ProcessSuspendedEventHandlerTest {
 
     @InjectMocks
-    private ProcessActivatedEventHandler handler;
+    private ProcessSuspendedEventHandler handler;
 
     @Mock
     private ProcessInstanceRepository processInstanceRepository;
