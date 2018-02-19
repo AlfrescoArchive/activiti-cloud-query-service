@@ -49,7 +49,7 @@ public class ProcessStartedEventHandler implements QueryEventHandler {
         Optional<ProcessInstance> findResult = processInstanceRepository.findById(processInstanceId);
         if (findResult.isPresent()) {
             ProcessInstance processInstance = findResult.get();
-            if(!processInstance.getStatus().equals("CREATED")){
+            if(processInstance.getStatus() == null || !processInstance.getStatus().equals("CREATED")){
                 throw new ActivitiException("Unable to start process instance in wrong status: " + processInstance.getStatus());
             }
             processInstance.setStatus("RUNNING");

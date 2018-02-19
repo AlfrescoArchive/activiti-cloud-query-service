@@ -64,6 +64,7 @@ public class ProcessStartedEventHandlerTest {
                                                             "201",
                                                             "runtime-bundle-a");
         ProcessInstance currentProcessInstance = mock(ProcessInstance.class);
+        given(currentProcessInstance.getStatus()).willReturn("CREATED");
         given(processInstanceRepository.findById("200")).willReturn(Optional.of(currentProcessInstance));
 
         //when
