@@ -18,9 +18,12 @@ package org.activiti.cloud.services.query.model;
 
 import java.util.Date;
 import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
-import javax.persistence.*;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.introproventures.graphql.jpa.query.annotation.GraphQLDescription;
@@ -33,6 +36,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProcessInstance {
 
+    private String applicationName;
     @Id
     @GraphQLDescription("Unique process instance identity attribute")
     private String processInstanceId;
@@ -48,26 +52,30 @@ public class ProcessInstance {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date lastModifiedFrom;
 
+    @JsonIgnore
     @GraphQLDescription("Associated tasks entities")
-    @OneToMany(mappedBy="processInstance")
+    @OneToMany(mappedBy = "processInstance")
     @org.hibernate.annotations.ForeignKey(name = "none")
-    private Set<Task> tasks;     
+    private Set<Task> tasks;
 
+    @JsonIgnore
     @GraphQLDescription("Associated process instance variables")
-    @OneToMany(mappedBy="processInstance")
+    @OneToMany(mappedBy = "processInstance")
     @org.hibernate.annotations.ForeignKey(name = "none")
-    private Set<Variable> variables;     
-    
+    private Set<Variable> variables;
+
     public ProcessInstance() {
     }
 
-    public ProcessInstance(String processInstanceId,
+    public ProcessInstance(String applicationName,
+                           String processInstanceId,
                            String processDefinitionId,
                            String status,
                            Date lastModified) {
+        this.applicationName = applicationName;
         this.processInstanceId = processInstanceId;
         this.processDefinitionId = processDefinitionId;
-        this.status = status; 
+        this.status = status;
         this.lastModified = lastModified;
     }
 
@@ -137,4 +145,11 @@ public class ProcessInstance {
         this.variables = variables;
     }
 
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
 }

@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package org.activiti.cloud.services.query.notifications.config;
+package org.activiti.cloud.services.query.resources;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.activiti.cloud.services.query.model.Variable;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resource;
 
-@ConditionalOnProperty(name = "spring.activiti.cloud.services.notifications.gateway.enabled", matchIfMissing = true)
-@ConditionalOnExpression("${spring.activiti.cloud.services.query.graphql.enabled}==null or ${spring.activiti.cloud.services.query.graphql.enabled}")
-public @interface ConditionalOnGraphQLNotifications {
+public class VariableResource extends Resource<Variable> {
+
+    public VariableResource(Variable content,
+                         Link... links) {
+        super(content,
+              links);
+    }
 
 }
