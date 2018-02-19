@@ -33,7 +33,7 @@ import org.activiti.cloud.services.api.events.ProcessEngineEvent;
         @JsonSubTypes.Type(value = ProcessCreatedEvent.class, name = "ProcessCreatedEvent"),
         @JsonSubTypes.Type(value = ProcessStartedEvent.class, name = "ProcessStartedEvent"),
         @JsonSubTypes.Type(value = ProcessSuspendedEvent.class, name = "ProcessSuspendedEvent"),
-        @JsonSubTypes.Type(value = ProcessSuspendedEvent.class, name = "ProcessActivatedEvent"),
+        @JsonSubTypes.Type(value = ProcessActivatedEvent.class, name = "ProcessActivatedEvent"),
         @JsonSubTypes.Type(value = ProcessCompletedEvent.class, name = "ProcessCompletedEvent"),
         @JsonSubTypes.Type(value = TaskCreatedEvent.class, name = "TaskCreatedEvent"),
         @JsonSubTypes.Type(value = TaskAssignedEvent.class, name = "TaskAssignedEvent"),
@@ -43,7 +43,6 @@ import org.activiti.cloud.services.api.events.ProcessEngineEvent;
         @JsonSubTypes.Type(value = VariableCreatedEvent.class, name = "VariableCreatedEvent"),
         @JsonSubTypes.Type(value = VariableUpdatedEvent.class, name = "VariableUpdatedEvent"),
         @JsonSubTypes.Type(value = VariableDeletedEvent.class, name = "VariableDeletedEvent"),
-
 })
 public abstract class AbstractProcessEngineEvent implements ProcessEngineEvent {
 
@@ -71,21 +70,17 @@ public abstract class AbstractProcessEngineEvent implements ProcessEngineEvent {
         this.applicationName = applicationName;
     }
 
-
     public Long getTimestamp() {
         return timestamp;
     }
-
 
     public String getEventType() {
         return eventType;
     }
 
-
     public String getExecutionId() {
         return executionId;
     }
-
 
     public String getProcessDefinitionId() {
         return processDefinitionId;
@@ -103,5 +98,4 @@ public abstract class AbstractProcessEngineEvent implements ProcessEngineEvent {
     public String getApplicationName() {
         return applicationName;
     }
-
 }
