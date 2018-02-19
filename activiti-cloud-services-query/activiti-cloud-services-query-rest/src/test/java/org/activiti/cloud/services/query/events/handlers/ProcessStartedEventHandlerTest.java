@@ -16,28 +16,36 @@
 
 package org.activiti.cloud.services.query.events.handlers;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.MockitoAnnotations.initMocks;
+import java.util.Optional;
 
 import org.activiti.cloud.services.api.events.ProcessEngineEvent;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.events.ProcessStartedEvent;
 import org.activiti.cloud.services.query.model.ProcessInstance;
+import org.activiti.engine.ActivitiException;
 import org.activiti.test.Assertions;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
+import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-public class ProcessStartedHandlerTest {
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+public class ProcessStartedEventHandlerTest {
 
     @InjectMocks
-    private ProcessStartedHandler handler;
+    private ProcessStartedEventHandler handler;
 
     @Mock
     private ProcessInstanceRepository processInstanceRepository;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -55,20 +63,37 @@ public class ProcessStartedHandlerTest {
                                                             "101",
                                                             "201",
                                                             "runtime-bundle-a");
+        ProcessInstance currentProcessInstance = mock(ProcessInstance.class);
+        given(processInstanceRepository.findById("200")).willReturn(Optional.of(currentProcessInstance));
 
         //when
         handler.handle(event);
 
         //then
-        ArgumentCaptor<ProcessInstance> argumentCaptor = ArgumentCaptor.forClass(ProcessInstance.class);
-        verify(processInstanceRepository).save(argumentCaptor.capture());
+        verify(processInstanceRepository).save(currentProcessInstance);
+        verify(currentProcessInstance).setStatus("RUNNING");
+    }
 
-        ProcessInstance processInstance = argumentCaptor.getValue();
-        Assertions.assertThat(processInstance)
-                .hasProcessInstanceId("200")
-                .hasProcessDefinitionId("100")
-                .hasApplicationName("runtime-bundle-a")
-                .hasStatus("RUNNING");
+    @Test
+    public void handleShouldThrowExceptionWhenRelatedProcessInstanceIsNotFound() throws Exception {
+        //given
+        ProcessStartedEvent event = new ProcessStartedEvent(System.currentTimeMillis(),
+                                                            "ProcessStartedEvent",
+                                                            "10",
+                                                            "100",
+                                                            "200",
+                                                            "101",
+                                                            "201",
+                                                            "runtime-bundle-a");
+
+        given(processInstanceRepository.findById("200")).willReturn(Optional.empty());
+
+        //then
+        expectedException.expect(ActivitiException.class);
+        expectedException.expectMessage("Unable to find process instance with the given id: ");
+
+        //when
+        handler.handle(event);
     }
 
     @Test
