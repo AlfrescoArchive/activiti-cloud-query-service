@@ -1,4 +1,4 @@
-#Query Service Background
+## Query Service Background
 
 The Query Service enable client applications to get Process & Task data without going
 straight to the Runtime Bundles. The Query Service was designed to enable efficient
@@ -9,7 +9,7 @@ This component was designed to aggregate data from a set of related Runtime Bund
 allowing consumers to filter using the runtime bundle.
 
 
-#Elastic Query Service
+## Elastic Query Service
 
 This service provides querying capabilities using Elasticsearch Implementation.
 
