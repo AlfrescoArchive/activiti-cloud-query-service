@@ -18,7 +18,8 @@ package org.activiti.cloud.services.query.rest;
 
 import com.querydsl.core.types.Predicate;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
-import org.activiti.cloud.services.query.app.repository.TaskRepository;
+import org.activiti.cloud.services.query.app.repository.TaskCandidateUserRepository;
+import org.activiti.cloud.services.query.app.repository.TaskRepository;;
 import org.activiti.cloud.services.query.model.Task;
 import org.activiti.cloud.services.query.resources.TaskResource;
 import org.activiti.cloud.services.query.rest.assembler.TaskResourceAssembler;
@@ -49,7 +50,8 @@ public class TaskController {
     public TaskController(TaskRepository taskRepository,
                           TaskResourceAssembler taskResourceAssembler,
                           PagedResourcesAssembler<Task> pagedResourcesAssembler,
-                          EntityFinder entityFinder) {
+                          EntityFinder entityFinder,
+                          TaskCandidateUserRepository taskCandidateUserRepository) {
         this.taskRepository = taskRepository;
         this.taskResourceAssembler = taskResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
