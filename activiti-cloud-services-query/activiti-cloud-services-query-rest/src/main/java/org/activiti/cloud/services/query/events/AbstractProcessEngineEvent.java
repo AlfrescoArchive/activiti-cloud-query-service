@@ -45,6 +45,8 @@ import org.activiti.cloud.services.api.events.ProcessEngineEvent;
         @JsonSubTypes.Type(value = VariableDeletedEvent.class, name = "VariableDeletedEvent"),
         @JsonSubTypes.Type(value = TaskCandidateUserAddedEvent.class, name = "TaskCandidateUserAddedEvent"),
         @JsonSubTypes.Type(value = TaskCandidateGroupAddedEvent.class, name = "TaskCandidateGroupAddedEvent"),
+        @JsonSubTypes.Type(value = TaskCandidateUserAddedEvent.class, name = "TaskCandidateUserRemovedEvent"),
+        @JsonSubTypes.Type(value = TaskCandidateGroupAddedEvent.class, name = "TaskCandidateGroupRemovedEvent"),
 })
 public abstract class AbstractProcessEngineEvent implements ProcessEngineEvent {
 
