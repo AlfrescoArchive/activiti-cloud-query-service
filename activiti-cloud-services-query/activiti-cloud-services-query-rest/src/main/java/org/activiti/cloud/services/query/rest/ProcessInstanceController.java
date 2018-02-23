@@ -26,7 +26,6 @@ import org.activiti.cloud.services.security.ActivitiForbiddenException;
 import org.activiti.cloud.services.security.AuthenticationWrapper;
 import org.activiti.cloud.services.security.SecurityPoliciesApplicationService;
 import org.activiti.cloud.services.security.SecurityPolicy;
-import org.activiti.engine.UserRoleLookupProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +56,6 @@ public class ProcessInstanceController {
 
     private final AuthenticationWrapper authenticationWrapper;
 
-    private final UserRoleLookupProxy userRoleLookupProxy;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessInstanceController.class);
 
@@ -82,15 +80,13 @@ public class ProcessInstanceController {
                                      PagedResourcesAssembler<ProcessInstance> pagedResourcesAssembler,
                                      EntityFinder entityFinder,
                                      SecurityPoliciesApplicationService securityPoliciesApplicationService,
-                                     AuthenticationWrapper authenticationWrapper,
-                                     UserRoleLookupProxy userRoleLookupProxy) {
+                                     AuthenticationWrapper authenticationWrapper) {
         this.processInstanceRepository = processInstanceRepository;
         this.processInstanceResourceAssembler = processInstanceResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
         this.entityFinder = entityFinder;
         this.securityPoliciesApplicationService = securityPoliciesApplicationService;
         this.authenticationWrapper = authenticationWrapper;
-        this.userRoleLookupProxy = userRoleLookupProxy;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -98,21 +94,6 @@ public class ProcessInstanceController {
                                                            Pageable pageable) {
 
         predicate = securityPoliciesApplicationService.restrictProcessInstanceQuery(predicate, SecurityPolicy.READ);
-
-        return pagedResourcesAssembler.toResource(processInstanceRepository.findAll(predicate,
-                pageable),
-                processInstanceResourceAssembler);
-    }
-
-    @RequestMapping(value = "/admin/",method = RequestMethod.GET)
-    public PagedResources<ProcessInstanceResource> adminFindAll(@QuerydslPredicate(root = ProcessInstance.class) Predicate predicate,
-                                                           Pageable pageable) {
-
-        if (authenticationWrapper.getAuthenticatedUserId() != null){
-            if (!userRoleLookupProxy.isAdmin(authenticationWrapper.getAuthenticatedUserId())){
-                throw new ActivitiForbiddenException("Access forbidden");
-            }
-        }
 
         return pagedResourcesAssembler.toResource(processInstanceRepository.findAll(predicate,
                 pageable),
