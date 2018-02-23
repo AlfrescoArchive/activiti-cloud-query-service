@@ -19,6 +19,7 @@ package org.activiti.cloud.starter.tests;
 import java.util.Collection;
 
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
+import org.activiti.cloud.services.query.app.repository.TaskCandidateUserRepository;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.model.Task;
 import org.activiti.cloud.starters.test.MyProducer;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -46,6 +48,7 @@ import static org.activiti.cloud.starters.test.MockProcessEngineEvent.aProcessSt
 import static org.activiti.cloud.starters.test.MockTaskEvent.aTaskAssignedEvent;
 import static org.activiti.cloud.starters.test.MockTaskEvent.aTaskCompletedEvent;
 import static org.activiti.cloud.starters.test.MockTaskEvent.aTaskCreatedEvent;
+import static org.activiti.cloud.starters.test.MockTaskCandidateUserEvent.aTaskCandidateUserAddedEvent;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.awaitility.Awaitility.await;
@@ -54,6 +57,7 @@ import static org.awaitility.Awaitility.await;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
 @DirtiesContext
+@EnableSpringDataWebSupport
 public class QueryTasksIT {
 
     private static final String TASKS_URL = "/v1/tasks";
@@ -68,6 +72,9 @@ public class QueryTasksIT {
 
     @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private TaskCandidateUserRepository taskCandidateUserRepository;
 
     @Autowired
     private ProcessInstanceRepository processInstanceRepository;
@@ -92,8 +99,10 @@ public class QueryTasksIT {
 
     @After
     public void tearDown() throws Exception {
+        taskCandidateUserRepository.deleteAll();
         taskRepository.deleteAll();
         processInstanceRepository.deleteAll();
+
     }
 
     @Test
@@ -132,6 +141,8 @@ public class QueryTasksIT {
                                                   .withName("Completed task")
                                                   .build()));
 
+        waitForMessage();
+
         await().untilAsserted(() -> {
 
             //when
@@ -153,6 +164,73 @@ public class QueryTasksIT {
                                     "COMPLETED"));
         });
     }
+
+
+    @Test
+    public void shouldGetRestrictedTasksWithPermission() throws Exception {
+        //given
+        // a created task
+        producer.send(aTaskCreatedEvent(System.currentTimeMillis(),
+                aTask()
+                        .withId("2")
+                        .withName("Created task")
+                        .build(),
+                PROCESS_INSTANCE_ID));
+
+        producer.send(aTaskCandidateUserAddedEvent(System.currentTimeMillis(),
+                new org.activiti.cloud.services.api.model.TaskCandidateUser("testuser","2"),
+                PROCESS_INSTANCE_ID));
+
+        waitForMessage();
+
+        await().untilAsserted(() -> {
+
+            //when
+            ResponseEntity<PagedResources<Task>> responseEntity = executeRequestGetTasks();
+
+            //then
+            assertThat(responseEntity).isNotNull();
+            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+            Collection<Task> tasks = responseEntity.getBody().getContent();
+            assertThat(tasks)
+                    .extracting(Task::getId,
+                            Task::getStatus)
+                    .contains(tuple("2",
+                            "CREATED"));
+        });
+    }
+
+    @Test
+    public void shouldNotGetRestrictedTasksWithoutPermission() throws Exception {
+        //given
+        // a created task
+        producer.send(aTaskCreatedEvent(System.currentTimeMillis(),
+                aTask()
+                        .withId("2")
+                        .withName("Created task")
+                        .build(),
+                PROCESS_INSTANCE_ID));
+        producer.send(aTaskCandidateUserAddedEvent(System.currentTimeMillis(),
+                new org.activiti.cloud.services.api.model.TaskCandidateUser("specialUser","2"),
+                PROCESS_INSTANCE_ID));
+
+        waitForMessage();
+
+        await().untilAsserted(() -> {
+
+            //when
+            ResponseEntity<PagedResources<Task>> responseEntity = executeRequestGetTasks();
+
+            //then
+            assertThat(responseEntity).isNotNull();
+            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+            Collection<Task> tasks = responseEntity.getBody().getContent();
+            assertThat(tasks).isNullOrEmpty();
+        });
+    }
+
 
     @Test
     public void shouldFilterOnStatusTasks() throws Exception {
@@ -224,5 +302,9 @@ public class QueryTasksIT {
         headers.add("Authorization", keycloakTokenProducer.getTokenString());
         HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
         return entity;
+    }
+
+    private void waitForMessage() throws InterruptedException {
+        Thread.sleep(300);
     }
 }

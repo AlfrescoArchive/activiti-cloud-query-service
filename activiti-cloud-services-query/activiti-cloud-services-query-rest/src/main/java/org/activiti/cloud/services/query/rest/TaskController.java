@@ -23,7 +23,9 @@ import org.activiti.cloud.services.query.app.repository.TaskRepository;;
 import org.activiti.cloud.services.query.model.Task;
 import org.activiti.cloud.services.query.resources.TaskResource;
 import org.activiti.cloud.services.query.rest.assembler.TaskResourceAssembler;
+import org.activiti.cloud.services.security.TaskLookupRestrictionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -46,23 +48,30 @@ public class TaskController {
 
     private EntityFinder entityFinder;
 
+    private TaskLookupRestrictionService taskLookupRestrictionService;
+
     @Autowired
     public TaskController(TaskRepository taskRepository,
                           TaskResourceAssembler taskResourceAssembler,
                           PagedResourcesAssembler<Task> pagedResourcesAssembler,
                           EntityFinder entityFinder,
-                          TaskCandidateUserRepository taskCandidateUserRepository) {
+                          TaskLookupRestrictionService taskLookupRestrictionService) {
         this.taskRepository = taskRepository;
         this.taskResourceAssembler = taskResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
         this.entityFinder = entityFinder;
+        this.taskLookupRestrictionService = taskLookupRestrictionService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public PagedResources<TaskResource> findAll(@QuerydslPredicate(root = Task.class) Predicate predicate,
                                                 Pageable pageable) {
-        return pagedResourcesAssembler.toResource(taskRepository.findAll(predicate,
-                                                                         pageable),
+
+        predicate = taskLookupRestrictionService.restrictTaskQuery(predicate);
+        Page<Task> page = taskRepository.findAll(predicate,
+                pageable);
+
+        return pagedResourcesAssembler.toResource(page,
                                                   taskResourceAssembler);
     }
 

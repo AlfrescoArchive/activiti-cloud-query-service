@@ -16,7 +16,8 @@ public class TaskLookupRestrictionService {
     @Autowired(required = false)
     private UserGroupLookupProxy userGroupLookupProxy;
 
-    private AuthenticationWrapper authenticationWrapper = new AuthenticationWrapper();
+    @Autowired
+    private AuthenticationWrapper authenticationWrapper;
 
     public Predicate restrictTaskQuery(Predicate predicate){
 
@@ -29,10 +30,14 @@ public class TaskLookupRestrictionService {
 
         if(userId!=null) {
 
-            //user is a candidate
-            QTask task = QTask.task;
-            restriction = addOrConditionToExpression(restriction,task.taskCandidateUsers.any().userId.eq(userId));
 
+            QTask task = QTask.task;
+
+            //user is assignee
+            restriction = addOrConditionToExpression(restriction,task.assignee.eq(userId));
+
+            //or user is a candidate
+            restriction = addOrConditionToExpression(restriction,task.taskCandidateUsers.any().userId.eq(userId));
 
             //or one of user's group is candidate
 
