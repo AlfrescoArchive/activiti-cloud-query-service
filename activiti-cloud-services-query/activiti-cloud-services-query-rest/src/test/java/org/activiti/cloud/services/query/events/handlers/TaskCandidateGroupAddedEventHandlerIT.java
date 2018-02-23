@@ -16,14 +16,9 @@
 
 package org.activiti.cloud.services.query.events.handlers;
 
-import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
-import org.activiti.cloud.services.query.app.repository.TaskCandidateUserRepository;
-import org.activiti.cloud.services.query.app.repository.TaskRepository;
-import org.activiti.cloud.services.query.events.TaskCandidateUserAddedEvent;
-import org.activiti.cloud.services.query.events.TaskCreatedEvent;
-import org.activiti.cloud.services.query.model.ProcessInstance;
-import org.activiti.cloud.services.query.model.Task;
-import org.activiti.cloud.services.query.model.TaskCandidateUser;
+import org.activiti.cloud.services.query.app.repository.TaskCandidateGroupRepository;
+import org.activiti.cloud.services.query.events.TaskCandidateGroupAddedEvent;
+import org.activiti.cloud.services.query.model.TaskCandidateGroup;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,31 +31,28 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Date;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * TaskCandidateUserAddedEventHandler JPA Repository Integration Tests
+ * TaskCandidateGroupAddedEventHandler JPA Repository Integration Tests
  * 
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest(showSql = true)
 @Sql(value = "classpath:/jpa-test.sql")
 @DirtiesContext
-public class TaskCandidateUserAddedEventHandlerIT {
+public class TaskCandidateGroupAddedEventHandlerIT {
 
     @Autowired
-    private TaskCandidateUserRepository taskCandidateUserRepository;
+    private TaskCandidateGroupRepository taskCandidateGroupRepository;
 
     @Autowired
-    private TaskCandidateUserAddedEventHandler handler;
+    private TaskCandidateGroupAddedEventHandler handler;
 
     @SpringBootConfiguration
-    @EnableJpaRepositories(basePackageClasses = TaskCandidateUserRepository.class)
-    @EntityScan(basePackageClasses = TaskCandidateUser.class)
-    @Import(TaskCandidateUserAddedEventHandler.class)
+    @EnableJpaRepositories(basePackageClasses = TaskCandidateGroupRepository.class)
+    @EntityScan(basePackageClasses = TaskCandidateGroup.class)
+    @Import(TaskCandidateGroupAddedEventHandler.class)
     static class Configuation {
     }
 
@@ -70,28 +62,28 @@ public class TaskCandidateUserAddedEventHandlerIT {
     }
 
     @Test
-    public void handleShouldStoreNewTaskCandidateUser() throws Exception {
+    public void handleShouldStoreNewTaskCandidateGroup() throws Exception {
 
         //given
-        TaskCandidateUser eventTaskCandidateUser = new TaskCandidateUser("task_id","user_id");
-        TaskCandidateUserAddedEvent taskCandidateUserAddedEvent = new TaskCandidateUserAddedEvent(System.currentTimeMillis(),
-                                                                                        "taskCandidateUserAdded",
+        TaskCandidateGroup eventTaskCandidateGroup = new TaskCandidateGroup("task_id","group_id");
+        TaskCandidateGroupAddedEvent taskCandidateGroupAddedEvent = new TaskCandidateGroupAddedEvent(System.currentTimeMillis(),
+                                                                                        "taskCandidateGroupAdded",
                                                                                         null,
                                                                                         null,
                                                                                         null,
                                                                                         "runtime-bundle-a",
-                                                                                        eventTaskCandidateUser);
+                                                                                        eventTaskCandidateGroup);
 
         //when
-        handler.handle(taskCandidateUserAddedEvent);
+        handler.handle(taskCandidateGroupAddedEvent);
 
         //then
-        Iterable<TaskCandidateUser> iterable = taskCandidateUserRepository.findAll();
+        Iterable<TaskCandidateGroup> iterable = taskCandidateGroupRepository.findAll();
 
         assertThat(iterable.iterator().hasNext()).isTrue();
-        TaskCandidateUser returnedTaskCandidateUser = iterable.iterator().next();
-        assertThat(returnedTaskCandidateUser.getUserId()).isEqualToIgnoringCase("user_id");
-        assertThat(returnedTaskCandidateUser.getTaskId()).isEqualToIgnoringCase("task_id");
+        TaskCandidateGroup returnedTaskCandidateGroup = iterable.iterator().next();
+        assertThat(returnedTaskCandidateGroup.getGroupId()).isEqualToIgnoringCase("group_id");
+        assertThat(returnedTaskCandidateGroup.getTaskId()).isEqualToIgnoringCase("task_id");
     }
 
 }
