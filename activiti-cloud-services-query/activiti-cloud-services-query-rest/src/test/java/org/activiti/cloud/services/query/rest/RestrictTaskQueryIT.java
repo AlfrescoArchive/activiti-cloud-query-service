@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate;
 import org.activiti.cloud.services.query.app.repository.TaskCandidateGroupRepository;
 import org.activiti.cloud.services.query.app.repository.TaskCandidateUserRepository;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
+import org.activiti.cloud.services.query.model.QTask;
 import org.activiti.cloud.services.query.model.Task;
 import org.activiti.cloud.services.query.model.TaskCandidateGroup;
 import org.activiti.cloud.services.query.model.TaskCandidateUser;
@@ -168,6 +169,61 @@ public class RestrictTaskQueryIT {
 
         Iterable<Task> iterable = taskRepository.findAll(predicate);
         assertThat(iterable.iterator().hasNext()).isTrue();
+    }
+
+    @Test
+    public void shouldGetTasksWhenNoCandidatesConfiguredAndExistingQueryMatches() throws Exception {
+
+        Task task = new Task();
+        task.setId("5");
+        task.setOwner("bob");
+        taskRepository.save(task);
+
+        // no candidates or groups - just a task without any permissions so anyone can see
+
+        when(authenticationWrapper.getAuthenticatedUserId()).thenReturn("testuser");
+
+        Predicate predicate = taskLookupRestrictionService.restrictTaskQuery(QTask.task.id.eq("5").and(QTask.task.owner.eq("bob")));
+
+        Iterable<Task> iterable = taskRepository.findAll(predicate);
+        assertThat(iterable.iterator().hasNext()).isTrue();
+    }
+
+    @Test
+    public void shouldNotGetTasksWhenNoCandidatesConfiguredAndExistingQueryDoesNotMatch() throws Exception {
+
+        Task task = new Task();
+        task.setId("5");
+        task.setOwner("bob");
+        taskRepository.save(task);
+
+        // no candidates or groups - just a task without any permissions so anyone can see
+
+        when(authenticationWrapper.getAuthenticatedUserId()).thenReturn("testuser");
+
+        Predicate predicate = taskLookupRestrictionService.restrictTaskQuery(QTask.task.id.eq("7").and(QTask.task.owner.eq("fred")));
+
+        Iterable<Task> iterable = taskRepository.findAll(predicate);
+        assertThat(iterable.iterator().hasNext()).isFalse();
+    }
+
+    @Test
+    public void shouldNotGetTasksWhenInCandidateGroupButExistingQueryDoesNotMatch() throws Exception {
+
+        Task task = new Task();
+        task.setId("3");
+        taskRepository.save(task);
+
+        TaskCandidateGroup taskCandidateGroup = new TaskCandidateGroup("3","hr");
+        taskCandidateGroupRepository.save(taskCandidateGroup);
+
+        when(authenticationWrapper.getAuthenticatedUserId()).thenReturn("hruser");
+        when(userGroupLookupProxy.getGroupsForCandidateUser("hruser")).thenReturn(Arrays.asList("hr"));
+
+        Predicate predicate = taskLookupRestrictionService.restrictTaskQuery(QTask.task.id.eq("7"));
+
+        Iterable<Task> iterable = taskRepository.findAll(predicate);
+        assertThat(iterable.iterator().hasNext()).isFalse();
     }
 
 }

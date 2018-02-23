@@ -21,7 +21,6 @@ public class TaskLookupRestrictionService {
 
     public Predicate restrictTaskQuery(Predicate predicate){
 
-        BooleanExpression securityExpression = null;
 
         //get authenticated user
         String userId = authenticationWrapper.getAuthenticatedUserId();
@@ -45,7 +44,6 @@ public class TaskLookupRestrictionService {
             if (userGroupLookupProxy != null) {
                 groups = userGroupLookupProxy.getGroupsForCandidateUser(userId);
             }
-            BooleanExpression userInACandidateGroupForTask = null;
             if(groups!=null && groups.size()>0) {
                 restriction = addOrConditionToExpression(restriction,task.taskCandidateGroups.any().groupId.in(groups));
             }

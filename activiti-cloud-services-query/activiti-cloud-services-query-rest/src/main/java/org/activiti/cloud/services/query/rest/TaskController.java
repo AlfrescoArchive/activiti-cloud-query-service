@@ -18,7 +18,6 @@ package org.activiti.cloud.services.query.rest;
 
 import com.querydsl.core.types.Predicate;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
-import org.activiti.cloud.services.query.app.repository.TaskCandidateUserRepository;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;;
 import org.activiti.cloud.services.query.model.Task;
 import org.activiti.cloud.services.query.resources.TaskResource;
