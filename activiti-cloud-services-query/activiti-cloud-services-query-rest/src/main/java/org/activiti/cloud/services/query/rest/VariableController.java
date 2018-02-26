@@ -69,7 +69,7 @@ public class VariableController {
 
         return variableResourceAssembler.toResource(entityFinder.findById(variableRepository,
                                                                           variableId,
-                                                                          "Unable to find processInstance for the given id:'" + variableId + "'"));
+                                                                          "Unable to find variable for the given id:'" + variableId + "'"));
 
     }
 
