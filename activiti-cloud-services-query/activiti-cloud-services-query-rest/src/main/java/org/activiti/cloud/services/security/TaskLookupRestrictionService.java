@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.activiti.cloud.services.query.model.QTask;
+import org.activiti.cloud.services.query.model.QVariable;
 import org.activiti.engine.UserGroupLookupProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,21 @@ public class TaskLookupRestrictionService {
 
     public Predicate restrictTaskQuery(Predicate predicate){
 
+        return restrictTaskQuery(predicate,QTask.task);
+    }
+
+
+    public Predicate restrictTaskVariableQuery(Predicate predicate){
+
+        QTask task = QVariable.variable.task;
+
+        predicate = addAndConditionToPredicate(predicate,task.isNotNull());
+
+        return restrictTaskQuery(predicate, task);
+    }
+
+    public Predicate restrictTaskQuery(Predicate predicate, QTask task){
+
 
         //get authenticated user
         String userId = authenticationWrapper.getAuthenticatedUserId();
@@ -28,9 +44,6 @@ public class TaskLookupRestrictionService {
         BooleanExpression restriction = null;
 
         if(userId!=null) {
-
-
-            QTask task = QTask.task;
 
             //user is assignee
             restriction = addOrConditionToExpression(restriction,task.assignee.eq(userId));
@@ -56,7 +69,7 @@ public class TaskLookupRestrictionService {
         return addAndConditionToPredicate(predicate,restriction);
     }
 
-    Predicate addAndConditionToPredicate(Predicate predicate, BooleanExpression expression){
+    private Predicate addAndConditionToPredicate(Predicate predicate, BooleanExpression expression){
         if(expression != null && predicate !=null){
             return expression.and(predicate);
         }
@@ -66,7 +79,7 @@ public class TaskLookupRestrictionService {
         return expression;
     }
 
-    BooleanExpression addOrConditionToExpression(BooleanExpression predicate, BooleanExpression expression){
+    private BooleanExpression addOrConditionToExpression(BooleanExpression predicate, BooleanExpression expression){
         if(expression != null && predicate !=null){
             return expression.or(predicate);
         }

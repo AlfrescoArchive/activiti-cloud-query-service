@@ -9,8 +9,6 @@ import org.activiti.engine.UserGroupLookupProxy;
 import org.activiti.engine.UserRoleLookupProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.activiti.cloud.services.security.SecurityPoliciesService;
-import org.activiti.cloud.services.security.SecurityPolicy;
 
 import java.util.List;
 import java.util.Map;
@@ -42,6 +40,25 @@ public class SecurityPoliciesApplicationService {
 
     }
 
+    public Predicate restrictProcessInstanceVariableQuery(Predicate predicate, SecurityPolicy securityPolicy){
+        if (noSecurityPoliciesOrNoUser()){
+            return predicate;
+        }
+
+        QProcessInstance processInstance = QVariable.variable.processInstance;
+
+        BooleanExpression varIsProcInstVar = processInstance.isNotNull();
+
+        if (predicate != null ){
+            predicate = varIsProcInstVar.and(predicate);
+        } else {
+            predicate = varIsProcInstVar;
+        }
+
+        return buildPredicateForQProcessInstance(predicate, securityPolicy, processInstance);
+
+    }
+
     public Predicate restrictTaskQuery(Predicate predicate, SecurityPolicy securityPolicy){
         if (noSecurityPoliciesOrNoUser()){
             return predicate;
@@ -53,15 +70,6 @@ public class SecurityPoliciesApplicationService {
     }
 
 
-    public Predicate restrictVariableQuery(Predicate predicate, SecurityPolicy securityPolicy){
-        if (noSecurityPoliciesOrNoUser()){
-            return predicate;
-        }
-
-        QProcessInstance processInstance = QVariable.variable.processInstance;
-        return buildPredicateForQProcessInstance(predicate, securityPolicy, processInstance);
-
-    }
 
 
     public Predicate buildPredicateForQProcessInstance(Predicate predicate, SecurityPolicy securityPolicy, QProcessInstance processInstance) {
