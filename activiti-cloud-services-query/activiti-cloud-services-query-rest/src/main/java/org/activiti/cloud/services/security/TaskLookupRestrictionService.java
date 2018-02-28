@@ -2,11 +2,11 @@ package org.activiti.cloud.services.security;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.activiti.cloud.services.query.model.QTask;
 import org.activiti.cloud.services.query.model.QVariable;
 import org.activiti.engine.UserGroupLookupProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,6 +19,9 @@ public class TaskLookupRestrictionService {
 
     @Autowired
     private AuthenticationWrapper authenticationWrapper;
+
+    @Value("${activiti.cloud.security.task.restrictions.enabled:true}")
+    private boolean restrictionsEnabled;
 
     public Predicate restrictTaskQuery(Predicate predicate){
 
@@ -35,8 +38,11 @@ public class TaskLookupRestrictionService {
         return restrictTaskQuery(predicate, task);
     }
 
-    public Predicate restrictTaskQuery(Predicate predicate, QTask task){
+    private Predicate restrictTaskQuery(Predicate predicate, QTask task){
 
+        if (!restrictionsEnabled){
+            return predicate;
+        }
 
         //get authenticated user
         String userId = authenticationWrapper.getAuthenticatedUserId();
@@ -89,4 +95,11 @@ public class TaskLookupRestrictionService {
         return expression;
     }
 
+    public void setRestrictionsEnabled(boolean restrictionsEnabled) {
+        this.restrictionsEnabled = restrictionsEnabled;
+    }
+
+    public boolean isRestrictionsEnabled() {
+        return restrictionsEnabled;
+    }
 }

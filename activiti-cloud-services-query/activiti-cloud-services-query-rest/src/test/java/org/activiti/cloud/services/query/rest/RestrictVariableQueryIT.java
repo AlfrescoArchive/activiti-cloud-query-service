@@ -38,16 +38,15 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+/**
+ * This is present in case of a future scenario where we need to filter task or process instance variables more generally rather than per task or per proc.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = { TaskRepository.class, Task.class, TaskCandidateUserRepository.class, TaskCandidateUser.class, TaskCandidateGroupRepository.class, TaskCandidateGroup.class, TaskLookupRestrictionService.class,
         ProcessInstanceRepository.class, SecurityPoliciesApplicationService.class, SecurityPoliciesService.class, SecurityProperties.class, ProcessInstance.class,
@@ -65,9 +64,6 @@ public class RestrictVariableQueryIT {
     @Autowired
     private TaskCandidateUserRepository taskCandidateUserRepository;
 
-    @Autowired
-    private TaskCandidateGroupRepository taskCandidateGroupRepository;
-
     @MockBean
     private AuthenticationWrapper authenticationWrapper;
 
@@ -80,9 +76,6 @@ public class RestrictVariableQueryIT {
 
     @Autowired
     private VariableLookupRestrictionService variableLookupRestrictionService;
-
-    @Autowired
-    private TaskLookupRestrictionService taskLookupRestrictionService;
 
     @Autowired
     private VariableRepository variableRepository;
@@ -152,51 +145,10 @@ public class RestrictVariableQueryIT {
         Iterable<Variable> iterable = variableRepository.findAll(predicate);
         assertThat(iterable.iterator().hasNext()).isTrue();
     }
-/*
-    @Test
-    public void shouldGetBothTaskAndProcessInstVariablesWhenPermitted(){
-        ProcessInstance processInstance = new ProcessInstance();
-        processInstance.setId("15");
-        processInstance.setName("name");
-        processInstance.setDescription("desc");
-        processInstance.setInitiator("initiator");
-        processInstance.setProcessDefinitionKey("defKey1");
-        processInstance.setApplicationName("test-cmd-endpoint");
-        processInstanceRepository.save(processInstance);
 
-        Variable variable = new Variable();
-        variable.setName("name");
-        variable.setValue("id");
-        variable.setProcessInstanceId("15");
-        variable.setProcessInstance(processInstance);
-        variableRepository.save(variable);
-
-        Task task = new Task();
-        task.setId("1");
-        taskRepository.save(task);
-
-        Variable variable2 = new Variable();
-        variable2.setName("name");
-        variable2.setValue("id");
-        variable2.setTaskId("1");
-        variable2.setTask(task);
-        variableRepository.save(variable2);
-
-        TaskCandidateUser taskCandidateUser = new TaskCandidateUser("1","testuser");
-        taskCandidateUserRepository.save(taskCandidateUser);
-
-        when(authenticationWrapper.getAuthenticatedUserId()).thenReturn("testuser");
-        when(userGroupLookupProxy.getGroupsForCandidateUser("testuser")).thenReturn(Arrays.asList("testgroup"));
-
-        Predicate predicate = variableLookupRestrictionService.restrictVariableQuery(null);
-
-        Iterable<Variable> iterable = variableRepository.findAll(predicate);
-        assertThat(iterable.iterator().hasNext()).isTrue();
-        Iterator<Variable> variableIterator = iterable.iterator();
-        List<Variable> variableList = new ArrayList<>();
-        while(variableIterator.hasNext()){
-            variableList.add(variableIterator.next());
-        }
-        assertThat(variableList.size()).isEqualTo(2);
-    } */
+/* The DSL queries seem to be able to join from variable to task or procInst but not both.
+   Could probably do it using queryFactory approach http://www.querydsl.com/static/querydsl/latest/reference/html/ch02.html#jpa_integration
+   But would then have to handle the pagination to make consistent with using repository.
+   No immediate need and would be inefficient to do those joins.
+ */
 }

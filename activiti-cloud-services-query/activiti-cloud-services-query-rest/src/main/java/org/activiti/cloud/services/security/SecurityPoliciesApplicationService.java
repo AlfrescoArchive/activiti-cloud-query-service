@@ -59,16 +59,6 @@ public class SecurityPoliciesApplicationService {
 
     }
 
-    public Predicate restrictTaskQuery(Predicate predicate, SecurityPolicy securityPolicy){
-        if (noSecurityPoliciesOrNoUser()){
-            return predicate;
-        }
-
-        QProcessInstance processInstance = QTask.task.processInstance;
-        return buildPredicateForQProcessInstance(predicate, securityPolicy, processInstance);
-
-    }
-
 
 
 

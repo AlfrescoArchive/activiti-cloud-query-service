@@ -1,11 +1,12 @@
 package org.activiti.cloud.services.security;
 
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import org.activiti.cloud.services.query.model.QVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * This is present in case of a future scenario where we need to filter task or process instance variables more generally rather than per task or per proc.
+ */
 @Component
 public class VariableLookupRestrictionService {
 
@@ -15,12 +16,6 @@ public class VariableLookupRestrictionService {
     @Autowired
     private SecurityPoliciesApplicationService securityPoliciesApplicationService;
 
-    public Predicate restrictVariableQuery(Predicate predicate){
-        //TODO: need to construct OR differently, prob by constructing expression together and exposing more from the collaborators
-        Predicate predicateTask = restrictTaskVariableQuery(predicate);
-        Predicate predicateProc = restrictProcessInstanceVariableQuery(predicate);
-        return QVariable.variable.name.isNotNull().andAnyOf(predicateTask,predicateProc);
-    }
 
     public Predicate restrictTaskVariableQuery(Predicate predicate){
         return taskLookupRestrictionService.restrictTaskVariableQuery(predicate);
