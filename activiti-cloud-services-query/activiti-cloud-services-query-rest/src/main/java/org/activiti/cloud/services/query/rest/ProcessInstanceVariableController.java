@@ -16,6 +16,7 @@
 
 package org.activiti.cloud.services.query.rest;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.QVariable;
 import org.activiti.cloud.services.query.model.Variable;
@@ -30,7 +31,10 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/v1/process-instances/{processInstanceId}", produces = MediaTypes.HAL_JSON_VALUE)
@@ -49,9 +53,26 @@ public class ProcessInstanceVariableController {
 
     @RequestMapping(value = "/variables", method = RequestMethod.GET)
     public PagedResources<VariableResource> getVariables(@PathVariable String processInstanceId,
+                                                         @RequestParam(value="name", required=false) Optional<String> name,
+                                                         @RequestParam(value="value", required=false) Optional<String>  value,
+                                                         @RequestParam(value="type", required=false) Optional<String>  type,
                                                          Pageable pageable,
                                                          PagedResourcesAssembler<Variable> pagedResourcesAssembler) {
-        Page<Variable> variables = variableRepository.findAll(QVariable.variable.processInstanceId.eq(processInstanceId), pageable);
+
+        QVariable variable = QVariable.variable;
+        BooleanExpression expression = variable.processInstanceId.eq(processInstanceId);
+
+        if(name!=null & name.isPresent()){
+            expression = expression.and(variable.name.eq(name.get()));
+        }
+        if(value!=null & value.isPresent()){
+            expression = expression.and(variable.value.eq(value.get()));
+        }
+        if(type!=null & type.isPresent()){
+            expression = expression.and(variable.type.eq(type.get()));
+        }
+
+        Page<Variable> variables = variableRepository.findAll(expression, pageable);
 
         return pagedResourcesAssembler.toResource(variables, variableResourceAssembler);
     }

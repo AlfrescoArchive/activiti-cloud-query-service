@@ -36,7 +36,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.activiti.cloud.starters.test.MockProcessEngineEvent.aProcessCreatedEvent;
@@ -153,7 +156,7 @@ public class QueryProcessInstanceVariablesIT {
         });
     }
 
-/*
+
     @Test
     public void shouldFilterOnVariableName() throws Exception {
         //given
@@ -191,13 +194,20 @@ public class QueryProcessInstanceVariablesIT {
 
         await().untilAsserted(() -> {
 
+            Map<String, String> uriParams = new HashMap<String, String>();
+            uriParams.put("processInstanceId", processInstanceId);
+
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(VARIABLES_URL)
+                    // Add query parameter
+                    .queryParam("name", "var2");
+
+            System.out.println(builder.buildAndExpand(uriParams).toUri());
+
             //when
-            ResponseEntity<PagedResources<Variable>> responseEntity = testRestTemplate.exchange(VARIABLES_URL + "&name={name}",
+            ResponseEntity<PagedResources<Variable>> responseEntity = testRestTemplate.exchange(builder.buildAndExpand(uriParams).toUri(),
                                                                                                 HttpMethod.GET,
                     getHeaderEntity(),
-                                                                                                PAGED_VARIABLE_RESPONSE_TYPE,
-                                                                                                processInstanceId,
-                                                                                                "var2");
+                                                                                                PAGED_VARIABLE_RESPONSE_TYPE);
 
             //then
             assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -211,7 +221,7 @@ public class QueryProcessInstanceVariablesIT {
                     );
         });
     }
-*/
+
 
     private HttpEntity getHeaderEntity(){
         HttpHeaders headers = new HttpHeaders();
