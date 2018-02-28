@@ -295,10 +295,8 @@ public class QueryAdminVariablesIT {
 
         producer.send(createProcessAndVariables.toArray(new ProcessEngineEvent[]{}));
 
-
-        //await().atMost(15, TimeUnit.SECONDS).untilAsserted(() -> {
-
-        Thread.sleep(800);
+        //awaitility doesn't seem to like this test (just fails with a timeout but doesn't actually wait), not sure why - having to use sleep
+        Thread.sleep(400);
 
             //when
             ResponseEntity<PagedResources<Variable>> responseEntity = testRestTemplate.exchange(VARIABLES_URL + "&name={name}",
@@ -318,7 +316,7 @@ public class QueryAdminVariablesIT {
                             tuple("var2",
                                   "v2")
                     );
-        //});
+
     }
 
 
