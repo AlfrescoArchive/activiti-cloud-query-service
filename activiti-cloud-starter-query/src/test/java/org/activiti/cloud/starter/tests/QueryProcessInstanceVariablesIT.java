@@ -34,7 +34,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -54,7 +53,6 @@ import static org.awaitility.Awaitility.await;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
-@DirtiesContext
 public class QueryProcessInstanceVariablesIT {
 
     private static final String VARIABLES_URL = "/v1/process-instances/{processInstanceId}/variables";
@@ -201,7 +199,6 @@ public class QueryProcessInstanceVariablesIT {
                     // Add query parameter
                     .queryParam("name", "var2");
 
-            System.out.println(builder.buildAndExpand(uriParams).toUri());
 
             //when
             ResponseEntity<PagedResources<Variable>> responseEntity = testRestTemplate.exchange(builder.buildAndExpand(uriParams).toUri(),

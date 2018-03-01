@@ -20,9 +20,7 @@ import org.activiti.cloud.services.api.events.ProcessEngineEvent;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.Variable;
-import org.activiti.cloud.services.security.AuthenticationWrapper;
 import org.activiti.cloud.starters.test.MyProducer;
-import org.activiti.engine.UserRoleLookupProxy;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +34,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -59,7 +56,6 @@ import static org.awaitility.Awaitility.await;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test-admin.properties")
-@DirtiesContext
 public class QueryAdminVariablesIT {
 
     private static final String VARIABLES_URL = "/v1/admin/variables?processInstanceId={processInstanceId}";
@@ -81,12 +77,6 @@ public class QueryAdminVariablesIT {
 
     @Autowired
     private MyProducer producer;
-
-    @Autowired
-    private UserRoleLookupProxy userRoleLookupProxy;
-
-    @Autowired
-    private AuthenticationWrapper authenticationWrapper;
 
     @After
     public void tearDown() throws Exception {
@@ -296,7 +286,7 @@ public class QueryAdminVariablesIT {
         producer.send(createProcessAndVariables.toArray(new ProcessEngineEvent[]{}));
 
         //awaitility doesn't seem to like this test (just fails with a timeout but doesn't actually wait), not sure why - having to use sleep
-        Thread.sleep(400);
+        Thread.sleep(300);
 
             //when
             ResponseEntity<PagedResources<Variable>> responseEntity = testRestTemplate.exchange(VARIABLES_URL + "&name={name}",
