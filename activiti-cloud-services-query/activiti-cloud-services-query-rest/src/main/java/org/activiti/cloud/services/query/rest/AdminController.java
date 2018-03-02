@@ -25,11 +25,6 @@ import org.activiti.cloud.services.query.resources.TaskResource;
 import org.activiti.cloud.services.query.resources.VariableResource;
 import org.activiti.cloud.services.query.rest.assembler.TaskResourceAssembler;
 import org.activiti.cloud.services.query.rest.assembler.VariableResourceAssembler;
-import org.activiti.cloud.services.security.ActivitiForbiddenException;
-import org.activiti.cloud.services.security.AuthenticationWrapper;
-import org.activiti.cloud.services.security.SecurityPoliciesService;
-import org.activiti.cloud.services.security.TaskLookupRestrictionService;
-import org.activiti.engine.UserRoleLookupProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,50 +55,25 @@ public class AdminController {
 
     private PagedResourcesAssembler<Variable> pagedVariablesResourcesAssembler;
 
-    private TaskLookupRestrictionService taskLookupRestrictionService;
-
-    private UserRoleLookupProxy userRoleLookupProxy;
-
-    private AuthenticationWrapper authenticationWrapper;
-
     private VariableRepository variableRepository;
 
     private VariableResourceAssembler variableResourceAssembler;
-
-    private SecurityPoliciesService securityPoliciesService;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 
 
     @Autowired
     public AdminController(TaskRepository taskRepository,
                            TaskResourceAssembler taskResourceAssembler,
                            PagedResourcesAssembler<Task> pagedResourcesAssembler,
-                           TaskLookupRestrictionService taskLookupRestrictionService,
-                           UserRoleLookupProxy userRoleLookupProxy,
-                           AuthenticationWrapper authenticationWrapper,
                             VariableRepository variableRepository,
                            VariableResourceAssembler variableResourceAssembler,
-                            PagedResourcesAssembler<Variable> pagedVariablesResourcesAssembler,
-                           SecurityPoliciesService securityPoliciesService) {
+                            PagedResourcesAssembler<Variable> pagedVariablesResourcesAssembler) {
         this.taskRepository = taskRepository;
         this.taskResourceAssembler = taskResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
-        this.taskLookupRestrictionService = taskLookupRestrictionService;
-        this.userRoleLookupProxy = userRoleLookupProxy;
-        this.authenticationWrapper = authenticationWrapper;
         this.variableRepository = variableRepository;
         this.variableResourceAssembler = variableResourceAssembler;
         this.pagedVariablesResourcesAssembler = pagedVariablesResourcesAssembler;
-        this.securityPoliciesService = securityPoliciesService;
     }
-
-    @ExceptionHandler(ActivitiForbiddenException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public String handleAppException(ActivitiForbiddenException ex) {
-        return ex.getMessage();
-    }
-
     @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleAppException(IllegalStateException ex) {
@@ -113,13 +83,6 @@ public class AdminController {
     @RequestMapping(value="/tasks",method = RequestMethod.GET)
     public PagedResources<TaskResource> allTasks(@QuerydslPredicate(root = Task.class) Predicate predicate,
                                                 Pageable pageable) {
-
-        if (authenticationWrapper.getAuthenticatedUserId() != null){
-            if (taskLookupRestrictionService.isRestrictionsEnabled() && !userRoleLookupProxy.isAdmin(authenticationWrapper.getAuthenticatedUserId())){
-                LOGGER.debug("User "+authenticationWrapper.getAuthenticatedUserId()+" not permitted to access all tasks");
-                throw new ActivitiForbiddenException("User "+authenticationWrapper.getAuthenticatedUserId()+" not permitted to access all tasks");
-            }
-        }
 
         Page<Task> page = taskRepository.findAll(predicate,
                 pageable);
@@ -131,16 +94,6 @@ public class AdminController {
     @RequestMapping(value="/variables",method = RequestMethod.GET)
     public PagedResources<VariableResource> findAll(@QuerydslPredicate(root = Variable.class) Predicate predicate,
                                                     Pageable pageable) {
-
-        if (authenticationWrapper.getAuthenticatedUserId() != null) {
-            if (securityPoliciesService.policiesDefined() || taskLookupRestrictionService.isRestrictionsEnabled()) {
-                if(!userRoleLookupProxy.isAdmin(authenticationWrapper.getAuthenticatedUserId())) {
-                    LOGGER.debug("User " + authenticationWrapper.getAuthenticatedUserId() + " not permitted to access all variables");
-                    throw new ActivitiForbiddenException("User "+authenticationWrapper.getAuthenticatedUserId()+" not permitted to access all variables");
-                }
-
-            }
-        }
 
         return pagedVariablesResourcesAssembler.toResource(variableRepository.findAll(predicate,
                 pageable),
