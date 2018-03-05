@@ -234,18 +234,18 @@ public class QueryTasksIT {
         List<ProcessEngineEvent> createTaskAndCandidate = new ArrayList<>();
         createTaskAndCandidate.addAll(        Arrays.asList(aTaskCreatedEvent(System.currentTimeMillis(),
                 aTask()
-                        .withId("2")
+                        .withId("3")
                         .withName("Created task")
                         .build(),
                 PROCESS_INSTANCE_ID))
         );
         createTaskAndCandidate.addAll(Arrays.asList(aTaskCandidateUserAddedEvent(System.currentTimeMillis(),
-                new org.activiti.cloud.services.api.model.TaskCandidateUser("specialUser","2"),
+                new org.activiti.cloud.services.api.model.TaskCandidateUser("specialUser","3"),
                 PROCESS_INSTANCE_ID)));
 
         producer.send(createTaskAndCandidate.toArray(new ProcessEngineEvent[]{}));
 
-        await().untilAsserted(() -> {
+        Thread.sleep(300);
 
             //when
             ResponseEntity<PagedResources<Task>> responseEntity = executeRequestGetTasks();
@@ -256,8 +256,10 @@ public class QueryTasksIT {
 
             Collection<Task> tasks = responseEntity.getBody().getContent();
             //don't see the task as not for me
-            assertThat(tasks).isNullOrEmpty();
-        });
+            for(Task task:tasks){
+                assertThat(task.getId()).isNotEqualToIgnoringCase("3");
+            }
+
     }
 
 

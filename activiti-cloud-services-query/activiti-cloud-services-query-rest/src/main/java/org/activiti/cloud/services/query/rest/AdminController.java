@@ -25,8 +25,6 @@ import org.activiti.cloud.services.query.resources.TaskResource;
 import org.activiti.cloud.services.query.resources.VariableResource;
 import org.activiti.cloud.services.query.rest.assembler.TaskResourceAssembler;
 import org.activiti.cloud.services.query.rest.assembler.VariableResourceAssembler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 ;
 
 @RestController
-@RequestMapping(value = "/v1/admin", produces = MediaTypes.HAL_JSON_VALUE)
+@RequestMapping(value = "/admin", produces = MediaTypes.HAL_JSON_VALUE)
 public class AdminController {
 
     private final TaskRepository taskRepository;

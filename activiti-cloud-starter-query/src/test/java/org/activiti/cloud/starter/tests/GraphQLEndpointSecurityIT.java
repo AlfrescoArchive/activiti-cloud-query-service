@@ -17,6 +17,7 @@
 package org.activiti.cloud.starter.tests;
 
 
+import org.activiti.cloud.services.query.graphql.web.ActivitiGraphQLController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,22 +25,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource("classpath:application-test.properties")
 public class GraphQLEndpointSecurityIT {
 
-    private static final String GRAPHQL_URL = "/graphql";
+    private static final String GRAPHQL_URL = "/admin/graphql";
 
     @Autowired
     private KeycloakTokenProducer keycloakTokenProducer;
@@ -49,22 +47,20 @@ public class GraphQLEndpointSecurityIT {
 
     @Test
     public void shouldNotSeeGraphQLEndpoint() throws Exception {
-        await().atMost(15, TimeUnit.SECONDS).untilAsserted(() -> {
 
-            //when
-            ResponseEntity<String> responseEntity = testRestTemplate.exchange(GRAPHQL_URL,
-                    HttpMethod.GET,
-                    getHeaderEntity(),String.class);
+        ActivitiGraphQLController.GraphQLQueryRequest query = new ActivitiGraphQLController.GraphQLQueryRequest("{ \"query\": \"{ ProcessInstances { select { id, status } } }\" }");
 
-            //then
-            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        });
+        //when
+        ResponseEntity<String> responseEntity = testRestTemplate.postForEntity(GRAPHQL_URL, new HttpEntity<>(query,getHeader()), String.class);
+
+        //then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+
     }
 
-    private HttpEntity getHeaderEntity(){
+    private HttpHeaders getHeader(){
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", keycloakTokenProducer.getTokenString());
-        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
-        return entity;
+        return headers;
     }
 }

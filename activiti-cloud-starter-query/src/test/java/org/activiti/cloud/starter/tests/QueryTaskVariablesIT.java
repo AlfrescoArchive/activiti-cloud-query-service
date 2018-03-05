@@ -64,7 +64,7 @@ import static org.awaitility.Awaitility.await;
 public class QueryTaskVariablesIT {
 
     private static final String VARIABLES_URL = "/v1/tasks/{taskId}/variables";
-    private static final String ADMIN_VARIABLES_URL = "/v1/admin/variables";
+    private static final String ADMIN_VARIABLES_URL = "/admin/variables";
 
     private static final ParameterizedTypeReference<PagedResources<Variable>> PAGED_VARIABLE_RESPONSE_TYPE = new ParameterizedTypeReference<PagedResources<Variable>>() {
     };
@@ -248,7 +248,6 @@ public class QueryTaskVariablesIT {
 
     @Test
     public void shouldNotSeeAdminVariables() throws Exception {
-        await().atMost(15, TimeUnit.SECONDS).untilAsserted(() -> {
 
             //when
             ResponseEntity<String> responseEntity = testRestTemplate.exchange(ADMIN_VARIABLES_URL,
@@ -257,7 +256,6 @@ public class QueryTaskVariablesIT {
 
             //then
             assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        });
     }
 
     private HttpEntity getHeaderEntity(){
