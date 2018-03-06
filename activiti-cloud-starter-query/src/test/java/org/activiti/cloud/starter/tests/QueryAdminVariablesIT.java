@@ -58,8 +58,8 @@ import static org.awaitility.Awaitility.await;
 @TestPropertySource("classpath:application-test-admin.properties")
 public class QueryAdminVariablesIT {
 
-    private static final String VARIABLES_URL = "/admin/variables?processInstanceId={processInstanceId}";
-    private static final String TASK_VARIABLES_URL = "/admin/variables?taskId={taskId}";
+    private static final String VARIABLES_URL = "/admin/v1/variables?processInstanceId={processInstanceId}";
+    private static final String TASK_VARIABLES_URL = "/admin/v1/variables?taskId={taskId}";
     private static final ParameterizedTypeReference<PagedResources<Variable>> PAGED_VARIABLE_RESPONSE_TYPE = new ParameterizedTypeReference<PagedResources<Variable>>() {
     };
 

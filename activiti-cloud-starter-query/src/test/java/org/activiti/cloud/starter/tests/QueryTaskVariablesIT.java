@@ -64,7 +64,7 @@ import static org.awaitility.Awaitility.await;
 public class QueryTaskVariablesIT {
 
     private static final String VARIABLES_URL = "/v1/tasks/{taskId}/variables";
-    private static final String ADMIN_VARIABLES_URL = "/admin/variables";
+    private static final String ADMIN_VARIABLES_URL = "/admin/v1/variables";
 
     private static final ParameterizedTypeReference<PagedResources<Variable>> PAGED_VARIABLE_RESPONSE_TYPE = new ParameterizedTypeReference<PagedResources<Variable>>() {
     };

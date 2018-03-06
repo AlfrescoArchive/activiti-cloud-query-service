@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 ;
 
 @RestController
-@RequestMapping(value = "/admin", produces = MediaTypes.HAL_JSON_VALUE)
+@RequestMapping(value = "/admin/v1", produces = MediaTypes.HAL_JSON_VALUE)
 public class AdminController {
 
     private final TaskRepository taskRepository;
