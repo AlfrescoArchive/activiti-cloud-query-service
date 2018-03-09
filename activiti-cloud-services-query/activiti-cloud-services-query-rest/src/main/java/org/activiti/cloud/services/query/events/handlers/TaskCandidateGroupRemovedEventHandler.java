@@ -24,18 +24,14 @@ import org.activiti.engine.ActivitiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityManager;
-
 @Component
 public class TaskCandidateGroupRemovedEventHandler implements QueryEventHandler {
 
     private final TaskCandidateGroupRepository taskCandidateGroupRepository;
-    private final EntityManager entityManager;
 
     @Autowired
-    public TaskCandidateGroupRemovedEventHandler(TaskCandidateGroupRepository taskCandidateGroupRepository, EntityManager entityManager) {
+    public TaskCandidateGroupRemovedEventHandler(TaskCandidateGroupRepository taskCandidateGroupRepository) {
         this.taskCandidateGroupRepository = taskCandidateGroupRepository;
-        this.entityManager = entityManager;
     }
 
     @Override

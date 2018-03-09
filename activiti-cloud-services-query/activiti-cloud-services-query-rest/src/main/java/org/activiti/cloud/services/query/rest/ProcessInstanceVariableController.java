@@ -33,10 +33,7 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/v1/process-instances/{processInstanceId}", produces = MediaTypes.HAL_JSON_VALUE)
@@ -62,13 +59,15 @@ public class ProcessInstanceVariableController {
         QVariable variable = QVariable.variable;
         BooleanExpression expression = variable.processInstanceId.eq(processInstanceId);
 
+        Predicate extendedPredicate = expression;
         if(predicate != null){
-            predicate = expression.and(predicate);
+            extendedPredicate = expression.and(predicate);
         }
 
-        Page<Variable> variables = variableRepository.findAll(predicate,
+        Page<Variable> variables = variableRepository.findAll(extendedPredicate,
                 pageable);
 
-        return pagedResourcesAssembler.toResource(variables, variableResourceAssembler);
+        return pagedResourcesAssembler.toResource(variables,
+                                                  variableResourceAssembler);
     }
 }

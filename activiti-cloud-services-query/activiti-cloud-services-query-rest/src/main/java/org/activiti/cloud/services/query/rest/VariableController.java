@@ -16,7 +16,6 @@
 
 package org.activiti.cloud.services.query.rest;
 
-import com.querydsl.core.types.Predicate;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
@@ -33,11 +32,7 @@ import org.activiti.cloud.services.security.TaskLookupRestrictionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
-import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,8 +51,6 @@ public class VariableController {
 
     private EntityFinder entityFinder;
 
-    private PagedResourcesAssembler<Variable> pagedResourcesAssembler;
-
     private SecurityPoliciesApplicationService securityPoliciesApplicationService;
 
     private AuthenticationWrapper authenticationWrapper;
@@ -67,7 +60,6 @@ public class VariableController {
     private TaskLookupRestrictionService taskLookupRestrictionService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VariableController.class);
-
 
     @ExceptionHandler(ActivitiForbiddenException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -83,8 +75,7 @@ public class VariableController {
 
     @Autowired
     public VariableController(VariableRepository variableRepository,
-                                         VariableResourceAssembler variableResourceAssembler,
-                                         PagedResourcesAssembler<Variable> pagedResourcesAssembler,
+                              VariableResourceAssembler variableResourceAssembler,
                               EntityFinder entityFinder,
                               SecurityPoliciesApplicationService securityPoliciesApplicationService,
                               AuthenticationWrapper authenticationWrapper,
@@ -92,7 +83,6 @@ public class VariableController {
                               TaskLookupRestrictionService taskLookupRestrictionService) {
         this.variableRepository = variableRepository;
         this.variableResourceAssembler = variableResourceAssembler;
-        this.pagedResourcesAssembler = pagedResourcesAssembler;
         this.entityFinder = entityFinder;
         this.securityPoliciesApplicationService = securityPoliciesApplicationService;
         this.authenticationWrapper = authenticationWrapper;
@@ -104,29 +94,28 @@ public class VariableController {
     public VariableResource findById(@PathVariable long variableId) {
 
         Variable variable = entityFinder.findById(variableRepository,
-                variableId,
-                "Unable to find variable for the given id:'" + variableId + "'");
+                                                  variableId,
+                                                  "Unable to find variable for the given id:'" + variableId + "'");
 
-        if (variable.getProcessInstance() != null){
+        if (variable.getProcessInstance() != null) {
             ProcessInstance processInstance = variable.getProcessInstance();
-            if(!securityPoliciesApplicationService.canRead(processInstance.getProcessDefinitionKey(),processInstance.getApplicationName())){
-                LOGGER.debug("User "+authenticationWrapper.getAuthenticatedUserId()+" not permitted to access definition "+processInstance.getProcessDefinitionKey());
-                throw new ActivitiForbiddenException("Operation not permitted for "+processInstance.getProcessDefinitionKey());
+            if (!securityPoliciesApplicationService.canRead(processInstance.getProcessDefinitionKey(),
+                                                            processInstance.getApplicationName())) {
+                LOGGER.debug("User " + authenticationWrapper.getAuthenticatedUserId() + " not permitted to access definition " + processInstance.getProcessDefinitionKey());
+                throw new ActivitiForbiddenException("Operation not permitted for " + processInstance.getProcessDefinitionKey());
             }
         }
 
-        if (variable.getTask() != null){
+        if (variable.getTask() != null) {
             Task task = variable.getTask();
             //do restricted query and check if still able to see it
             Iterable<Task> taskIterable = taskRepository.findAll(taskLookupRestrictionService.restrictTaskQuery(QTask.task.id.eq(task.getId())));
-            if (!taskIterable.iterator().hasNext()){
-                LOGGER.debug("User "+authenticationWrapper.getAuthenticatedUserId()+" not permitted to access task "+task.getId());
-                throw new ActivitiForbiddenException("Operation not permitted for "+task.getId());
+            if (!taskIterable.iterator().hasNext()) {
+                LOGGER.debug("User " + authenticationWrapper.getAuthenticatedUserId() + " not permitted to access task " + task.getId());
+                throw new ActivitiForbiddenException("Operation not permitted for " + task.getId());
             }
         }
 
         return variableResourceAssembler.toResource(variable);
-
     }
-
 }

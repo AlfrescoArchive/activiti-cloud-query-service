@@ -33,10 +33,7 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/v1/tasks/{taskId}", produces = MediaTypes.HAL_JSON_VALUE)
@@ -59,15 +56,15 @@ public class TaskVariableController {
                                                          Pageable pageable,
                                                          PagedResourcesAssembler<Variable> pagedResourcesAssembler) {
 
-
         QVariable variable = QVariable.variable;
         BooleanExpression expression = variable.taskId.eq(taskId);
 
-        if(predicate != null){
-            predicate = expression.and(predicate);
+        Predicate extendedPredicated = expression;
+        if (predicate != null) {
+            extendedPredicated = expression.and(predicate);
         }
 
-        Page<Variable> variables = variableRepository.findAll(predicate,
+        Page<Variable> variables = variableRepository.findAll(extendedPredicated,
                                                               pageable);
 
         return pagedResourcesAssembler.toResource(variables,

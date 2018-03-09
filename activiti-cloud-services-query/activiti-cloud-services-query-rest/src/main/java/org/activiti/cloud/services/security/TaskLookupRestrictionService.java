@@ -1,5 +1,7 @@
 package org.activiti.cloud.services.security;
 
+import java.util.List;
+
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.services.query.model.QTask;
@@ -8,8 +10,6 @@ import org.activiti.engine.UserGroupLookupProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class TaskLookupRestrictionService {
@@ -33,9 +33,9 @@ public class TaskLookupRestrictionService {
 
         QTask task = QVariable.variable.task;
 
-        predicate = addAndConditionToPredicate(predicate,task.isNotNull());
+        Predicate extendedPredicate = addAndConditionToPredicate(predicate,task.isNotNull());
 
-        return restrictTaskQuery(predicate, task);
+        return restrictTaskQuery(extendedPredicate, task);
     }
 
     private Predicate restrictTaskQuery(Predicate predicate, QTask task){

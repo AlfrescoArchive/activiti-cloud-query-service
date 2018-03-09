@@ -1,18 +1,14 @@
 package org.activiti.cloud.services.query.rest;
 
-import com.querydsl.core.types.Expression;
+import java.util.Arrays;
+
 import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.app.repository.TaskCandidateGroupRepository;
 import org.activiti.cloud.services.query.app.repository.TaskCandidateUserRepository;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.ProcessInstance;
-import org.activiti.cloud.services.query.model.QTask;
-import org.activiti.cloud.services.query.model.QTaskCandidateUser;
-import org.activiti.cloud.services.query.model.QVariable;
 import org.activiti.cloud.services.query.model.Task;
 import org.activiti.cloud.services.query.model.TaskCandidateGroup;
 import org.activiti.cloud.services.query.model.TaskCandidateUser;
@@ -38,8 +34,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Arrays;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -48,7 +42,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
  * This is present in case of a future scenario where we need to filter task or process instance variables more generally rather than per task or per proc.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { TaskRepository.class, Task.class, TaskCandidateUserRepository.class, TaskCandidateUser.class, TaskCandidateGroupRepository.class, TaskCandidateGroup.class, TaskLookupRestrictionService.class,
+@SpringBootTest(classes = {TaskRepository.class, Task.class, TaskCandidateUserRepository.class, TaskCandidateUser.class, TaskCandidateGroupRepository.class, TaskCandidateGroup.class, TaskLookupRestrictionService.class,
         ProcessInstanceRepository.class, SecurityPoliciesApplicationService.class, SecurityPoliciesService.class, SecurityProperties.class, ProcessInstance.class,
         Variable.class, VariableRepository.class, VariableLookupRestrictionService.class})
 @EnableConfigurationProperties
@@ -70,7 +64,6 @@ public class RestrictVariableQueryIT {
     @MockBean
     private UserGroupLookupProxy userGroupLookupProxy;
 
-
     @Autowired
     private ProcessInstanceRepository processInstanceRepository;
 
@@ -91,7 +84,6 @@ public class RestrictVariableQueryIT {
         variableRepository.deleteAll();
         taskRepository.deleteAll();
         processInstanceRepository.deleteAll();
-
     }
 
     @Test
@@ -108,7 +100,8 @@ public class RestrictVariableQueryIT {
         variable.setTask(task);
         variableRepository.save(variable);
 
-        TaskCandidateUser taskCandidateUser = new TaskCandidateUser("1","testuser");
+        TaskCandidateUser taskCandidateUser = new TaskCandidateUser("1",
+                                                                    "testuser");
         taskCandidateUserRepository.save(taskCandidateUser);
 
         when(authenticationWrapper.getAuthenticatedUserId()).thenReturn("testuser");

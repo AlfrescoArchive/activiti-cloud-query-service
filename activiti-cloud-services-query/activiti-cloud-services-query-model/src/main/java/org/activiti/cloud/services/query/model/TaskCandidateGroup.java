@@ -1,20 +1,18 @@
 package org.activiti.cloud.services.query.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.introproventures.graphql.jpa.query.annotation.GraphQLDescription;
-
-
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.introproventures.graphql.jpa.query.annotation.GraphQLDescription;
 
 @GraphQLDescription("Task Candidate Group Entity Model")
 
@@ -31,18 +29,18 @@ public class TaskCandidateGroup {
     private String groupId;
 
     @JsonIgnore
-    @ManyToOne(optional=true)
-    @JoinColumn(name="taskId", referencedColumnName="id", insertable=false, updatable=false, nullable=true
-            , foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name="none"))
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "taskId", referencedColumnName = "id", insertable = false, updatable = false, nullable = true
+            , foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
     private Task task;
 
-    public TaskCandidateGroup(){
+    public TaskCandidateGroup() {
 
     }
 
     @JsonCreator
     public TaskCandidateGroup(@JsonProperty("taskId") String taskid,
-                @JsonProperty("groupId") String groupId) {
+                              @JsonProperty("groupId") String groupId) {
         this.taskId = taskid;
         this.groupId = groupId;
     }
