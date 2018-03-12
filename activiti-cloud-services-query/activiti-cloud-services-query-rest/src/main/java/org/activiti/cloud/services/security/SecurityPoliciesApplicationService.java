@@ -13,6 +13,9 @@ import org.activiti.engine.UserRoleLookupProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Applies permissions/restrictions to ProcessInstance data (and Proc Inst Variables) based upon property file
+ */
 @Component
 public class SecurityPoliciesApplicationService {
 

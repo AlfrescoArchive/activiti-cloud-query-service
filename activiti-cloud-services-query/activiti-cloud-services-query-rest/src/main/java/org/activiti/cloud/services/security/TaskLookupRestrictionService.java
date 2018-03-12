@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 /*
  * Tested by RestrictTaskQueryIT
+ * Applies permissions/restrictions to Task data (and Task Variables) based upon Candidate user/group logic
  */
 @Component
 public class TaskLookupRestrictionService {
