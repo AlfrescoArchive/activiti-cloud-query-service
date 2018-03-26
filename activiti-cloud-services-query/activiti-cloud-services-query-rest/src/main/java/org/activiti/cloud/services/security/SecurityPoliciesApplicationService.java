@@ -95,7 +95,7 @@ public class SecurityPoliciesApplicationService {
                                                                   BooleanExpression securityExpression,
                                                                   String appName,
                                                                   Set<String> defKeys) {
-        BooleanExpression nextExpression = processInstance.processDefinitionKey.in(defKeys).and(processInstance.applicationName.matches().equalsIgnoreCase(appName));
+        BooleanExpression nextExpression = processInstance.processDefinitionKey.in(defKeys).and(processInstance.applicationName.equalsIgnoreCase(appName));
         if (securityExpression == null) {
             securityExpression = nextExpression;
         } else {
