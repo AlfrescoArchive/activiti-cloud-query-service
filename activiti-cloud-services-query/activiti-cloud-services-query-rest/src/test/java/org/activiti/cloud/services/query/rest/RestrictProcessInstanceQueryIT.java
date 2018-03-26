@@ -70,14 +70,14 @@ public class RestrictProcessInstanceQueryIT {
     }
 
     @Test
-    public void shouldMatchAppNameCaseInsensitive() throws Exception {
+    public void shouldMatchAppNameCaseInsensitiveIgnoringHyphens() throws Exception {
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setId("16");
         processInstance.setName("name");
         processInstance.setDescription("desc");
         processInstance.setInitiator("initiator");
         processInstance.setProcessDefinitionKey("defKey1");
-        processInstance.setApplicationName("TeSt-CmD-EnDpoInT");
+        processInstance.setApplicationName("Te-St-CmD-EnDpoInT");
         processInstanceRepository.save(processInstance);
 
         assertThat(processInstanceRepository.count()).isEqualTo(2);
