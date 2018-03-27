@@ -18,17 +18,11 @@ package org.activiti.cloud.services.query.rest;
 
 import com.querydsl.core.types.Predicate;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
-import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.model.ProcessInstance;
 import org.activiti.cloud.services.query.resources.ProcessInstanceResource;
 import org.activiti.cloud.services.query.rest.assembler.ProcessInstanceResourceAssembler;
 import org.activiti.cloud.services.security.ActivitiForbiddenException;
-import org.activiti.cloud.services.security.AuthenticationWrapper;
-import org.activiti.cloud.services.security.SecurityPoliciesApplicationService;
-import org.activiti.cloud.services.security.SecurityPolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
@@ -37,7 +31,6 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -58,14 +51,6 @@ public class ProcessInstanceAdminController {
 
     private AlfrescoPagedResourcesAssembler<ProcessInstance> pagedResourcesAssembler;
 
-    private SecurityPoliciesApplicationService securityPoliciesApplicationService;
-
-    private final AuthenticationWrapper authenticationWrapper;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessInstanceAdminController.class);
-
-    private EntityFinder entityFinder;
-
     @ExceptionHandler(ActivitiForbiddenException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleAppException(ActivitiForbiddenException ex) {
@@ -81,16 +66,10 @@ public class ProcessInstanceAdminController {
     @Autowired
     public ProcessInstanceAdminController(ProcessInstanceRepository processInstanceRepository,
                                           ProcessInstanceResourceAssembler processInstanceResourceAssembler,
-                                          AlfrescoPagedResourcesAssembler<ProcessInstance> pagedResourcesAssembler,
-                                          EntityFinder entityFinder,
-                                          SecurityPoliciesApplicationService securityPoliciesApplicationService,
-                                          AuthenticationWrapper authenticationWrapper) {
+                                          AlfrescoPagedResourcesAssembler<ProcessInstance> pagedResourcesAssembler) {
         this.processInstanceRepository = processInstanceRepository;
         this.processInstanceResourceAssembler = processInstanceResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
-        this.entityFinder = entityFinder;
-        this.securityPoliciesApplicationService = securityPoliciesApplicationService;
-        this.authenticationWrapper = authenticationWrapper;
     }
 
     @RequestMapping(method = RequestMethod.GET)

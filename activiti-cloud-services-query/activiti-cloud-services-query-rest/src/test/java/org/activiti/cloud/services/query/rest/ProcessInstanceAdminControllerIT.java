@@ -16,11 +16,9 @@
 
 package org.activiti.cloud.services.query.rest;
 
-import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.model.ProcessInstance;
 import org.activiti.cloud.services.security.AuthenticationWrapper;
-import org.activiti.cloud.services.security.SecurityPoliciesApplicationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,13 +67,7 @@ public class ProcessInstanceAdminControllerIT {
     private ProcessInstanceRepository processInstanceRepository;
 
     @MockBean
-    private SecurityPoliciesApplicationService securityPoliciesApplicationService;
-
-    @MockBean
     private AuthenticationWrapper authenticationWrapper;
-
-    @MockBean
-    private EntityFinder entityFinder;
 
     @Before
     public void setUp() throws Exception {
