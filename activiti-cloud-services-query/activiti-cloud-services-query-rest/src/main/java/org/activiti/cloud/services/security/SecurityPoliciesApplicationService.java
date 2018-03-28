@@ -7,7 +7,6 @@ import java.util.Set;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.activiti.cloud.services.query.model.QProcessInstance;
 import org.activiti.cloud.services.query.model.QVariable;
 import org.activiti.engine.UserGroupLookupProxy;
