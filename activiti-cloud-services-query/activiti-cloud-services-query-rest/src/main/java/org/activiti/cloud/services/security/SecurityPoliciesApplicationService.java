@@ -7,6 +7,7 @@ import java.util.Set;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.activiti.cloud.services.query.model.QProcessInstance;
 import org.activiti.cloud.services.query.model.QVariable;
 import org.activiti.engine.UserGroupLookupProxy;
@@ -98,15 +99,26 @@ public class SecurityPoliciesApplicationService {
                                                                   Set<String> defKeys) {
 
         //expect to remove hyphens when passing in environment variables
-        Predicate appNamePredicate = Expressions.stringTemplate("replace({0},'-','')", processInstance.applicationName).equalsIgnoreCase(appName.replace("-",""));
+        BooleanExpression appNamePredicate = Expressions.stringTemplate("replace({0},'-','')", processInstance.applicationName).equalsIgnoreCase(appName.replace("-",""));
 
-        BooleanExpression nextExpression = processInstance.processDefinitionKey.in(defKeys).and(appNamePredicate);
+        BooleanExpression nextExpression = appNamePredicate;
+        //will filter by app name and will also filter by definition keys if no wildcard
+        if(!defKeys.contains(securityPoliciesService.getWildcard())){
+            nextExpression = restrictByAppNameAndProcDefKeys(processInstance, defKeys, appNamePredicate);
+        }
+
         if (securityExpression == null) {
             securityExpression = nextExpression;
         } else {
             securityExpression = securityExpression.or(nextExpression);
         }
         return securityExpression;
+    }
+
+    public BooleanExpression restrictByAppNameAndProcDefKeys(QProcessInstance processInstance, Set<String> defKeys, BooleanExpression appNamePredicate) {
+        BooleanExpression nextExpression;
+        nextExpression = processInstance.processDefinitionKey.in(defKeys).and(appNamePredicate);
+        return nextExpression;
     }
 
     private boolean noSecurityPoliciesOrNoUser() {
@@ -153,6 +165,6 @@ public class SecurityPoliciesApplicationService {
 
         Set<String> keys = definitionKeysAllowedForPolicy(securityPolicy).get(appName);
 
-        return (keys != null && keys.contains(processDefId));
+        return (keys != null && (keys.contains(processDefId) || keys.contains(securityPoliciesService.getWildcard())));
     }
 }
