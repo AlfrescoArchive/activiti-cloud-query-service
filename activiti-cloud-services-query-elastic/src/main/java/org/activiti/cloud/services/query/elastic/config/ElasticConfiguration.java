@@ -26,10 +26,10 @@ public class ElasticConfiguration {
 
     private static Logger logger = LoggerFactory.getLogger(ElasticConfiguration.class);
 
-    @Value("${elasticsearch.home:/Users/wzhou/Downloads/elasticsearch-5.5.0}")
+    @Value("${elasticsearch.home:/Users/wzhou/Developer/elasticsearch-5.4.0}")
     private String elasticsearchHome;
 
-    @Value("${elasticsearch.clusterName:my-application")
+    @Value("${elasticsearch.clusterName:my-elastic-application")
     private String clusterName;
 
     @Bean
