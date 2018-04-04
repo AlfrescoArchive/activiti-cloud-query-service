@@ -26,7 +26,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.introproventures.graphql.jpa.query.schema.GraphQLExecutor;
 import com.introproventures.graphql.jpa.query.schema.impl.GraphQLJpaExecutor;
 import graphql.ExecutionResult;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -41,6 +43,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @ConditionalOnWebApplication
 @ConditionalOnClass(GraphQLExecutor.class)
+@ConditionalOnProperty(name = "spring.activiti.cloud.services.query.graphql.enabled", matchIfMissing = true)
 public class ActivitiGraphQLController {
     
     private static final String PATH = "${spring.activiti.cloud.services.query.graphql.path:/admin/graphql}";
