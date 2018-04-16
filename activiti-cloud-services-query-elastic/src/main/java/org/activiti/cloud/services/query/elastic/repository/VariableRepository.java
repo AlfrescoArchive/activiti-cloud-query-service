@@ -31,21 +31,26 @@ public interface VariableRepository extends ElasticsearchRepository<Variable, Lo
 QuerydslPredicateExecutor<Variable>, QuerydslBinderCustomizer<QVariable> 
 {
 	@RestResource(exported = false)
+    String findVariableById();
+	
+	@RestResource(exported = false)
+    String findVariableByType();
+	
+	@RestResource(exported = false)
+    String findVariableByName();
+	
+	@RestResource(exported = false)
     List<Variable> findVariableByProcessInstanceId();
 
     @RestResource(exported = false)
     List<Variable> findVariableByTaskId();
     
     @RestResource(exported = false)
-    List<Variable> findVariableByName();
-   
-    @RestResource(exported = false)
-    List<Variable> findVariableById();
-    
-    @RestResource(exported = false)
     List<Variable> findVariableByCreateTime();
+
+    @RestResource(exported = false)
+    List<Variable> findVariableByLastUpdatedTime();
     
-    /**
-     * ADD MORE METHODS HERE
-     */
+    @RestResource(exported = false)
+    List<Variable> findVariableByExecutionId();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Alfresco, Inc. and/or its affiliates.
+2 * Copyright 2017 Alfresco, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.activiti.cloud.services.query.elastic.repository;
 import java.util.List;
 
 import org.activiti.cloud.services.query.elastic.model.ProcessInstance;
+import org.activiti.cloud.services.query.elastic.model.Variable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -30,18 +31,29 @@ public interface ProcessInstanceRepository extends ElasticsearchRepository<Proce
     List<ProcessInstance> findProcessInstances();
 
     @RestResource(exported = false)
-    List<ProcessInstance> findProcessInstancesLastModified();
+    List<ProcessInstance> findLastModified();
+    
+    @RestResource(exported = false)
+    List<ProcessInstance> findLastModifiedFrom();
+    
+    @RestResource(exported = false)
+    List<ProcessInstance> findLastModifiedTo();
     
     @RestResource(exported = false)
     List<ProcessInstance> findProcessInstanceVariables();
    
     @RestResource(exported = false)
-    List<ProcessInstance> findRunningProcessInstances();
+    List<ProcessInstance> findByStatus();
     
     @RestResource(exported = false)
     List<ProcessInstance> findCompletedProcessInstances();
     
-    /**
-     * ADD MORE METHODS HERE
-     */
+    @RestResource(exported = false)
+    List<Variable> findVariables();
+    
+    @RestResource(exported = false)
+    Long findProcessInstanceById();
+    
+    @RestResource(exported = false)
+    String findProcessDefinitionById();
 }

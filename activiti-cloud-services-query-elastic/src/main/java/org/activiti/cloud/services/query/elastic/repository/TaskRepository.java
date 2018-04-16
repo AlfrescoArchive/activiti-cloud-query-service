@@ -18,6 +18,7 @@ package org.activiti.cloud.services.query.elastic.repository;
 
 import java.util.List;
 
+import org.activiti.cloud.services.query.elastic.model.ProcessInstance;
 import org.activiti.cloud.services.query.elastic.model.Task;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -27,21 +28,39 @@ import org.springframework.data.rest.core.annotation.RestResource;
 public interface TaskRepository extends ElasticsearchRepository<Task, Long>
 {
 	@RestResource(exported = false)
-    List<Task> findTasks();
-
+    Long findTaskById();
+	
+	@RestResource(exported = false)
+	List<Task> findTaskByAssignee();
+	
+	@RestResource(exported = false)
+	List<Task> findTaskByName();
+	 
+	@RestResource(exported = false)
+	List<Task> findTaskByDescription();
+	
+	@RestResource(exported = false)
+    List<Task> findTaskByCreateTime();
+	
+	@RestResource(exported = false)
+    List<Task> findTaskByDueDate();
+	
+	@RestResource(exported = false)
+    List<Task> findTaskByPriority();
+	
+	@RestResource(exported = false)
+    List<Task> findTaskByCategory();
+	
+	@RestResource(exported = false)
+    List<ProcessInstance> findTaskByProcessDefinitionId();
+	
+	@RestResource(exported = false)
+    List<ProcessInstance> findTaskByProcessInstanceId();
+	
+	@RestResource(exported = false)
+    List<Task> findTaskByStatus();
+	
     @RestResource(exported = false)
     List<Task> findTaskByLastModified();
-    
-    @RestResource(exported = false)
-    List<Task> findTaskByProcessInstanceId();
-   
-    @RestResource(exported = false)
-    List<Task> findTaskByStatus();
-    
-    @RestResource(exported = false)
-    List<Task> findTaskVariables();
-    
-    /**
-     * ADD MORE METHODS HERE
-     */
+  
 }
