@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.activiti.cloud.services.query.events;
+package org.activiti.cloud.services.query.elastic.events;
 
 import org.activiti.cloud.services.query.model.ProcessInstance;
 

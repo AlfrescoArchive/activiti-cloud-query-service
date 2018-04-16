@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.activiti.cloud.services.query.events.handlers;
+package org.activiti.cloud.services.query.elastic.events.handlers;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;

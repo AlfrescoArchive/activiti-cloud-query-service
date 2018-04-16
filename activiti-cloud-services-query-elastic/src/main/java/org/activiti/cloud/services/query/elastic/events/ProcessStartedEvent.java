@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.activiti.cloud.services.query.events;
+package org.activiti.cloud.services.query.elastic.events;
 
 public class ProcessStartedEvent extends AbstractProcessEngineEvent {
 

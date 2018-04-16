@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.activiti.cloud.services.query.events.handlers;
+package org.activiti.cloud.services.query.elastic.events.handlers;
 
 import org.activiti.cloud.services.api.events.ProcessEngineEvent;
 import org.activiti.cloud.services.query.events.VariableDeletedEvent;

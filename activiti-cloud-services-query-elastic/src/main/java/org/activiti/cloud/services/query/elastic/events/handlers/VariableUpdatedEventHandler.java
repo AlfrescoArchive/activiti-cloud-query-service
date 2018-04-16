@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.activiti.cloud.services.query.events.handlers;
+package org.activiti.cloud.services.query.elastic.events.handlers;
 
 import java.util.Date;
 
-import org.activiti.cloud.services.api.events.ProcessEngineEvent;
-import org.activiti.cloud.services.query.model.Variable;
 import org.activiti.cloud.services.query.events.VariableUpdatedEvent;
+import org.activiti.cloud.services.query.model.Variable;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

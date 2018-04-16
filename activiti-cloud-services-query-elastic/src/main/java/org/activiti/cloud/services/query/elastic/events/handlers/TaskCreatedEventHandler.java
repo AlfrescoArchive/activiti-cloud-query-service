@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.activiti.cloud.services.query.events.handlers;
+package org.activiti.cloud.services.query.elastic.events.handlers;
 
 import java.util.Date;
 
 import javax.persistence.EntityManager;
 
 import org.activiti.engine.ActivitiException;
-import org.activiti.cloud.services.api.events.ProcessEngineEvent;
-import org.activiti.cloud.services.query.app.repository.TaskRepository;
-import org.activiti.cloud.services.query.events.TaskCreatedEvent;
+
 import org.activiti.cloud.services.query.model.ProcessInstance;
 import org.activiti.cloud.services.query.model.Task;
 import org.springframework.beans.factory.annotation.Autowired;

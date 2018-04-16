@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.activiti.cloud.services.query.events.handlers;
+package org.activiti.cloud.services.query.elastic.events.handlers;
 
 import com.querydsl.core.types.Predicate;
+
+import org.activiti.cloud.services.query.elastic.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.Variable;
-import org.activiti.cloud.services.query.app.repository.EntityFinder;
-import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
