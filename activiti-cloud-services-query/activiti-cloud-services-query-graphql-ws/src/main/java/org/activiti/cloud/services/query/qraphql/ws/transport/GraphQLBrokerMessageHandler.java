@@ -45,6 +45,8 @@ import org.springframework.util.Assert;
 
 public class GraphQLBrokerMessageHandler extends AbstractBrokerMessageHandler {
 
+    final static String BROKER_NOT_AVAILABLE = "Broker Not Available.";
+
 	private final Map<String, SessionInfo> sessions = new ConcurrentHashMap<String, SessionInfo>();
 
 	private MessageHeaderInitializer headerInitializer;
@@ -73,8 +75,31 @@ public class GraphQLBrokerMessageHandler extends AbstractBrokerMessageHandler {
 		this.graphQLsubscriptionRegistry = new GraphQLBrokerSubscriptionRegistry();
 	}
 
+    public GraphQLBrokerSubscriptionRegistry getGraphQLsubscriptionRegistry() {
+        return graphQLsubscriptionRegistry;
+    }
 
-	@EventListener
+    public long getBufferTimeSpanMs() {
+        return bufferTimeSpanMs;
+    }
+
+    public GraphQLBrokerMessageHandler setBufferTimeSpanMs(long bufferTimeSpanMs) {
+        this.bufferTimeSpanMs = bufferTimeSpanMs;
+
+        return this;
+    }
+
+    public int getBufferCount() {
+        return bufferCount;
+    }
+
+    public GraphQLBrokerMessageHandler setBufferCount(int bufferCount) {
+        this.bufferCount = bufferCount;
+
+        return this;
+    }
+
+    @EventListener
 	public void on(BrokerAvailabilityEvent event) {
 	    this.brokerAvailable.set(event.isBrokerAvailable());
 	}
@@ -160,7 +185,7 @@ public class GraphQLBrokerMessageHandler extends AbstractBrokerMessageHandler {
 				case CONNECTION_INIT:
 
 					if(!isBrokerAvailable()) {
-						sendErrorMessageToClient("Broker Not Available.", GraphQLMessageType.CONNECTION_ERROR, message);
+                        sendErrorMessageToClient(BROKER_NOT_AVAILABLE, GraphQLMessageType.CONNECTION_ERROR, message);
 						return;
 					}
 
@@ -180,7 +205,7 @@ public class GraphQLBrokerMessageHandler extends AbstractBrokerMessageHandler {
 				case START:
 					// start subscription
 					if(!isBrokerAvailable()) {
-						sendErrorMessageToClient("Broker Not Available.", GraphQLMessageType.ERROR, message);
+                        sendErrorMessageToClient(BROKER_NOT_AVAILABLE, GraphQLMessageType.ERROR, message);
 						return;
 					}
 
@@ -194,21 +219,43 @@ public class GraphQLBrokerMessageHandler extends AbstractBrokerMessageHandler {
 					}
 			        ExecutionResult executionResult = graphQLSubscriptionExecutor.execute(parameters.getQuery(), parameters.getVariables());
 
-			        if(executionResult.getErrors().isEmpty()) {
-			        	Optional.ofNullable(executionResult.<Publisher<ExecutionResult>>getData())
-			        		.ifPresent(data -> {
-			        			GraphQLBrokerChannelSubscriber subscriber =
-			        					new GraphQLBrokerChannelSubscriber(message, operationPayload.getId(),
-			        							getClientOutboundChannel(),
-			        							bufferTimeSpanMs,
-			        							bufferCount
-			        							);
+                    if (executionResult.getErrors().isEmpty()) {
+                        Optional.ofNullable(executionResult.<Publisher<ExecutionResult>> getData())
+                                .map(data -> {
+                                    GraphQLBrokerChannelSubscriber subscriber = new GraphQLBrokerChannelSubscriber(message,
+                                                                                                                   operationPayload.getId(),
+                                                                                                                   getClientOutboundChannel(),
+                                                                                                                   bufferTimeSpanMs,
+                                                                                                                   bufferCount);
 
-			        			graphQLsubscriptionRegistry.subscribe(sessionId, operationPayload.getId(), subscriber, () -> {
-			            			data.subscribe(subscriber);
-			        			});
-			        		});
-			        }
+                                    graphQLsubscriptionRegistry.subscribe(sessionId,
+                                                                          operationPayload.getId(),
+                                                                          subscriber,
+                                                                          () -> {
+                                                                              data.subscribe(subscriber);
+                                                                          });
+
+                                    return data;
+                                })
+                                .orElseGet(() -> {
+                                    sendErrorMessageToClient("Server error!", GraphQLMessageType.ERROR, message);
+
+                                    return null;
+                                });
+                    } else {
+                        Map<String, Object> payload = Collections.singletonMap("errors", executionResult.getErrors());
+
+                        GraphQLMessage startSubscriptionMessage = (GraphQLMessage) message.getPayload();
+                        GraphQLMessage startSubscriptionErrors = new GraphQLMessage(startSubscriptionMessage.getId(),
+                                                                                    GraphQLMessageType.ERROR,
+                                                                                    payload);
+
+                        MessageHeaderAccessor messageHeaderAccessor = SimpMessageHeaderAccessor.getMutableAccessor(startSubscriptionMessage);
+                        Message<GraphQLMessage> errorMessage = MessageBuilder.createMessage(startSubscriptionErrors,
+                                                                                            messageHeaderAccessor.getMessageHeaders());
+
+                        getClientOutboundChannel().send(errorMessage);
+                    }
 
 					break;
 
@@ -234,8 +281,6 @@ public class GraphQLBrokerMessageHandler extends AbstractBrokerMessageHandler {
 			}
 
 		}
-
-
 	}
 
 	private void sendErrorMessageToClient(String errorText, GraphQLMessageType type, Message<?> inputMessage) {
@@ -248,16 +293,14 @@ public class GraphQLBrokerMessageHandler extends AbstractBrokerMessageHandler {
 		getClientOutboundChannel().send(errorMessage);
 	}
 
-
-
-	private void updateSessionReadTime(String sessionId) {
-		if (sessionId != null) {
-			SessionInfo info = this.sessions.get(sessionId);
-			if (info != null) {
-				info.setLastReadTime(System.currentTimeMillis());
-			}
-		}
-	}
+    private void updateSessionReadTime(String sessionId) {
+        if (sessionId != null) {
+            SessionInfo info = this.sessions.get(sessionId);
+            if (info != null) {
+                info.setLastReadTime(System.currentTimeMillis());
+            }
+        }
+    }
 
 	private void logMessage(Message<?> message) {
 		if (logger.isDebugEnabled()) {
@@ -273,12 +316,14 @@ public class GraphQLBrokerMessageHandler extends AbstractBrokerMessageHandler {
 	 * {@link #setHeartbeatValue heartbeatValue} to "10000, 10000".
 	 * <p>By default this is not set.
 	 */
-	public void setTaskScheduler(TaskScheduler taskScheduler) {
+    public GraphQLBrokerMessageHandler setTaskScheduler(TaskScheduler taskScheduler) {
 		Assert.notNull(taskScheduler, "TaskScheduler must not be null");
 		this.taskScheduler = taskScheduler;
 		if (this.heartbeatValue == null) {
 			this.heartbeatValue = new long[] {5000, 5000};
 		}
+
+        return this;
 	}
 
 	/**
@@ -296,11 +341,13 @@ public class GraphQLBrokerMessageHandler extends AbstractBrokerMessageHandler {
 	 * taskScheduler} in which case the default becomes "10000,10000"
 	 * (in milliseconds).
 	 */
-	public void setHeartbeatValue(long[] heartbeat) {
+    public GraphQLBrokerMessageHandler setHeartbeatValue(long[] heartbeat) {
 		if (heartbeat == null || heartbeat.length != 2 || heartbeat[0] < 0 || heartbeat[1] < 0) {
 			throw new IllegalArgumentException("Invalid heart-beat: " + Arrays.toString(heartbeat));
 		}
 		this.heartbeatValue = heartbeat;
+
+        return this;
 	}
 
 	/**
