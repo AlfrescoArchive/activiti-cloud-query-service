@@ -20,5 +20,6 @@
     <module>activiti-cloud-services-query-stomp</module>
     <module>activiti-cloud-services-query-graphiql</module>
     <module>activiti-cloud-services-query-graphql-ws-schema</module>
+    <module>activiti-cloud-services-query-graphql-ws-security</module>
   </modules>
 </project>
