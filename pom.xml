@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.activiti.cloud</groupId>
+    <artifactId>activiti-cloud-parent</artifactId>
+    <version>7-201803-EA-SNAPSHOT</version>
+    <relativePath/>
+  </parent>
+  <artifactId>activiti-cloud-query-service-parent</artifactId>
+  <name>Activiti Cloud Query :: Parent</name>
+  <version>7-201803-EA-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <url>http://activiti.org</url>
+  <modules>
+    <module>activiti-cloud-services-query</module>
+    <module>activiti-cloud-starter-query</module>
+  </modules>
+  <scm>
+    <url>https://github.com/Activiti/activiti-cloud-query-service</url>
+    <connection>scm:git:https://github.com/Activiti/activiti-cloud-query-service.git</connection>
+    <developerConnection>scm:git:https://github.com/Activiti/activiti-cloud-query-service.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+  <ciManagement>
+    <system>Travis</system>
+    <url>https://travis-ci.org/Activiti/activiti-cloud-query-service</url>
+  </ciManagement>
+  <repositories>
+    <repository>
+      <id>activiti-snapshots</id>
+      <name>Activiti Snapshots</name>
+      <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
+</project>
