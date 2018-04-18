@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringBootElasticsearchPocApplication {
+public class ActivitiElasticsearchApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringBootElasticsearchPocApplication.class, args);
+		SpringApplication.run(ActivitiElasticsearchApplication.class, args);
 	}
 }

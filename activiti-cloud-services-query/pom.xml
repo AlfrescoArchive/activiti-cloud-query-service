@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.activiti.cloud</groupId>
     <artifactId>activiti-cloud-query-service-parent</artifactId>
-    <version>7-201802-EA-SNAPSHOT</version>
+    <version>7-201803-EA-SNAPSHOT</version>
   </parent>
 
   <artifactId>activiti-cloud-services-query</artifactId>
@@ -21,6 +21,10 @@
     <module>activiti-cloud-services-query-graphql-ws</module>
     <module>activiti-cloud-services-query-stomp</module>
     <module>activiti-cloud-services-query-graphiql</module>
+    
+    
+    <module>../activiti-cloud-services-query-elastic</module>
+    <module>../activiti-cloud-starter-query</module>
   </modules>
 
 </project>
