@@ -16,8 +16,6 @@
 package org.activiti.cloud.services.query.qraphql.ws.transport;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -91,10 +89,10 @@ public class GraphQLBrokerMessageHandlerTest {
     private ScheduledFuture scheduledFuture;
 
     @Captor
-    ArgumentCaptor<Message<GraphQLMessage>> messageCaptor;
+    private ArgumentCaptor<Message<GraphQLMessage>> messageCaptor;
 
     @Captor
-    ArgumentCaptor<Message<GraphQLMessage>> messageCaptor2;
+    private ArgumentCaptor<Message<GraphQLMessage>> messageCaptor2;
 
     @Before
     public void setUp() throws Exception {
@@ -125,12 +123,12 @@ public class GraphQLBrokerMessageHandlerTest {
 
     @Test
     public void testStartStop() {
-        assertTrue(this.messageHandler.isRunning());
+        assertThat(this.messageHandler.isRunning()).isTrue();
         this.messageHandler.stop();
-        assertFalse(this.messageHandler.isRunning());
+        assertThat(this.messageHandler.isRunning()).isFalse();
 
         this.messageHandler.start();
-        assertTrue(this.messageHandler.isRunning());
+        assertThat(this.messageHandler.isRunning()).isTrue();
     }
 
     @Test
@@ -413,9 +411,9 @@ public class GraphQLBrokerMessageHandlerTest {
     }
 
     private WebSocketSession mockWebSocketSession(String sessionId) {
-        Session nativeSession = Mockito.mock(Session.class);
-        Mockito.when(nativeSession.getId()).thenReturn(sessionId);
-        Mockito.when(nativeSession.getUserPrincipal()).thenReturn(mock(Principal.class));
+        Session nativeSession = mock(Session.class);
+        when(nativeSession.getId()).thenReturn(sessionId);
+        when(nativeSession.getUserPrincipal()).thenReturn(mock(Principal.class));
 
         StandardWebSocketSession wsSession = new StandardWebSocketSession(null,
                                                                           null,

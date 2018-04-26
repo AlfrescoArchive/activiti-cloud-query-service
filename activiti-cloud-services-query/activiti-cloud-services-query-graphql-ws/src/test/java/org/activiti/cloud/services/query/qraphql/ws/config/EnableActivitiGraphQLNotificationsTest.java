@@ -31,10 +31,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class EnableActivitiGraphQLNotificationsTest {
 
     @Autowired
-    MessageHandler graphQLBrokerMessageHandler;
+    private MessageHandler graphQLBrokerMessageHandler;
 
     @Autowired
-    GraphQLBrokerSubProtocolHandler graphQLBrokerSubProtocolHandler;
+    private GraphQLBrokerSubProtocolHandler graphQLBrokerSubProtocolHandler;
 
     @EnableAutoConfiguration
     @SpringBootConfiguration

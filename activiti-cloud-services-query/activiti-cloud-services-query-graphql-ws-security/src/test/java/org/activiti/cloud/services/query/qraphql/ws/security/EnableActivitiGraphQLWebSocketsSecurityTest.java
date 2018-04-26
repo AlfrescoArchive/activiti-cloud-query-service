@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class EnableActivitiGraphQLWebSocketsSecurityTest {
 
     @Autowired
-    GraphQLSecurityWebSocketMessageBrokerConfiguration configuration;
+    private GraphQLSecurityWebSocketMessageBrokerConfigurer configuration;
 
     @EnableAutoConfiguration
     @SpringBootConfiguration

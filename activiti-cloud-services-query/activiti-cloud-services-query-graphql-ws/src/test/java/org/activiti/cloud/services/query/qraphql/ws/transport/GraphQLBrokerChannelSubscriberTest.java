@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.security.Principal;
 import java.util.Collections;
@@ -19,7 +20,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.reactivestreams.Subscription;
 import org.springframework.messaging.Message;
@@ -38,10 +38,10 @@ public class GraphQLBrokerChannelSubscriberTest {
     private MessageChannel messageChannel;
 
     @Mock
-    Subscription subscription;
+    private Subscription subscription;
 
     @Captor
-    ArgumentCaptor<Message<GraphQLMessage>> messageCaptor;
+    private ArgumentCaptor<Message<GraphQLMessage>> messageCaptor;
 
     private Message<GraphQLMessage> startMessage;
 
@@ -137,9 +137,9 @@ public class GraphQLBrokerChannelSubscriberTest {
     }
 
     private WebSocketSession mockWebSocketSession(String sessionId) {
-        Session nativeSession = Mockito.mock(Session.class);
-        Mockito.when(nativeSession.getId()).thenReturn(sessionId);
-        Mockito.when(nativeSession.getUserPrincipal()).thenReturn(mock(Principal.class));
+        Session nativeSession = mock(Session.class);
+        when(nativeSession.getId()).thenReturn(sessionId);
+        when(nativeSession.getUserPrincipal()).thenReturn(mock(Principal.class));
 
         StandardWebSocketSession wsSession = new StandardWebSocketSession(null,
                                                                           null,

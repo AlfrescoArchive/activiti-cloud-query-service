@@ -30,7 +30,6 @@ import java.util.Collections;
 
 import javax.websocket.Session;
 
-import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,10 +64,10 @@ public class GraphQLBrokerSubProtocolHandlerTest {
     ApplicationEventPublisher applicationEventPublisher;
 
     @Captor
-    ArgumentCaptor<Message<GraphQLMessage>> messageCaptor;
+    private ArgumentCaptor<Message<GraphQLMessage>> messageCaptor;
 
     @Captor
-    ArgumentCaptor<WebSocketMessage<TextMessage>> webSocketMessageCaptor;
+    private ArgumentCaptor<WebSocketMessage<TextMessage>> webSocketMessageCaptor;
 
     @Before
     public void setUp() throws Exception {
@@ -87,7 +86,7 @@ public class GraphQLBrokerSubProtocolHandlerTest {
 
     @Test
     public void testGetSupportedProtocols() {
-        Assertions.assertThat(testSubject.getSupportedProtocols()).containsExactly("graphql-ws");
+        assertThat(testSubject.getSupportedProtocols()).containsExactly("graphql-ws");
     }
 
     @Test
@@ -239,15 +238,10 @@ public class GraphQLBrokerSubProtocolHandlerTest {
         verify(session).setTextMessageSizeLimit(ArgumentMatchers.eq(GraphQLBrokerSubProtocolHandler.MINIMUM_WEBSOCKET_MESSAGE_SIZE));
     }
 
-    @Test
-    public void testSetLogginPeriod() {
-
-    }
-
     private WebSocketSession mockWebSocketSession(String sessionId) {
-        Session nativeSession = Mockito.mock(Session.class);
-        Mockito.when(nativeSession.getId()).thenReturn(sessionId);
-        Mockito.when(nativeSession.getUserPrincipal()).thenReturn(mock(Principal.class));
+        Session nativeSession = mock(Session.class);
+        when(nativeSession.getId()).thenReturn(sessionId);
+        when(nativeSession.getUserPrincipal()).thenReturn(mock(Principal.class));
 
         StandardWebSocketSession wsSession = new StandardWebSocketSession(null,
                                                                           null,

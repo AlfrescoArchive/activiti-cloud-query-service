@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 
-public class GraphQLSecurityWebSocketMessageBrokerConfiguration extends AbstractSecurityWebSocketMessageBrokerConfigurer {
+public class GraphQLSecurityWebSocketMessageBrokerConfigurer extends AbstractSecurityWebSocketMessageBrokerConfigurer {
 
     @Value("${spring.activiti.cloud.services.graphql.ws.endpoint:/ws/graphql}")
     private String endpoint;

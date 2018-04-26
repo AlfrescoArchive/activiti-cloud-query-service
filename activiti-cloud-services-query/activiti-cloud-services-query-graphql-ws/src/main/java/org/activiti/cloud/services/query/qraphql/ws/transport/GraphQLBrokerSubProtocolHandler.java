@@ -47,7 +47,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.SessionLimitExceededException;
-import org.springframework.web.socket.messaging.SubProtocolErrorHandler;
 import org.springframework.web.socket.messaging.SubProtocolHandler;
 
 public class GraphQLBrokerSubProtocolHandler implements SubProtocolHandler, ApplicationEventPublisherAware {
@@ -70,7 +69,7 @@ public class GraphQLBrokerSubProtocolHandler implements SubProtocolHandler, Appl
 
     private ScheduledFuture<?> loggingTask;
 
-    ScheduledExecutorService taskScheduler = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledExecutorService taskScheduler = Executors.newSingleThreadScheduledExecutor();
 
     private long loggingPeriod = 5 * 60 * 1000;
 
@@ -271,9 +270,7 @@ public class GraphQLBrokerSubProtocolHandler implements SubProtocolHandler, Appl
 
 
 	/**
-     * Invoked when no
-     * {@link #setErrorHandler(SubProtocolErrorHandler) errorHandler}
-     * is configured to send an ERROR frame to the client.
+     * Invoked to send an ERROR frame to the client.
      */
 	protected void sendErrorMessage(WebSocketSession session, Throwable error, GraphQLMessage message) {
         this.stats.incrementErrorCount();

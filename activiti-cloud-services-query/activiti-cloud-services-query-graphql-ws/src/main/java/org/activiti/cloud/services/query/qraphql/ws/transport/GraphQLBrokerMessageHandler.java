@@ -45,7 +45,7 @@ import org.springframework.util.Assert;
 
 public class GraphQLBrokerMessageHandler extends AbstractBrokerMessageHandler {
 
-    final static String BROKER_NOT_AVAILABLE = "Broker Not Available.";
+    public final static String BROKER_NOT_AVAILABLE = "Broker Not Available.";
 
 	private final Map<String, SessionInfo> sessions = new ConcurrentHashMap<String, SessionInfo>();
 

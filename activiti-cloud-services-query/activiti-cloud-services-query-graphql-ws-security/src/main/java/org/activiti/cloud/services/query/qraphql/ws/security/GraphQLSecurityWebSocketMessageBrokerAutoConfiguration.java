@@ -29,8 +29,8 @@ public class GraphQLSecurityWebSocketMessageBrokerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public GraphQLSecurityWebSocketMessageBrokerConfiguration GraphQLSecurityWebSocketMessageBrokerConfiguration() {
-            return new GraphQLSecurityWebSocketMessageBrokerConfiguration();
+        public GraphQLSecurityWebSocketMessageBrokerConfigurer graphQLSecurityWebSocketMessageBrokerConfiguration() {
+            return new GraphQLSecurityWebSocketMessageBrokerConfigurer();
         }
 
     }
