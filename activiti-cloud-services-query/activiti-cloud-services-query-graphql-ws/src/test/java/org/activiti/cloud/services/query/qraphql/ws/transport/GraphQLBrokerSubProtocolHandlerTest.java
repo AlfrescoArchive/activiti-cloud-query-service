@@ -48,7 +48,6 @@ import org.springframework.messaging.support.GenericMessage;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.adapter.standard.StandardWebSocketSession;
 
@@ -61,13 +60,10 @@ public class GraphQLBrokerSubProtocolHandlerTest {
     private MessageChannel outputChannel;
 
     @Mock
-    ApplicationEventPublisher applicationEventPublisher;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Captor
     private ArgumentCaptor<Message<GraphQLMessage>> messageCaptor;
-
-    @Captor
-    private ArgumentCaptor<WebSocketMessage<TextMessage>> webSocketMessageCaptor;
 
     @Before
     public void setUp() throws Exception {

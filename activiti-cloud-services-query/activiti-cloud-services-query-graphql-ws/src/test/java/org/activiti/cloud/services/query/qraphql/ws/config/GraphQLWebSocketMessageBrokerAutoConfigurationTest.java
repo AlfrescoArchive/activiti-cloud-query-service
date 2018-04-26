@@ -45,7 +45,7 @@ public class GraphQLWebSocketMessageBrokerAutoConfigurationTest {
 
     @Test
     public void testContextLoads() {
-        // nothing here
+        // success
     }
 
 }

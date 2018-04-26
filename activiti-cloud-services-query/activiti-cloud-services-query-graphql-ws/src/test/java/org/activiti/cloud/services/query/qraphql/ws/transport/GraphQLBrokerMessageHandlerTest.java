@@ -91,9 +91,6 @@ public class GraphQLBrokerMessageHandlerTest {
     @Captor
     private ArgumentCaptor<Message<GraphQLMessage>> messageCaptor;
 
-    @Captor
-    private ArgumentCaptor<Message<GraphQLMessage>> messageCaptor2;
-
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
