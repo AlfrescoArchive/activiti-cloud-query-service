@@ -43,13 +43,12 @@ public class GraphQLBrokerChannelSubscriberTest {
     @Captor
     private ArgumentCaptor<Message<GraphQLMessage>> messageCaptor;
 
-    private Message<GraphQLMessage> startMessage;
-
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        this.startMessage = startMessage("operationId", "sessionId");
+        Message<GraphQLMessage> startMessage = startMessage("operationId", "sessionId");
+
         this.testSubject = new GraphQLBrokerChannelSubscriber(startMessage, "operationId", messageChannel, 1000, 1);
     }
 
