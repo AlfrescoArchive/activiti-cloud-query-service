@@ -104,6 +104,7 @@ public class TaskController {
 
         return pagedResourcesAssembler.toResource(pageable,
                                                   page,
+                                                  Task.class,
                                                   taskResourceAssembler);
     }
 

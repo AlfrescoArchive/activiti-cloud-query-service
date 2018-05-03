@@ -75,6 +75,7 @@ public class TaskAdminController {
 
         return pagedResourcesAssembler.toResource(pageable,
                                                   page,
+                                                  Task.class,
                                                   taskResourceAssembler);
     }
 }

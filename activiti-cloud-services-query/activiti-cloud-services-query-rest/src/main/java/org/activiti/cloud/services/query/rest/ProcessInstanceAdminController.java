@@ -80,6 +80,7 @@ public class ProcessInstanceAdminController {
         return pagedResourcesAssembler.toResource(pageable,
                                                   processInstanceRepository.findAll(predicate,
                                                                                     pageable),
+                                                  ProcessInstance.class,
                                                   processInstanceResourceAssembler);
     }
 

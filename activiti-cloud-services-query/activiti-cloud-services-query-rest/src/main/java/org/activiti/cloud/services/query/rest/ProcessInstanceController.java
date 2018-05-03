@@ -103,6 +103,7 @@ public class ProcessInstanceController {
         return pagedResourcesAssembler.toResource(pageable,
                                                   processInstanceRepository.findAll(predicate,
                                                                                     pageable),
+                                                  ProcessInstance.class,
                                                   processInstanceResourceAssembler);
     }
 

@@ -78,6 +78,7 @@ public class TaskVariableController {
 
         return pagedResourcesAssembler.toResource(pageable,
                                                   variables,
+                                                  Variable.class,
                                                   variableResourceAssembler);
     }
 }

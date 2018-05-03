@@ -78,6 +78,7 @@ public class ProcessInstanceVariableController {
 
         return pagedResourcesAssembler.toResource(pageable,
                                                   variables,
+                                                  Variable.class,
                                                   variableResourceAssembler);
     }
 }

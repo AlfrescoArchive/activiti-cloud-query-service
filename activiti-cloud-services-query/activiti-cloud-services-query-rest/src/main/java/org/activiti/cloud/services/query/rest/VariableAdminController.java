@@ -72,6 +72,7 @@ public class VariableAdminController {
         return pagedVariablesResourcesAssembler.toResource(pageable,
                                                            variableRepository.findAll(predicate,
                                                                                       pageable),
+                                                           Variable.class,
                                                            variableResourceAssembler);
     }
 }
