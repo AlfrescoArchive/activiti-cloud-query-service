@@ -18,6 +18,7 @@ package org.activiti.cloud.services.query.qraphql.ws.config;
 import com.introproventures.graphql.jpa.query.schema.GraphQLExecutor;
 import graphql.GraphQL;
 import org.activiti.cloud.services.query.qraphql.ws.datafetcher.ProcessEngineNotificationStompRelayDataFetcherDestinationResolver;
+import org.activiti.cloud.services.query.qraphql.ws.datafetcher.StompRelayDestinationResolver;
 import org.activiti.cloud.services.query.qraphql.ws.datafetcher.StompRelayPublisherFactory;
 import org.activiti.cloud.services.query.qraphql.ws.transport.GraphQLBrokerMessageHandler;
 import org.activiti.cloud.services.query.qraphql.ws.transport.GraphQLBrokerSubProtocolHandler;
@@ -114,12 +115,17 @@ public class GraphQLWebSocketMessageBrokerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public StompRelayPublisherFactory stompRelayPublisherFactory(ReactorNettyTcpStompClient stompClient) {
-            return new StompRelayPublisherFactory(stompClient)
-                    .login(login)
-                    .passcode(passcode)
-                    .destinationResolver(new ProcessEngineNotificationStompRelayDataFetcherDestinationResolver())
-                    ;
+        public StompRelayDestinationResolver stompRelayDestinationResolver() {
+            return new ProcessEngineNotificationStompRelayDataFetcherDestinationResolver();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        public StompRelayPublisherFactory stompRelayPublisherFactory(ReactorNettyTcpStompClient stompClient,
+                                                                     StompRelayDestinationResolver stompRelayDestinationResolver) {
+            return new StompRelayPublisherFactory(stompClient).login(login)
+                                                              .passcode(passcode)
+                                                              .destinationResolver(stompRelayDestinationResolver);
         }
 
         @Bean
