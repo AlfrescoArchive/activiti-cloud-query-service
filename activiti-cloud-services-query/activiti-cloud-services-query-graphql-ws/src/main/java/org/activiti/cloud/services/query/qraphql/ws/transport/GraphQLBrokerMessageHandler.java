@@ -162,136 +162,168 @@ public class GraphQLBrokerMessageHandler extends AbstractBrokerMessageHandler {
 		}
 	}
 
-	@Override
-	protected void handleMessageInternal(Message<?> message) {
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void handleMessageInternal(Message<?> message) {
 
-		MessageHeaders headers = message.getHeaders();
-		SimpMessageType messageType = SimpMessageHeaderAccessor.getMessageType(headers);
-		String destination = SimpMessageHeaderAccessor.getDestination(headers);
-		String sessionId = SimpMessageHeaderAccessor.getSessionId(headers);
-		Principal user = SimpMessageHeaderAccessor.getUser(headers);
+        MessageHeaders headers = message.getHeaders();
+        SimpMessageType messageType = SimpMessageHeaderAccessor.getMessageType(headers);
+        String destination = SimpMessageHeaderAccessor.getDestination(headers);
+        String sessionId = SimpMessageHeaderAccessor.getSessionId(headers);
+        Principal user = SimpMessageHeaderAccessor.getUser(headers);
 
-		updateSessionReadTime(sessionId);
+        updateSessionReadTime(sessionId);
 
-		if (!checkDestinationPrefix(destination)) {
-			return;
-		}
+        if (!checkDestinationPrefix(destination)) {
+            return;
+        }
 
-		if (SimpMessageType.MESSAGE.equals(messageType) && message.getPayload() instanceof GraphQLMessage ) {
-			logMessage(message);
-			GraphQLMessage operationPayload = (GraphQLMessage) message.getPayload();
+        if (SimpMessageType.MESSAGE.equals(messageType) && message.getPayload() instanceof GraphQLMessage) {
+            logMessage(message);
+            Message<GraphQLMessage> graphQLMessage = (Message<GraphQLMessage>) message;
+            GraphQLMessageType graphQLMessagePayloadType = graphQLMessage.getPayload().getType();
 
-			switch(operationPayload.getType()) {
-				case CONNECTION_INIT:
+            switch (graphQLMessagePayloadType) {
+                case CONNECTION_INIT:
 
-					if(!isBrokerAvailable()) {
+                    if (!isBrokerAvailable()) {
                         sendErrorMessageToClient(BROKER_NOT_AVAILABLE, GraphQLMessageType.CONNECTION_ERROR, message);
-						return;
-					}
-
-					long[] clientHeartbeat = SimpMessageHeaderAccessor.getHeartbeat(headers);
-					long[] serverHeartbeat = getHeartbeatValue();
-					this.sessions.put(sessionId, new SessionInfo(sessionId, user, clientHeartbeat, serverHeartbeat));
-
-					GraphQLMessage connection_ack = new GraphQLMessage(operationPayload.getId(), GraphQLMessageType.CONNECTION_ACK, Collections.emptyMap());
-
-					MessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.getMutableAccessor(message);
-
-					Message<?> responseMessage = MessageBuilder.createMessage(connection_ack, headerAccessor.getMessageHeaders());
-
-					getClientOutboundChannel().send(responseMessage);
-					break;
-
-				case START:
-					// start subscription
-					if(!isBrokerAvailable()) {
-                        sendErrorMessageToClient(BROKER_NOT_AVAILABLE, GraphQLMessageType.ERROR, message);
-						return;
-					}
-
-					QueryParameters parameters = null;
-
-					try {
-						parameters = QueryParameters.from(operationPayload.getPayload());
-					} catch (Exception e) {
-						sendErrorMessageToClient(e.getMessage(), GraphQLMessageType.ERROR, message);
-						return;
-					}
-			        ExecutionResult executionResult = graphQLSubscriptionExecutor.execute(parameters.getQuery(), parameters.getVariables());
-
-                    if (executionResult.getErrors().isEmpty()) {
-                        Optional.ofNullable(executionResult.<Publisher<ExecutionResult>> getData())
-                                .map(data -> {
-                                    GraphQLBrokerChannelSubscriber subscriber = new GraphQLBrokerChannelSubscriber(message,
-                                                                                                                   operationPayload.getId(),
-                                                                                                                   getClientOutboundChannel(),
-                                                                                                                   bufferTimeSpanMs,
-                                                                                                                   bufferCount);
-
-                                    graphQLsubscriptionRegistry.subscribe(sessionId,
-                                                                          operationPayload.getId(),
-                                                                          subscriber,
-                                                                          () -> {
-                                                                              data.subscribe(subscriber);
-                                                                          });
-
-                                    return data;
-                                })
-                                .orElseGet(() -> {
-                                    sendErrorMessageToClient("Server error!", GraphQLMessageType.ERROR, message);
-
-                                    return null;
-                                });
-                    } else {
-                        Map<String, Object> payload = Collections.singletonMap("errors", executionResult.getErrors());
-
-                        GraphQLMessage startSubscriptionMessage = (GraphQLMessage) message.getPayload();
-                        GraphQLMessage startSubscriptionErrors = new GraphQLMessage(startSubscriptionMessage.getId(),
-                                                                                    GraphQLMessageType.ERROR,
-                                                                                    payload);
-
-                        MessageHeaderAccessor messageHeaderAccessor = SimpMessageHeaderAccessor.getMutableAccessor(startSubscriptionMessage);
-                        Message<GraphQLMessage> errorMessage = MessageBuilder.createMessage(startSubscriptionErrors,
-                                                                                            messageHeaderAccessor.getMessageHeaders());
-
-                        getClientOutboundChannel().send(errorMessage);
+                        return;
                     }
 
-					break;
+                    long[] clientHeartbeat = SimpMessageHeaderAccessor.getHeartbeat(headers);
+                    long[] serverHeartbeat = getHeartbeatValue();
+                    this.sessions.put(sessionId, new SessionInfo(sessionId, user, clientHeartbeat, serverHeartbeat));
 
-				case STOP:
-					// stop subscription
-					graphQLsubscriptionRegistry.unsubscribe(sessionId, operationPayload.getId(), (subscriber) -> {
-						subscriber.onComplete();
-					});
+                    handleConnectionInitMessage(graphQLMessage);
+                    break;
 
-					break;
+                case START:
+                    // start subscription
+                    if (!isBrokerAvailable()) {
+                        sendErrorMessageToClient(BROKER_NOT_AVAILABLE, GraphQLMessageType.ERROR, message);
+                        return;
+                    }
 
-				case CONNECTION_TERMINATE:
-					// end connection
-					graphQLsubscriptionRegistry.unsubscribe(sessionId, (subscriber) -> {
-						subscriber.cancel();
-					});
+                    handleStartSubscription(graphQLMessage);
+                    break;
 
-					break;
+                case STOP:
+                    // stop subscription
+                    handleStopSubscription(graphQLMessage);
+                    break;
 
+                case CONNECTION_TERMINATE:
+                    // end connection
+                    handleConnectionTerminate(graphQLMessage);
+                    break;
 
-				default:
-					break;
-			}
+                default:
+                    break;
+            }
 
-		}
-	}
+        }
+    }
 
-	private void sendErrorMessageToClient(String errorText, GraphQLMessageType type, Message<?> inputMessage) {
-		Map<String, Object> payload =  Collections.singletonMap("errors", Collections.singletonList(errorText));
-		GraphQLMessage inputOperation = (GraphQLMessage) inputMessage.getPayload();
-		GraphQLMessage connectionError = new GraphQLMessage(inputOperation.getId(), type, payload);
-		MessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.getMutableAccessor(inputMessage);
-		Message<GraphQLMessage> errorMessage = MessageBuilder.createMessage(connectionError, headerAccessor.getMessageHeaders());
+    protected final void handleConnectionInitMessage(Message<GraphQLMessage> message) {
+        GraphQLMessage operationPayload = message.getPayload();
 
-		getClientOutboundChannel().send(errorMessage);
-	}
+        GraphQLMessage connection_ack = new GraphQLMessage(operationPayload.getId(),
+                                                           GraphQLMessageType.CONNECTION_ACK,
+                                                           Collections.emptyMap());
+
+        MessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.getMutableAccessor(message);
+
+        Message<?> responseMessage = MessageBuilder.createMessage(connection_ack, headerAccessor.getMessageHeaders());
+
+        getClientOutboundChannel().send(responseMessage);
+
+    }
+
+    protected final void handleStartSubscription(Message<GraphQLMessage> message) {
+        MessageHeaders headers = message.getHeaders();
+        String sessionId = SimpMessageHeaderAccessor.getSessionId(headers);
+        GraphQLMessage operationPayload = message.getPayload();
+        QueryParameters parameters = null;
+
+        try {
+            parameters = QueryParameters.from(operationPayload.getPayload());
+        } catch (Exception e) {
+            sendErrorMessageToClient(e.getMessage(), GraphQLMessageType.ERROR, message);
+            return;
+        }
+        ExecutionResult executionResult = graphQLSubscriptionExecutor.execute(parameters.getQuery(),
+                                                                              parameters.getVariables());
+
+        if (executionResult.getErrors().isEmpty()) {
+            Optional.ofNullable(executionResult.<Publisher<ExecutionResult>> getData())
+                    .map(data -> {
+                        GraphQLBrokerChannelSubscriber subscriber = new GraphQLBrokerChannelSubscriber(message,
+                                                                                                       operationPayload.getId(),
+                                                                                                       getClientOutboundChannel(),
+                                                                                                       bufferTimeSpanMs,
+                                                                                                       bufferCount);
+
+                        graphQLsubscriptionRegistry.subscribe(sessionId,
+                                                              operationPayload.getId(),
+                                                              subscriber,
+                                                              () -> {
+                                                                  data.subscribe(subscriber);
+                                                              });
+
+                        return data;
+                    })
+                    .orElseGet(() -> {
+                        sendErrorMessageToClient("Server error!", GraphQLMessageType.ERROR, message);
+
+                        return null;
+                    });
+        } else {
+            Map<String, Object> payload = Collections.singletonMap("errors", executionResult.getErrors());
+
+            GraphQLMessage startSubscriptionMessage = message.getPayload();
+            GraphQLMessage startSubscriptionErrors = new GraphQLMessage(startSubscriptionMessage.getId(),
+                                                                        GraphQLMessageType.ERROR,
+                                                                        payload);
+
+            MessageHeaderAccessor messageHeaderAccessor = SimpMessageHeaderAccessor.getMutableAccessor(startSubscriptionMessage);
+            Message<GraphQLMessage> errorMessage = MessageBuilder.createMessage(startSubscriptionErrors,
+                                                                                messageHeaderAccessor.getMessageHeaders());
+
+            getClientOutboundChannel().send(errorMessage);
+        }
+
+    }
+
+    protected final void handleStopSubscription(Message<GraphQLMessage> message) {
+        MessageHeaders headers = message.getHeaders();
+        String sessionId = SimpMessageHeaderAccessor.getSessionId(headers);
+        GraphQLMessage operationPayload = message.getPayload();
+
+        graphQLsubscriptionRegistry.unsubscribe(sessionId, operationPayload.getId(), (subscriber) -> {
+            subscriber.onComplete();
+        });
+    }
+
+    protected final void handleConnectionTerminate(Message<GraphQLMessage> message) {
+        MessageHeaders headers = message.getHeaders();
+        String sessionId = SimpMessageHeaderAccessor.getSessionId(headers);
+
+        graphQLsubscriptionRegistry.unsubscribe(sessionId, (subscriber) -> {
+            subscriber.cancel();
+        });
+    }
+
+    private void sendErrorMessageToClient(String errorText, GraphQLMessageType type, Message<?> inputMessage) {
+        Map<String, Object> payload = Collections.singletonMap("errors", Collections.singletonList(errorText));
+        GraphQLMessage inputOperation = (GraphQLMessage) inputMessage.getPayload();
+        GraphQLMessage connectionError = new GraphQLMessage(inputOperation.getId(), type, payload);
+        MessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.getMutableAccessor(inputMessage);
+        Message<GraphQLMessage> errorMessage = MessageBuilder.createMessage(connectionError,
+                                                                            headerAccessor.getMessageHeaders());
+
+        getClientOutboundChannel().send(errorMessage);
+    }
 
     private void updateSessionReadTime(String sessionId) {
         if (sessionId != null) {
