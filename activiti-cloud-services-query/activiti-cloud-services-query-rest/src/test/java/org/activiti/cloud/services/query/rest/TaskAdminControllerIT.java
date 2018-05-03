@@ -111,10 +111,15 @@ public class TaskAdminControllerIT {
                         UUID.randomUUID().toString(),
                         UUID.randomUUID().toString(),
                         "My app",
+                        "My app",
+                        "1",
+                        null,
+                        null,
                         org.activiti.cloud.services.api.model.Task.TaskStatus.ASSIGNED.name(),
                         new Date(),
                         new Date(),
-                        "peter"
+                        "peter",
+                        null
         );
     }
 

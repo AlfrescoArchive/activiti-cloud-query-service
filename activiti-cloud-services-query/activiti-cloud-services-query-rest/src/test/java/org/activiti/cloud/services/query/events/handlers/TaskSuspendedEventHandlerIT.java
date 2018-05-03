@@ -78,28 +78,38 @@ public class TaskSuspendedEventHandlerIT {
 
         //given
         Task eventTask = new Task(
-                                  taskId,
-                                  "assignee",
-                                  "name",
-                                  "description",
-                                  new Date() /*createTime*/,
-                                  new Date() /*dueDate*/,
-                                  "priority",
-                                  "category",
-                                  "process_definition_id",
-                                  processInstanceId,
-                                  "runtime-bundle-a",
-                                  "ASSIGNED",
-                                  new Date() /*lastModified*/,
-                                new Date(), /*claimDate*/
-                                "owner"
+                taskId,
+                "assignee",
+                "name",
+                "description",
+                new Date() /*createTime*/,
+                new Date() /*dueDate*/,
+                "priority",
+                "category",
+                "process_definition_id",
+                processInstanceId,
+                "runtime-bundle-a",
+                "runtime-bundle-a",
+                "1",
+                null,
+                null,
+                "ASSIGNED",
+                new Date() /*lastModified*/,
+                new Date(), /*claimDate*/
+                "owner",
+                null
         );
         TaskSuspendedEvent givenEvent = new TaskSuspendedEvent(System.currentTimeMillis(),
                                                               "taskSuspended",
                                                               "10",
                                                               "process_definition_id",
+                                                    "runtime-bundle-a",
+                                                    "runtime-bundle-a",
+                                                    "runtime-bundle",
+                                                    "1",
+                                                    null,
+                                                    null,
                                                               processInstanceId,
-                                                              "runtime-bundle-a",
                                                               eventTask);
         //when
         handler.handle(givenEvent);
