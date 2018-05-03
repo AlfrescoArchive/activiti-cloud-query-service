@@ -64,6 +64,7 @@ public class ProcessInstanceTasksController {
                                                  pageable);
         return pagedResourcesAssembler.toResource(pageable,
                                                   page,
+                                                  Task.class,
                                                   taskResourceAssembler);
     }
 }
