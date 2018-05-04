@@ -30,7 +30,7 @@ public class GraphQLSubscriptionsSchemaBuilderAutoConfiguration {
     public static class DefaultGraphQLSubscriptionsSchemaConfiguration {
 
         @Autowired
-        GraphQLSubscriptionSchemaProperties properties;
+        private GraphQLSubscriptionSchemaProperties properties;
 
         @Bean
         @ConditionalOnMissingBean
