@@ -17,7 +17,6 @@ package org.activiti.cloud.services.query.qraphql.ws.config;
 
 import com.introproventures.graphql.jpa.query.schema.GraphQLExecutor;
 import graphql.GraphQL;
-import org.activiti.cloud.services.query.qraphql.ws.datafetcher.ProcessEngineNotificationStompRelayDataFetcherDestinationResolver;
 import org.activiti.cloud.services.query.qraphql.ws.datafetcher.StompRelayDestinationResolver;
 import org.activiti.cloud.services.query.qraphql.ws.datafetcher.StompRelayPublisherFactory;
 import org.activiti.cloud.services.query.qraphql.ws.transport.GraphQLBrokerMessageHandler;
@@ -46,7 +45,7 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 
 @Configuration
 @ConditionalOnClass({GraphQL.class, EnableWebSocketMessageBroker.class})
-@ConditionalOnProperty(name="spring.activiti.cloud.services.graphql.ws.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name="spring.activiti.cloud.services.query.graphql.ws.enabled", matchIfMissing = true)
 public class GraphQLWebSocketMessageBrokerAutoConfiguration {
 
     @Configuration
@@ -57,7 +56,7 @@ public class GraphQLWebSocketMessageBrokerAutoConfiguration {
         @Value("${spring.rabbitmq.host:rabbitmq}")
         private String relayHost;
 
-        @Value("${spring.activiti.cloud.services.graphql.ws.relayPort:61613}")
+        @Value("${spring.activiti.cloud.services.query.graphql.ws.relayPort:61613}")
         private int relayPort;
 
         @Value("${spring.rabbitmq.username:guest}")
@@ -66,16 +65,16 @@ public class GraphQLWebSocketMessageBrokerAutoConfiguration {
         @Value("${spring.rabbitmq.password:guest}")
         private String passcode;
 
-        @Value("${spring.activiti.cloud.services.graphql.ws.endpoint:/ws/graphql}")
+        @Value("${spring.activiti.cloud.services.query.graphql.ws.endpoint:/ws/graphql}")
         private String graphQLEndpoint;
 
-        @Value("${spring.activiti.cloud.services.graphql.ws.allowed-origins:*}")
+        @Value("${spring.activiti.cloud.services.query.graphql.ws.allowed-origins:*}")
         private String graphQLAllowedOrigins;
 
-        @Value("${spring.activiti.cloud.services.graphql.ws.buffer-count:50}")
+        @Value("${spring.activiti.cloud.services.query.graphql.ws.buffer-count:50}")
         private Integer bufferCount;
 
-        @Value("${spring.activiti.cloud.services.graphql.ws.buffer-timespan-ms:1000}")
+        @Value("${spring.activiti.cloud.services.query.graphql.ws.buffer-timespan-ms:1000}")
         private Integer bufferTimeSpanMs;
 
         /**
@@ -111,12 +110,6 @@ public class GraphQLWebSocketMessageBrokerAutoConfiguration {
             stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
             return stompClient;
-        }
-
-        @Bean
-        @ConditionalOnMissingBean
-        public StompRelayDestinationResolver stompRelayDestinationResolver() {
-            return new ProcessEngineNotificationStompRelayDataFetcherDestinationResolver();
         }
 
         @Bean

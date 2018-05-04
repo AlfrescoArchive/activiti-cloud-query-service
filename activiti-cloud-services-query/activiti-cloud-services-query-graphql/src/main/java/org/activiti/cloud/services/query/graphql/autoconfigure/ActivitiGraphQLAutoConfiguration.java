@@ -27,6 +27,7 @@ import graphql.schema.StaticDataFetcher;
 import org.activiti.cloud.services.query.graphql.web.ActivitiGraphQLController;
 import org.activiti.cloud.services.query.model.ProcessInstance;
 import org.activiti.cloud.services.query.qraphql.ws.schema.GraphQLSubscriptionSchemaBuilder;
+import org.activiti.cloud.services.query.qraphql.ws.schema.GraphQLSubscriptionSchemaProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -64,27 +65,17 @@ public class ActivitiGraphQLAutoConfiguration {
         @Autowired
         private ActivitiGraphQLSchemaProperties properties;
 
-        private String graphQLSchemaFileName = "activiti.graphqls";
-
-        private String graphQLSchemaSubscriptionFieldName = "ProcessEngineNotification";
-
-        @Bean
-        @ConditionalOnProperty(name="spring.activiti.cloud.services.query.graphql.enabled", matchIfMissing = true)
-        @ConditionalOnMissingBean
-        public GraphQLSubscriptionSchemaBuilder graphqlSchemaBuilder() {
-
-            GraphQLSubscriptionSchemaBuilder schemaBuilder = new GraphQLSubscriptionSchemaBuilder(graphQLSchemaFileName);
-
-            schemaBuilder.withSubscription(graphQLSchemaSubscriptionFieldName, new StaticDataFetcher(null));
-
-            return schemaBuilder;
-        }
+        @Autowired
+        private GraphQLSubscriptionSchemaProperties subscriptionProperties;
 
         @Bean
         @ConditionalOnProperty(name = "spring.activiti.cloud.services.query.graphql.enabled", matchIfMissing = true)
         @ConditionalOnMissingBean(GraphQLExecutor.class)
         public GraphQLExecutor graphQLExecutor(final GraphQLSchemaBuilder querySchemaBuilder,
                                                final GraphQLSubscriptionSchemaBuilder subscriptionSchemaBuilder) {
+
+            // Use NoOp DataFetcher for subscription schema fields via REST endpoint
+            subscriptionSchemaBuilder.withSubscription(subscriptionProperties.getSubscriptionFieldName(), new StaticDataFetcher(null));
 
             // Merge query and subscriptions schemas into one
             GraphQLSchema querySchema = GraphQLSchema

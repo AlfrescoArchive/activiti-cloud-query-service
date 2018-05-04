@@ -17,10 +17,13 @@ package org.activiti.cloud.services.query.qraphql.ws.config;
 
 import com.introproventures.graphql.jpa.query.schema.GraphQLExecutor;
 import com.introproventures.graphql.jpa.query.schema.impl.GraphQLJpaExecutor;
+import org.activiti.cloud.services.query.qraphql.ws.datafetcher.GraphQLStompRelayDataFetcherDestinationResolver;
 import org.activiti.cloud.services.query.qraphql.ws.datafetcher.StompRelayDataFetcher;
+import org.activiti.cloud.services.query.qraphql.ws.datafetcher.StompRelayDestinationResolver;
 import org.activiti.cloud.services.query.qraphql.ws.datafetcher.StompRelayPublisherFactory;
 import org.activiti.cloud.services.query.qraphql.ws.schema.GraphQLSubscriptionSchemaBuilder;
-import org.springframework.beans.factory.annotation.Value;
+import org.activiti.cloud.services.query.qraphql.ws.schema.GraphQLSubscriptionSchemaProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -29,30 +32,33 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnClass({GraphQLSubscriptionSchemaBuilder.class, StompRelayPublisherFactory.class})
-@ConditionalOnProperty(name="spring.activiti.cloud.services.graphql.ws.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name="spring.activiti.cloud.services.query.graphql.ws.enabled", matchIfMissing = true)
 public class GraphQLSubscriptionsSchemaAutoConfiguration {
 
     @Configuration
     public static class DefaultGraphQLSubscriptionsSchemaConfiguration {
 
-        @Value("${spring.activiti.cloud.services.graphql.ws.schema.graphqls:activiti.graphqls}")
-        private String graphQLSchemaFileName;
-
-        @Value("${spring.activiti.cloud.services.graphql.ws.schema.subscripion-field-name:ProcessEngineNotification}")
-        private String graphQLSchemaSubscriptionFieldName;
+        @Autowired
+        private GraphQLSubscriptionSchemaProperties subscriptionProperties;
 
         @Bean
         @ConditionalOnMissingBean
-        public GraphQLSubscriptionSchemaBuilder graphqlSchemaBuilder(StompRelayPublisherFactory stompRelay) {
-            GraphQLSubscriptionSchemaBuilder schemaBuilder = new GraphQLSubscriptionSchemaBuilder(graphQLSchemaFileName);
-            schemaBuilder.withSubscription(graphQLSchemaSubscriptionFieldName, new StompRelayDataFetcher(stompRelay));
-
-            return schemaBuilder;
+        public StompRelayDestinationResolver stompRelayDestinationResolver() {
+            return new GraphQLStompRelayDataFetcherDestinationResolver(subscriptionProperties.getSubscriptionArgumentNames());
         }
 
         @Bean
         @ConditionalOnMissingBean
-        public GraphQLExecutor graphQLExecutor(final GraphQLSubscriptionSchemaBuilder subscriptionSchemaBuilder) {
+        public StompRelayDataFetcher stompRelayDataFetcher(StompRelayPublisherFactory stompRelayPublisherFactory) {
+            return new StompRelayDataFetcher(stompRelayPublisherFactory);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        public GraphQLExecutor graphQLExecutor(final GraphQLSubscriptionSchemaBuilder subscriptionSchemaBuilder,
+                                               StompRelayDataFetcher stompRelayDataFetcher) {
+            subscriptionSchemaBuilder.withSubscription(subscriptionProperties.getSubscriptionFieldName(), stompRelayDataFetcher);
+
             return new GraphQLJpaExecutor(subscriptionSchemaBuilder.getGraphQLSchema());
         }
     }
