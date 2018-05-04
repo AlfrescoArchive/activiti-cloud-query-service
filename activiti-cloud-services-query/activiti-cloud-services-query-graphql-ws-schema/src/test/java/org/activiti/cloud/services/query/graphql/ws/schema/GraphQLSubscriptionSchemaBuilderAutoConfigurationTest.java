@@ -32,10 +32,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class GraphQLSubscriptionSchemaBuilderAutoConfigurationTest {
 
     @Autowired
-    GraphQLSubscriptionSchemaProperties properties;
+    private GraphQLSubscriptionSchemaProperties properties;
 
     @Autowired
-    GraphQLSubscriptionSchemaBuilder graphQLSubscriptionSchemaBuilder;
+    private GraphQLSubscriptionSchemaBuilder graphQLSubscriptionSchemaBuilder;
 
     @EnableAutoConfiguration
     @Configuration
