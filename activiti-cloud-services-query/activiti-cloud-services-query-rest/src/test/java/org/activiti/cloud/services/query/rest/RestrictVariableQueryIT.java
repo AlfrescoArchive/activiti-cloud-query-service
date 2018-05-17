@@ -3,6 +3,7 @@ package org.activiti.cloud.services.query.rest;
 import java.util.Arrays;
 
 import com.querydsl.core.types.Predicate;
+import org.activiti.cloud.alfresco.AlfrescoJsonAutoConfiguration;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.app.repository.TaskCandidateGroupRepository;
 import org.activiti.cloud.services.query.app.repository.TaskCandidateUserRepository;
