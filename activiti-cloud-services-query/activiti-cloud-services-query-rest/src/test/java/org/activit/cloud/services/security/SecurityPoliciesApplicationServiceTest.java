@@ -1,7 +1,7 @@
 package org.activit.cloud.services.security;
 
 import com.querydsl.core.types.Predicate;
-import org.activiti.cloud.services.security.AuthenticationWrapper;
+import org.activiti.cloud.services.security.BaseAuthenticationWrapper;
 import org.activiti.cloud.services.security.SecurityPoliciesApplicationService;
 import org.activiti.engine.UserGroupLookupProxy;
 import org.activiti.engine.UserRoleLookupProxy;
@@ -46,7 +46,7 @@ public class SecurityPoliciesApplicationServiceTest {
     private SecurityPoliciesService securityPoliciesService;
 
     @Mock
-    private AuthenticationWrapper authenticationWrapper;
+    private BaseAuthenticationWrapper authenticationWrapper;
 
     @Before
     public void setUp() throws Exception {

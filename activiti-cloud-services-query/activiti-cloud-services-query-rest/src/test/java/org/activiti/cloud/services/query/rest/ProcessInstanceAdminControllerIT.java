@@ -18,7 +18,7 @@ package org.activiti.cloud.services.query.rest;
 
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.model.ProcessInstance;
-import org.activiti.cloud.services.security.AuthenticationWrapper;
+import org.activiti.cloud.services.security.BaseAuthenticationWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,7 +67,7 @@ public class ProcessInstanceAdminControllerIT {
     private ProcessInstanceRepository processInstanceRepository;
 
     @MockBean
-    private AuthenticationWrapper authenticationWrapper;
+    private BaseAuthenticationWrapper authenticationWrapper;
 
     @Before
     public void setUp() throws Exception {

@@ -24,7 +24,7 @@ import com.querydsl.core.types.Predicate;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.model.ProcessInstance;
-import org.activiti.cloud.services.security.AuthenticationWrapper;
+import org.activiti.cloud.services.security.BaseAuthenticationWrapper;
 import org.activiti.cloud.services.security.SecurityPoliciesApplicationService;
 import org.activiti.cloud.services.security.SecurityPolicy;
 import org.junit.Before;
@@ -78,7 +78,7 @@ public class ProcessInstanceControllerIT {
     private SecurityPoliciesApplicationService securityPoliciesApplicationService;
 
     @MockBean
-    private AuthenticationWrapper authenticationWrapper;
+    private BaseAuthenticationWrapper authenticationWrapper;
 
     @MockBean
     private EntityFinder entityFinder;

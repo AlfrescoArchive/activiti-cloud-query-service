@@ -25,7 +25,7 @@ import org.activiti.cloud.services.query.model.Task;
 import org.activiti.cloud.services.query.resources.TaskResource;
 import org.activiti.cloud.services.query.rest.assembler.TaskResourceAssembler;
 import org.activiti.cloud.services.security.ActivitiForbiddenException;
-import org.activiti.cloud.services.security.AuthenticationWrapper;
+import org.activiti.cloud.services.security.BaseAuthenticationWrapper;
 import org.activiti.cloud.services.security.TaskLookupRestrictionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,7 @@ public class TaskController {
 
     private TaskLookupRestrictionService taskLookupRestrictionService;
 
-    private AuthenticationWrapper authenticationWrapper;
+    private BaseAuthenticationWrapper authenticationWrapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
 
@@ -73,7 +73,7 @@ public class TaskController {
                           AlfrescoPagedResourcesAssembler<Task> pagedResourcesAssembler,
                           EntityFinder entityFinder,
                           TaskLookupRestrictionService taskLookupRestrictionService,
-                          AuthenticationWrapper authenticationWrapper) {
+                          BaseAuthenticationWrapper authenticationWrapper) {
         this.taskRepository = taskRepository;
         this.taskResourceAssembler = taskResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;

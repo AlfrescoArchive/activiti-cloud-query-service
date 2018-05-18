@@ -26,7 +26,7 @@ import org.activiti.cloud.services.query.model.Variable;
 import org.activiti.cloud.services.query.resources.VariableResource;
 import org.activiti.cloud.services.query.rest.assembler.VariableResourceAssembler;
 import org.activiti.cloud.services.security.ActivitiForbiddenException;
-import org.activiti.cloud.services.security.AuthenticationWrapper;
+import org.activiti.cloud.services.security.BaseAuthenticationWrapper;
 import org.activiti.cloud.services.security.SecurityPoliciesApplicationService;
 import org.activiti.cloud.services.security.TaskLookupRestrictionService;
 import org.slf4j.Logger;
@@ -59,7 +59,7 @@ public class VariableController {
 
     private SecurityPoliciesApplicationService securityPoliciesApplicationService;
 
-    private AuthenticationWrapper authenticationWrapper;
+    private BaseAuthenticationWrapper authenticationWrapper;
 
     private TaskRepository taskRepository;
 
@@ -84,7 +84,7 @@ public class VariableController {
                               VariableResourceAssembler variableResourceAssembler,
                               EntityFinder entityFinder,
                               SecurityPoliciesApplicationService securityPoliciesApplicationService,
-                              AuthenticationWrapper authenticationWrapper,
+                              BaseAuthenticationWrapper authenticationWrapper,
                               TaskRepository taskRepository,
                               TaskLookupRestrictionService taskLookupRestrictionService) {
         this.variableRepository = variableRepository;

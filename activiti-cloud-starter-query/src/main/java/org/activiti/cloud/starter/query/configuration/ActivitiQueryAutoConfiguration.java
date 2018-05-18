@@ -1,6 +1,5 @@
 package org.activiti.cloud.starter.query.configuration;
 
-import org.activiti.cloud.services.security.AuthenticationWrapper;
 import org.activiti.cloud.services.security.SecurityPoliciesApplicationService;
 import org.activiti.cloud.services.security.TaskLookupRestrictionService;
 import org.activiti.cloud.services.security.VariableLookupRestrictionService;
@@ -29,12 +28,6 @@ public class ActivitiQueryAutoConfiguration {
     @ConditionalOnMissingBean
     public VariableLookupRestrictionService variableLookupRestrictionService(){
         return new VariableLookupRestrictionService();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public AuthenticationWrapper authenticationWrapper(){
-        return new AuthenticationWrapper();
     }
 
 }
