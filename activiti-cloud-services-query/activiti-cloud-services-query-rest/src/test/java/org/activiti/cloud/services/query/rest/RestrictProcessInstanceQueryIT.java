@@ -4,7 +4,7 @@ import com.querydsl.core.types.Predicate;
 import org.activiti.cloud.services.query.model.ProcessInstance;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.model.QProcessInstance;
-import org.activiti.cloud.services.security.AuthenticationWrapper;
+import org.activiti.cloud.services.security.BaseAuthenticationWrapper;
 import org.activiti.cloud.services.security.SecurityPoliciesApplicationService;
 import org.activiti.cloud.services.security.SecurityPoliciesService;
 import org.activiti.cloud.services.security.SecurityPolicy;
@@ -46,7 +46,7 @@ public class RestrictProcessInstanceQueryIT {
     private SecurityPoliciesApplicationService securityPoliciesApplicationService;
 
     @MockBean
-    private AuthenticationWrapper authenticationWrapper;
+    private BaseAuthenticationWrapper authenticationWrapper;
 
     @MockBean
     private UserGroupLookupProxy userGroupLookupProxy;

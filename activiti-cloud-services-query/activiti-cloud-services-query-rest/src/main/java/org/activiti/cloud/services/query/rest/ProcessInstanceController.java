@@ -24,7 +24,7 @@ import org.activiti.cloud.services.query.model.ProcessInstance;
 import org.activiti.cloud.services.query.resources.ProcessInstanceResource;
 import org.activiti.cloud.services.query.rest.assembler.ProcessInstanceResourceAssembler;
 import org.activiti.cloud.services.security.ActivitiForbiddenException;
-import org.activiti.cloud.services.security.AuthenticationWrapper;
+import org.activiti.cloud.services.security.BaseAuthenticationWrapper;
 import org.activiti.cloud.services.security.SecurityPoliciesApplicationService;
 import org.activiti.cloud.services.security.SecurityPolicy;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ public class ProcessInstanceController {
 
     private SecurityPoliciesApplicationService securityPoliciesApplicationService;
 
-    private final AuthenticationWrapper authenticationWrapper;
+    private final BaseAuthenticationWrapper authenticationWrapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessInstanceController.class);
 
@@ -84,7 +84,7 @@ public class ProcessInstanceController {
                                      AlfrescoPagedResourcesAssembler<ProcessInstance> pagedResourcesAssembler,
                                      EntityFinder entityFinder,
                                      SecurityPoliciesApplicationService securityPoliciesApplicationService,
-                                     AuthenticationWrapper authenticationWrapper) {
+                                     BaseAuthenticationWrapper authenticationWrapper) {
         this.processInstanceRepository = processInstanceRepository;
         this.processInstanceResourceAssembler = processInstanceResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;

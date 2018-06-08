@@ -26,9 +26,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,6 +62,7 @@ public class GraphQLEndpointSecurityIT {
 
     private HttpHeaders getHeader(){
         HttpHeaders headers = new HttpHeaders();
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
         headers.add("Authorization", keycloakTokenProducer.getTokenString());
         return headers;
     }

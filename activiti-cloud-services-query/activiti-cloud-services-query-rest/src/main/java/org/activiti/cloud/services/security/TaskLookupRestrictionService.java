@@ -22,7 +22,7 @@ public class TaskLookupRestrictionService {
     private UserGroupLookupProxy userGroupLookupProxy;
 
     @Autowired
-    private AuthenticationWrapper authenticationWrapper;
+    private BaseAuthenticationWrapper authenticationWrapper;
 
     @Value("${activiti.cloud.security.task.restrictions.enabled:true}")
     private boolean restrictionsEnabled;

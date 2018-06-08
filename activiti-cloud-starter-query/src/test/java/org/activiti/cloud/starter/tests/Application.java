@@ -34,11 +34,8 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 @ComponentScan({"org.activiti.cloud.services.query.app",
         "org.activiti.cloud.services.query.events",
         "org.activiti.cloud.services.query.rest",
-        "org.activiti.cloud.services.security",
         "org.activiti.cloud.starters",
-        "org.activiti.cloud.starter",
-        "org.activiti.cloud.services.identity",
-        "org.activiti.cloud.alfresco"})
+        "org.activiti.cloud.starter"})
 public class Application {
 
     public static void main(String[] args) {

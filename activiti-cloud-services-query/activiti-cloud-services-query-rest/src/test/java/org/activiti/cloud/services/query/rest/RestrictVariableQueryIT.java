@@ -13,7 +13,7 @@ import org.activiti.cloud.services.query.model.Task;
 import org.activiti.cloud.services.query.model.TaskCandidateGroup;
 import org.activiti.cloud.services.query.model.TaskCandidateUser;
 import org.activiti.cloud.services.query.model.Variable;
-import org.activiti.cloud.services.security.AuthenticationWrapper;
+import org.activiti.cloud.services.security.BaseAuthenticationWrapper;
 import org.activiti.cloud.services.security.SecurityPoliciesApplicationService;
 import org.activiti.cloud.services.security.SecurityPoliciesService;
 import org.activiti.cloud.services.security.TaskLookupRestrictionService;
@@ -59,7 +59,7 @@ public class RestrictVariableQueryIT {
     private TaskCandidateUserRepository taskCandidateUserRepository;
 
     @MockBean
-    private AuthenticationWrapper authenticationWrapper;
+    private BaseAuthenticationWrapper authenticationWrapper;
 
     @MockBean
     private UserGroupLookupProxy userGroupLookupProxy;

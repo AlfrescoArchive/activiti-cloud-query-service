@@ -35,6 +35,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -172,7 +173,7 @@ public class QueryTaskVariablesIT {
             //when
             ResponseEntity<PagedResources<Variable>> responseEntity = testRestTemplate.exchange(VARIABLES_URL,
                                                                                                 HttpMethod.GET,
-                                                                                                getHeaderEntity(),
+                                                                                                getHeaderEntity(false),
                                                                                                 PAGED_VARIABLE_RESPONSE_TYPE,
                                                                                                 TASK_ID);
 
@@ -233,7 +234,7 @@ public class QueryTaskVariablesIT {
                     //when
                     ResponseEntity<PagedResources<Variable>> responseEntity = testRestTemplate.exchange(builder.buildAndExpand(uriParams).toUri(),
                             HttpMethod.GET,
-                            getHeaderEntity(),
+                            getHeaderEntity(false),
                             PAGED_VARIABLE_RESPONSE_TYPE);
 
                     //then
@@ -256,15 +257,18 @@ public class QueryTaskVariablesIT {
             //when
             ResponseEntity<String> responseEntity = testRestTemplate.exchange(ADMIN_VARIABLES_URL,
                     HttpMethod.GET,
-                    getHeaderEntity(),String.class);
+                    getHeaderEntity(true),String.class);
 
             //then
             assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
-    private HttpEntity getHeaderEntity(){
+    private HttpEntity getHeaderEntity(boolean jsonHeader){
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", keycloakTokenProducer.getTokenString());
+        if(jsonHeader) {
+            headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        }
         HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
         return entity;
     }

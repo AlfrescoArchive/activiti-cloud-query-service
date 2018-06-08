@@ -8,7 +8,7 @@ import org.activiti.cloud.services.query.model.QTask;
 import org.activiti.cloud.services.query.model.Task;
 import org.activiti.cloud.services.query.model.TaskCandidateGroup;
 import org.activiti.cloud.services.query.model.TaskCandidateUser;
-import org.activiti.cloud.services.security.AuthenticationWrapper;
+import org.activiti.cloud.services.security.BaseAuthenticationWrapper;
 import org.activiti.cloud.services.security.TaskLookupRestrictionService;
 import org.activiti.engine.UserGroupLookupProxy;
 import org.junit.Before;
@@ -50,7 +50,7 @@ public class RestrictTaskQueryIT {
     private TaskLookupRestrictionService taskLookupRestrictionService;
 
     @MockBean
-    private AuthenticationWrapper authenticationWrapper;
+    private BaseAuthenticationWrapper authenticationWrapper;
 
     @MockBean
     private UserGroupLookupProxy userGroupLookupProxy;
