@@ -173,8 +173,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.activiti.cloud</groupId>
-      <artifactId>activiti-cloud-services-common-identity-basic</artifactId>
+      <groupId>org.activiti</groupId>
+      <artifactId>activiti-identity-basic</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
