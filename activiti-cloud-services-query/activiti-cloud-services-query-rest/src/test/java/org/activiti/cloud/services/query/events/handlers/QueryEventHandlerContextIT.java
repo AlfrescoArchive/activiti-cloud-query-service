@@ -25,7 +25,7 @@ import org.activiti.cloud.services.query.app.repository.TaskCandidateGroupReposi
 import org.activiti.cloud.services.query.app.repository.TaskCandidateUserRepository;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
-import org.activiti.runtime.api.event.ProcessRuntimeEvent;
+import org.activiti.api.process.model.events.ProcessRuntimeEvent;
 import org.activiti.runtime.api.event.TaskCandidateGroupEvent;
 import org.activiti.runtime.api.event.TaskCandidateUserEvent;
 import org.activiti.runtime.api.event.TaskRuntimeEvent;

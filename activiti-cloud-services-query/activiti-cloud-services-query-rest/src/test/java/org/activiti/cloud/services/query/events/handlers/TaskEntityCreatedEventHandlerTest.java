@@ -25,7 +25,7 @@ import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
 import org.activiti.cloud.services.query.model.TaskEntity;
 import org.activiti.runtime.api.event.TaskRuntimeEvent;
 import org.activiti.runtime.api.event.impl.CloudTaskCreatedEventImpl;
-import org.activiti.runtime.api.model.Task;
+import org.activiti.api.task.model.Task;
 import org.activiti.runtime.api.model.impl.TaskImpl;
 import org.junit.Before;
 import org.junit.Test;

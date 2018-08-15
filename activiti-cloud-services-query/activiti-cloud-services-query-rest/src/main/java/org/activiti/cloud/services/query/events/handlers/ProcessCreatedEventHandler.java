@@ -22,8 +22,8 @@ import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepositor
 import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
 import org.activiti.runtime.api.event.CloudProcessCreated;
 import org.activiti.runtime.api.event.CloudRuntimeEvent;
-import org.activiti.runtime.api.event.ProcessRuntimeEvent;
-import org.activiti.runtime.api.model.ProcessInstance;
+import org.activiti.api.process.model.events.ProcessRuntimeEvent;
+import org.activiti.api.process.model.ProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

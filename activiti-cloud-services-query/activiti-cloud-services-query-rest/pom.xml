@@ -43,24 +43,24 @@
       <artifactId>activiti-cloud-process-model-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
-      <artifactId>activiti-task-model-api</artifactId>
+      <groupId>org.activiti.api</groupId>
+      <artifactId>activiti-api-task-model</artifactId>
     </dependency>
     <dependency>
       <groupId>org.activiti</groupId>
       <artifactId>activiti-cloud-task-model-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
-      <artifactId>activiti-common-model-api</artifactId>
+      <groupId>org.activiti.api</groupId>
+      <artifactId>activiti-api-model-shared</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
-      <artifactId>activiti-common-runtime-api</artifactId>
+      <groupId>org.activiti.api</groupId>
+      <artifactId>activiti-api-runtime-shared</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
-      <artifactId>activiti-process-model-api</artifactId>
+      <groupId>org.activiti.api</groupId>
+      <artifactId>activiti-api-process-model</artifactId>
     </dependency>
     <dependency>
       <groupId>org.activiti</groupId>

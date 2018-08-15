@@ -11,8 +11,8 @@
   <name>Activiti Cloud Query :: Services :: Query Model</name>
   <dependencies>
     <dependency>
-      <groupId>org.activiti</groupId>
-      <artifactId>activiti-process-model-api</artifactId>
+      <groupId>org.activiti.api</groupId>
+      <artifactId>activiti-api-process-model</artifactId>
     </dependency>
     <dependency>
       <groupId>org.activiti</groupId>
@@ -59,8 +59,8 @@
       <artifactId>jackson-databind</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
-      <artifactId>activiti-task-model-api</artifactId>
+      <groupId>org.activiti.api</groupId>
+      <artifactId>activiti-api-task-model</artifactId>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>

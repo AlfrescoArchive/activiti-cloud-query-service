@@ -32,7 +32,7 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.activiti.runtime.api.model.CloudTask;
-import org.activiti.runtime.api.model.ProcessInstance;
+import org.activiti.api.process.model.ProcessInstance;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity(name="Task")

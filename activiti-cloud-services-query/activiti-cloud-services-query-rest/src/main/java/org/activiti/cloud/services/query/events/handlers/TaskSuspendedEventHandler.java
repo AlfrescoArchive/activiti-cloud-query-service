@@ -24,7 +24,7 @@ import org.activiti.cloud.services.query.model.TaskEntity;
 import org.activiti.runtime.api.event.CloudRuntimeEvent;
 import org.activiti.runtime.api.event.CloudTaskSuspendedEvent;
 import org.activiti.runtime.api.event.TaskRuntimeEvent;
-import org.activiti.runtime.api.model.Task;
+import org.activiti.api.task.model.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

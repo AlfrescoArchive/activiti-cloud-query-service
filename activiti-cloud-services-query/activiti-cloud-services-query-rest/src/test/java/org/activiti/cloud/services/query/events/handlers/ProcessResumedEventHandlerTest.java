@@ -24,9 +24,9 @@ import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepositor
 import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
 import org.activiti.cloud.services.query.model.QueryException;
 import org.activiti.runtime.api.event.CloudProcessResumed;
-import org.activiti.runtime.api.event.ProcessRuntimeEvent;
+import org.activiti.api.process.model.events.ProcessRuntimeEvent;
 import org.activiti.runtime.api.event.impl.CloudProcessResumedEventImpl;
-import org.activiti.runtime.api.model.ProcessInstance;
+import org.activiti.api.process.model.ProcessInstance;
 import org.activiti.runtime.api.model.impl.ProcessInstanceImpl;
 import org.junit.Before;
 import org.junit.Rule;
