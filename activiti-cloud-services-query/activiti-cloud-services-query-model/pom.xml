@@ -15,15 +15,15 @@
       <artifactId>activiti-api-process-model</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti.api</groupId>
+      <groupId>org.activiti.cloud.api</groupId>
       <artifactId>activiti-cloud-api-model-shared</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti.api</groupId>
+      <groupId>org.activiti.cloud.api</groupId>
       <artifactId>activiti-cloud-api-process-model</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti.api</groupId>
+      <groupId>org.activiti.cloud.api</groupId>
       <artifactId>activiti-cloud-api-task-model</artifactId>
     </dependency>
     <dependency>
