@@ -149,7 +149,7 @@ public class QueryTasksIT {
                     .extracting(Task::getId,
                                 Task::getStatus)
                     .containsExactly(tuple(assignedTask.getId(),
-                                           org.activiti.runtime.api.model.Task.TaskStatus.ASSIGNED));
+                                           Task.TaskStatus.ASSIGNED));
         });
     }
 
@@ -261,7 +261,7 @@ public class QueryTasksIT {
                     .extracting(Task::getId,
                                 Task::getStatus)
                     .contains(tuple(taskWithCandidate.getId(),
-                                    org.activiti.runtime.api.model.Task.TaskStatus.CREATED));
+                                    Task.TaskStatus.CREATED));
         });
     }
 

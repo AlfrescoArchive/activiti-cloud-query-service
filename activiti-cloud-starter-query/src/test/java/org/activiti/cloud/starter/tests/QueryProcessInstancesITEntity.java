@@ -83,8 +83,8 @@ public class QueryProcessInstancesITEntity {
     @Test
     public void shouldGetAvailableProcInstancesAndFilteredProcessInstances() {
         //given
-        org.activiti.runtime.api.model.ProcessInstance completedProcess = processInstanceBuilder.aCompletedProcessInstance("first");
-        org.activiti.runtime.api.model.ProcessInstance runningProcess = processInstanceBuilder.aRunningProcessInstance("second");
+        ProcessInstance completedProcess = processInstanceBuilder.aCompletedProcessInstance("first");
+        ProcessInstance runningProcess = processInstanceBuilder.aRunningProcessInstance("second");
 
         eventsAggregator.sendAll();
 
