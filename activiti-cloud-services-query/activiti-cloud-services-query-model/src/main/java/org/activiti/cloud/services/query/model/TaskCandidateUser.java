@@ -26,7 +26,7 @@ public class TaskCandidateUser {
     private String userId;
 
     @JsonIgnore
-    @ManyToOne(optional = true)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "taskId", referencedColumnName = "id", insertable = false, updatable = false, nullable = true
             , foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
     private TaskEntity task;

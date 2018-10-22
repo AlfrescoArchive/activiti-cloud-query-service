@@ -58,20 +58,20 @@ public class VariableEntity extends ActivitiEntityMetadata implements CloudVaria
     private String executionId;
 
     @Convert(converter = VariableValueJsonConverter.class)
-    @Lob
+    @Lob @Basic(fetch=FetchType.LAZY)
     @Column
     private VariableValue<?> value;
 
     private Boolean markedAsDeleted = false;
 
     @JsonIgnore
-    @ManyToOne(optional = true)
+    @ManyToOne(optional = true, fetch=FetchType.LAZY)
     @JoinColumn(name = "taskId", referencedColumnName = "id", insertable = false, updatable = false, nullable = true
             , foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
     private TaskEntity task;
 
     @JsonIgnore
-    @ManyToOne(optional = true)
+    @ManyToOne(optional = true, fetch=FetchType.LAZY)
     @JoinColumn(name = "processInstanceId", referencedColumnName = "id", insertable = false, updatable = false
             , foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
     private ProcessInstanceEntity processInstance;
