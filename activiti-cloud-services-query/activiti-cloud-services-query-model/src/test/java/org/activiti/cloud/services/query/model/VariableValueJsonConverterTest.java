@@ -16,19 +16,18 @@
 
 package org.activiti.cloud.services.query.model;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 import java.io.IOException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class VariableValueJsonConverterTest {
 
@@ -85,7 +84,7 @@ public class VariableValueJsonConverterTest {
         VariableValue<?> convertedValue = converter.convertToEntityAttribute(JSON_REPRESENTATION);
 
         //then
-        assertThat(convertedValue.getValue()).isEqualTo(ENTITY_REPRESENTATION.getValue());
+        assertThat(convertedValue).isEqualTo(ENTITY_REPRESENTATION);
     }
 
     @Test
@@ -96,7 +95,7 @@ public class VariableValueJsonConverterTest {
                                      VariableValue.class)).willThrow(ioException);
 
         //when
-        Throwable thrown = catchThrowable(() -> converter.convertToEntityAttribute(JSON_REPRESENTATION).getValue());
+        Throwable thrown = catchThrowable(() -> converter.convertToEntityAttribute(JSON_REPRESENTATION));
 
         //then
         assertThat(thrown)
