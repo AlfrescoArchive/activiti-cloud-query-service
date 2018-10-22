@@ -48,6 +48,7 @@ public class VariableValueJsonConverter implements AttributeConverter<VariableVa
 
     class LazyVariableValue<T> extends VariableValue<T> {
         private String rawValue;
+        private VariableValue<T> value;
     	
         LazyVariableValue(String json) {
         	this.rawValue = json;
@@ -56,12 +57,16 @@ public class VariableValueJsonConverter implements AttributeConverter<VariableVa
         @SuppressWarnings("unchecked")
 		@Override
         public T getValue() {
-        	try {
-				return (T) objectMapper.readValue(rawValue, VariableValue.class)
-								.getValue();
-			} catch (Throwable cause) {
-				return null;
-			}
+        	if(value == null) {
+	        	try {
+	       			value = objectMapper.readValue(rawValue, VariableValue.class);
+				} catch (Throwable cause) {
+					return null;
+				}
+        	}
+        	
+        	return value.getValue();
         }
     }
+    
 }
