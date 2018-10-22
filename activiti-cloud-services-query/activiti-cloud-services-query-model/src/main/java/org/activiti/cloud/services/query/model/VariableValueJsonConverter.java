@@ -16,7 +16,6 @@
 
 package org.activiti.cloud.services.query.model;
 
-import java.io.IOException;
 import javax.persistence.AttributeConverter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -44,10 +43,25 @@ public class VariableValueJsonConverter implements AttributeConverter<VariableVa
 
     @Override
     public VariableValue<?> convertToEntityAttribute(String dbData) {
-        try {
-            return objectMapper.readValue(dbData, VariableValue.class);
-        } catch (IOException e) {
-            throw new QueryException("Unable to deserialize variable.", e);
+    	return new LazyVariableValue<Object>(dbData);
+    }
+
+    class LazyVariableValue<T> extends VariableValue<T> {
+        private String rawValue;
+    	
+        LazyVariableValue(String json) {
+        	this.rawValue = json;
+        }
+        
+        @SuppressWarnings("unchecked")
+		@Override
+        public T getValue() {
+        	try {
+				return (T) objectMapper.readValue(rawValue, VariableValue.class)
+								.getValue();
+			} catch (Throwable cause) {
+				return null;
+			}
         }
     }
 }
