@@ -61,7 +61,7 @@ public class VariableValueJsonConverter implements AttributeConverter<VariableVa
 	        	try {
 	       			value = objectMapper.readValue(rawValue, VariableValue.class);
 				} catch (Throwable cause) {
-					return null;
+					throw new QueryException("Unable to deserialize variable.", cause);
 				}
         	}
         	
