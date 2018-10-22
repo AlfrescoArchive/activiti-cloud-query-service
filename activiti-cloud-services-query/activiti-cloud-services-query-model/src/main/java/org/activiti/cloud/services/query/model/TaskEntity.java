@@ -18,12 +18,14 @@ package org.activiti.cloud.services.query.model;
 
 import java.util.Date;
 import java.util.Set;
+
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -35,8 +37,14 @@ import org.activiti.api.process.model.ProcessInstance;
 import org.activiti.cloud.api.task.model.CloudTask;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity(name="Task")
-@Table(name = "TASK")
+@Table(name = "TASK",
+	indexes= {
+		@Index(name="task_status_idx", columnList="status", unique=false),
+		@Index(name="task_processInstance_idx", columnList="processInstanceId", unique=false)
+})
 public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
 
     /**
