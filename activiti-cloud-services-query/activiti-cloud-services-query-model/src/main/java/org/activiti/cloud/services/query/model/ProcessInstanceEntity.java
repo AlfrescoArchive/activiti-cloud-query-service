@@ -56,13 +56,15 @@ public class ProcessInstanceEntity extends ActivitiEntityMetadata implements Clo
     private Date lastModifiedFrom;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "processInstance")
-    @org.hibernate.annotations.ForeignKey(name = "none")
+    @OneToMany(fetch=FetchType.LAZY)
+    @JoinColumn(name = "processInstanceId", referencedColumnName = "id", insertable = false, updatable = false
+    	, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
     private Set<TaskEntity> tasks;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "processInstance")
-    @org.hibernate.annotations.ForeignKey(name = "none")
+    @OneToMany(fetch=FetchType.LAZY)
+    @JoinColumn(name = "processInstanceId", referencedColumnName = "id", insertable = false, updatable = false
+		, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
     private Set<VariableEntity> variables;
 
     public ProcessInstanceEntity() {
