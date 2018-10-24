@@ -51,7 +51,7 @@ public class VariableEntity extends ActivitiEntityMetadata implements CloudVaria
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String type;
 
@@ -117,7 +117,7 @@ public class VariableEntity extends ActivitiEntityMetadata implements CloudVaria
         this.executionId = executionId;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
