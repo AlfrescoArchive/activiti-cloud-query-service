@@ -18,6 +18,7 @@
     <module>activiti-cloud-query-dependencies</module>
     <module>activiti-cloud-services-query</module>
     <module>activiti-cloud-starter-query</module>
+    <module>activiti-cloud-starter-query-elastic</module>
   </modules>
   <scm>
     <url>https://github.com/Activiti/activiti-cloud-query-service</url>
@@ -45,10 +46,47 @@
     <activiti-cloud-service-common.version>7.0.37</activiti-cloud-service-common.version>
     <activiti-cloud-query-service.version>${project.version}</activiti-cloud-query-service.version>
     <json-unit.version>1.24.0</json-unit.version>
+    <!-- TODO check if this versions should be defined here-->
+    <spring-boot-starter-data-elasticsearch.version>2.1.0.RC1</spring-boot-starter-data-elasticsearch.version>	
+    <spring-data-elasticsearch.version>3.1.1.RELEASE</spring-data-elasticsearch.version>
+    <elasticsearch.version>6.2.2</elasticsearch.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      
+      <dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+		<version>${spring-boot-starter-data-elasticsearch.version}</version>
+	  </dependency>	  
+	  <dependency>
+		<groupId>org.springframework.data</groupId>
+		<artifactId>spring-data-elasticsearch</artifactId>
+		<version>${spring-data-elasticsearch.version}</version>
+	  </dependency>	  
+	  <dependency>
+		<groupId>org.elasticsearch</groupId>
+		<artifactId>elasticsearch</artifactId>
+	  	<version>${elasticsearch.version}</version>
+	  </dependency>
+	  <dependency>
+		<groupId>org.elasticsearch.client</groupId>
+		<artifactId>transport</artifactId>
+		<version>${elasticsearch.version}</version>
+	  </dependency>
+	  <dependency>
+		<groupId>org.elasticsearch.distribution.integ-test-zip</groupId>
+		<artifactId>elasticsearch</artifactId>
+		<version>${elasticsearch.version}</version>
+		<type>zip</type>
+	  </dependency>
+	  <dependency>
+		<groupId>org.elasticsearch.plugin</groupId>
+		<artifactId>transport-netty4-client</artifactId>
+		<version>${elasticsearch.version}</version>
+	  </dependency>
+	
       <dependency>
         <groupId>org.activiti.cloud.common</groupId>
         <artifactId>activiti-cloud-service-common-dependencies</artifactId>
@@ -75,12 +113,27 @@
       </dependency>
       <dependency>
         <groupId>org.activiti.cloud.query</groupId>
+        <artifactId>activiti-cloud-services-query-model-elastic</artifactId>
+        <version>${activiti-cloud-query-service.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.activiti.cloud.query</groupId>
         <artifactId>activiti-cloud-services-query-repo</artifactId>
         <version>${activiti-cloud-query-service.version}</version>
       </dependency>
       <dependency>
         <groupId>org.activiti.cloud.query</groupId>
+        <artifactId>activiti-cloud-services-query-repo-elastic</artifactId>
+        <version>${activiti-cloud-query-service.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.activiti.cloud.query</groupId>
         <artifactId>activiti-cloud-services-query-rest</artifactId>
+        <version>${activiti-cloud-query-service.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.activiti.cloud.query</groupId>
+        <artifactId>activiti-cloud-services-query-rest-elastic</artifactId>
         <version>${activiti-cloud-query-service.version}</version>
       </dependency>
       <dependency>
