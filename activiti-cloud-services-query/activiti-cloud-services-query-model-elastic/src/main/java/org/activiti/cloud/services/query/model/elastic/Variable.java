@@ -25,10 +25,12 @@ import javax.persistence.GenerationType;
 
 import org.activiti.cloud.api.model.shared.CloudVariableInstance;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@Document(indexName = "variable", type = "_doc")
 public class Variable extends ActivitiEntityMetadata implements CloudVariableInstance {
 
 	@Id
@@ -54,7 +56,9 @@ public class Variable extends ActivitiEntityMetadata implements CloudVariableIns
 	@Convert(converter = VariableValueJsonConverter.class)
 	private VariableValue<?> value;
 
-	private Boolean markedAsDeleted = false;	
+	private Boolean markedAsDeleted = false;
+
+	private Set<Variable> variables;
 
 	@JsonIgnore
 	private Task task;
@@ -65,19 +69,9 @@ public class Variable extends ActivitiEntityMetadata implements CloudVariableIns
 	public Variable() {
 	}
 
-	public Variable(String id,
-			String type,
-			String name,
-			String processInstanceId,
-			String serviceName,
-			String serviceFullName,
-			String serviceVersion,
-			String appName,
-			String appVersion,
-			String taskId,
-			Date createTime,
-			Date lastUpdatedTime,
-			String executionId) {
+	public Variable(String id, String type, String name, String processInstanceId, String serviceName,
+			String serviceFullName, String serviceVersion, String appName, String appVersion, String taskId,
+			Date createTime, Date lastUpdatedTime, String executionId) {
 		super(serviceName, serviceFullName, serviceVersion, appName, appVersion);
 		this.id = id;
 		this.type = type;
@@ -186,9 +180,16 @@ public class Variable extends ActivitiEntityMetadata implements CloudVariableIns
 		this.markedAsDeleted = markedAsDeleted;
 	}
 
+	public Set<Variable> getVariables() {
+		return variables;
+	}
+
+	public void setVariables(Set<Variable> variables) {
+		this.variables = variables;
+	}
+
 	@Override
 	public boolean isTaskVariable() {
 		return taskId != null;
 	}
-		
 }
