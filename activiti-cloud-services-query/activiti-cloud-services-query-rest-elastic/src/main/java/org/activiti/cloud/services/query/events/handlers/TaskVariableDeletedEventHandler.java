@@ -18,27 +18,27 @@ package org.activiti.cloud.services.query.events.handlers;
 
 import org.activiti.cloud.api.model.shared.events.CloudVariableDeletedEvent;
 import org.activiti.cloud.services.query.app.repository.elastic.EntityFinder;
-import org.activiti.cloud.services.query.app.repository.elastic.VariableRepository;
+import org.activiti.cloud.services.query.app.repository.elastic.ProcessInstanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TaskVariableDeletedEventHandler {
 
-    private final VariableRepository variableRepository;
+	private final ProcessInstanceRepository processInstanceRepository;
 
-    private final EntityFinder entityFinder;
+	private final EntityFinder entityFinder;
 
-    @Autowired
-    public TaskVariableDeletedEventHandler(VariableRepository variableRepository,
-                                           EntityFinder entityFinder) {
-        this.variableRepository = variableRepository;
-        this.entityFinder = entityFinder;
-    }
+	@Autowired
+	public TaskVariableDeletedEventHandler(ProcessInstanceRepository processInstanceRepository,
+			EntityFinder entityFinder) {
+		this.processInstanceRepository = processInstanceRepository;
+		this.entityFinder = entityFinder;
+	}
 
-    public void handle(CloudVariableDeletedEvent event) {
-        String variableName = event.getEntity().getName();
-        String taskId = event.getEntity().getTaskId();
+	public void handle(CloudVariableDeletedEvent event) {
+		String variableName = event.getEntity().getName();
+		String taskId = event.getEntity().getTaskId();
 //        BooleanExpression predicate = QVariableEntity.variableEntity.taskId.eq(taskId)
 //                .and(
 //                        QVariableEntity.variableEntity.name.eq(variableName)
@@ -49,5 +49,5 @@ public class TaskVariableDeletedEventHandler {
 //                                                             "Unable to find variableEntity with name '" + variableName + "' for task '" + taskId + "'");
 //        variableEntity.setMarkedAsDeleted(true);
 //        variableRepository.save(variableEntity);
-    }
+	}
 }

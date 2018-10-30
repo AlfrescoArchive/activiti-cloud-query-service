@@ -45,13 +45,20 @@ public class ProcessInstance extends ActivitiEntityMetadata implements CloudProc
 //    @OneToMany
 //    private Set<VariableEntity> variables;
 
-	private Map<String, Set<ValuePls>> variables;
+	private Map<String, Set<Variable>> variables;
 
 	public ProcessInstance() {
 	}
 
-	public ProcessInstance(String serviceName, String serviceFullName, String serviceVersion, String appName,
-			String appVersion, String processInstanceId, String processDefinitionId, ProcessInstanceStatus status,
+	public ProcessInstance(
+			String serviceName,
+			String serviceFullName,
+			String serviceVersion,
+			String appName,
+			String appVersion,
+			String processInstanceId,
+			String processDefinitionId,
+			ProcessInstanceStatus status,
 			Date lastModified) {
 		super(serviceName, serviceFullName, serviceVersion, appName, appVersion);
 		this.id = processInstanceId;
@@ -167,11 +174,11 @@ public class ProcessInstance extends ActivitiEntityMetadata implements CloudProc
 		this.businessKey = businessKey;
 	}
 
-	public Map<String, Set<ValuePls>> getVariables() {
+	public Map<String, Set<Variable>> getVariables() {
 		return variables;
 	}
 
-	public void setVariables(Map<String, Set<ValuePls>> variables) {
+	public void setVariables(Map<String, Set<Variable>> variables) {
 		this.variables = variables;
 	}
 

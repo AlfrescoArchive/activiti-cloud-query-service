@@ -18,29 +18,28 @@ package org.activiti.cloud.services.query.events.handlers;
 
 import org.activiti.cloud.api.model.shared.events.CloudVariableDeletedEvent;
 import org.activiti.cloud.services.query.app.repository.elastic.EntityFinder;
-import org.activiti.cloud.services.query.app.repository.elastic.VariableRepository;
+import org.activiti.cloud.services.query.app.repository.elastic.ProcessInstanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ProcessVariableDeletedEventHandler {
 
-    private final VariableRepository variableRepository;
+	private final ProcessInstanceRepository processInstanceRepository;
 
-    private final EntityFinder entityFinder;
+	private final EntityFinder entityFinder;
 
-    @Autowired
-    public ProcessVariableDeletedEventHandler(VariableRepository variableRepository,
-                                              EntityFinder entityFinder) {
-        this.variableRepository = variableRepository;
-        this.entityFinder = entityFinder;
-    }
+	@Autowired
+	public ProcessVariableDeletedEventHandler(ProcessInstanceRepository processInstanceRepository,
+			EntityFinder entityFinder) {
+		this.processInstanceRepository = processInstanceRepository;
+		this.entityFinder = entityFinder;
+	}
 
-    public void handle(CloudVariableDeletedEvent event) {
-        String variableName = event.getEntity().getName();
-        String processInstanceId = event.getEntity().getProcessInstanceId();
-        // TODO complete this method
-        System.out.println("COMPLETE THIS METHOD PLS");
+	public void handle(CloudVariableDeletedEvent event) {
+		String variableName = event.getEntity().getName();
+		String processInstanceId = event.getEntity().getProcessInstanceId();
+		// TODO complete this method
 //        BooleanExpression predicate = QVariableEntity.variableEntity.processInstanceId.eq(processInstanceId)
 //                .and(
 //                        QVariableEntity.variableEntity.name.eq(variableName)
@@ -51,5 +50,5 @@ public class ProcessVariableDeletedEventHandler {
 //                                                             "Unable to find variableEntity with name '" + variableName + "' for process instance '" + processInstanceId + "'");
 //        variableEntity.setMarkedAsDeleted(true);
 //        variableRepository.save(variableEntity);
-    }
+	}
 }

@@ -36,7 +36,6 @@ public class ProcessVariableUpdateEventHandler {
 		String variableName = updatedVariableEntity.getName();
 		String processInstanceId = updatedVariableEntity.getProcessInstanceId();
 		// TODO complete this method pls
-		System.out.println("Complet this method pls");
 
 		// BooleanExpression predicate =
 		// QVariableEntity.variableEntity.name.eq(variableName)

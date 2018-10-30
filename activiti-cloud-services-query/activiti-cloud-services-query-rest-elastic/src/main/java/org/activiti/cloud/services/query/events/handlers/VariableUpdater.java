@@ -17,7 +17,7 @@
 package org.activiti.cloud.services.query.events.handlers;
 
 import org.activiti.cloud.services.query.app.repository.elastic.EntityFinder;
-import org.activiti.cloud.services.query.app.repository.elastic.VariableRepository;
+import org.activiti.cloud.services.query.app.repository.elastic.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.model.elastic.Variable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -29,14 +29,14 @@ public class VariableUpdater {
 
 	private final EntityFinder entityFinder;
 
-	private VariableRepository variableRepository;
+	private ProcessInstanceRepository processInstanceRepository;
 	private ElasticsearchOperations elasticsearchTemplate;
 
 	@Autowired
-	public VariableUpdater(EntityFinder entityFinder, VariableRepository variableRepository,
+	public VariableUpdater(EntityFinder entityFinder, ProcessInstanceRepository processInstanceRepository,
 			ElasticsearchOperations elasticsearchTemplate) {
 		this.entityFinder = entityFinder;
-		this.variableRepository = variableRepository;
+		this.processInstanceRepository = processInstanceRepository;
 		this.elasticsearchTemplate = elasticsearchTemplate;
 	}
 
@@ -46,7 +46,8 @@ public class VariableUpdater {
 		variableEntity.setType(updatedVariableEntity.getType());
 		variableEntity.setValue(updatedVariableEntity.getValue());
 
-		variableRepository.save(variableEntity);
+		// TODO implement this PLEASE!!!
+//		variableRepository.save(variableEntity);
 	}
 
 }

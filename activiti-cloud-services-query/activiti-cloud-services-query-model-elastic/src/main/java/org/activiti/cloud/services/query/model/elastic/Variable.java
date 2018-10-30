@@ -17,7 +17,7 @@
 package org.activiti.cloud.services.query.model.elastic;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.Objects;
 
 import javax.persistence.Convert;
 import javax.persistence.GeneratedValue;
@@ -25,12 +25,10 @@ import javax.persistence.GenerationType;
 
 import org.activiti.cloud.api.model.shared.CloudVariableInstance;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Document(indexName = "variable", type = "_doc")
 public class Variable extends ActivitiEntityMetadata implements CloudVariableInstance {
 
 	@Id
@@ -58,8 +56,6 @@ public class Variable extends ActivitiEntityMetadata implements CloudVariableIns
 
 	private Boolean markedAsDeleted = false;
 
-	private Set<Variable> variables;
-
 	@JsonIgnore
 	private Task task;
 
@@ -69,9 +65,20 @@ public class Variable extends ActivitiEntityMetadata implements CloudVariableIns
 	public Variable() {
 	}
 
-	public Variable(String id, String type, String name, String processInstanceId, String serviceName,
-			String serviceFullName, String serviceVersion, String appName, String appVersion, String taskId,
-			Date createTime, Date lastUpdatedTime, String executionId) {
+	public Variable(
+			String id,
+			String type,
+			String name,
+			String processInstanceId,
+			String serviceName,
+			String serviceFullName,
+			String serviceVersion,
+			String appName,
+			String appVersion,
+			String taskId,
+			Date createTime,
+			Date lastUpdatedTime,
+			String executionId) {
 		super(serviceName, serviceFullName, serviceVersion, appName, appVersion);
 		this.id = id;
 		this.type = type;
@@ -180,16 +187,33 @@ public class Variable extends ActivitiEntityMetadata implements CloudVariableIns
 		this.markedAsDeleted = markedAsDeleted;
 	}
 
-	public Set<Variable> getVariables() {
-		return variables;
-	}
-
-	public void setVariables(Set<Variable> variables) {
-		this.variables = variables;
-	}
-
 	@Override
 	public boolean isTaskVariable() {
 		return taskId != null;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.type, this.name, this.taskId, this.processInstanceId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Variable)) {
+			return false;
+		}
+
+		Variable other = (Variable) obj;
+		boolean basicCondition = other.type != null && other.type.equals(this.getType())
+				&& Objects.equals(other.name, this.name);
+		if (!basicCondition) {
+			return false;
+		}
+
+		if (other.isTaskVariable()) {
+			return other.isTaskVariable() == this.isTaskVariable() && Objects.equals(other.taskId, this.taskId);
+		}
+		return Objects.equals(other.processInstanceId, this.processInstanceId);
+	}
+
 }
