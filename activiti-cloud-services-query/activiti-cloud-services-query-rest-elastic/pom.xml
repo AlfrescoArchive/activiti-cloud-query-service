@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.activiti.cloud.query</groupId>
     <artifactId>activiti-cloud-services-query</artifactId>
-    <version>7.0.0-SNAPSHOT</version>
+    <version>7.0.41</version>
   </parent>
   <artifactId>activiti-cloud-services-query-rest-elastic</artifactId>
   <name>Activiti Cloud Query :: Services :: Query REST :: Elasticsearch</name>

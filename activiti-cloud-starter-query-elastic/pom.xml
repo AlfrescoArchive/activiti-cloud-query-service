@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.activiti.cloud.query</groupId>
     <artifactId>activiti-cloud-query-service-parent</artifactId>
-    <version>7.0.0-SNAPSHOT</version>
+    <version>7.0.41</version>
   </parent>
   <artifactId>activiti-cloud-starter-query-elastic</artifactId>
   <name>Activiti Cloud Query :: Starter :: Query :: Elastic</name>
