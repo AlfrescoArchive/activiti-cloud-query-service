@@ -42,9 +42,6 @@ public class ProcessInstance extends ActivitiEntityMetadata implements CloudProc
 //    @org.hibernate.annotations.ForeignKey(name = "none")
 //    private Set<TaskEntity> tasks;
 
-//    @OneToMany
-//    private Set<VariableEntity> variables;
-
 	private Map<String, Set<Variable>> variables;
 
 	public ProcessInstance() {
