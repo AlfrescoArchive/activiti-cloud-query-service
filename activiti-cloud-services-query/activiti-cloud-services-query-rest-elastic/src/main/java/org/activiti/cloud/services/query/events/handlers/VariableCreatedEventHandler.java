@@ -48,7 +48,6 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
 
 	private final ProcessInstanceRepository processInstanceRepository;
 	private final TaskRepository taskRepository;
-	private ElasticsearchTemplate esTemplate;
 	private Client esClient;
 	private ObjectMapper objectMapper;
 
@@ -58,7 +57,6 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
 			ObjectMapper objectMapper) {
 		this.processInstanceRepository = processInstanceRepository;
 		this.taskRepository = taskRepository;
-		this.esTemplate = esTemplate;
 		this.esClient = esClient;
 		this.objectMapper = objectMapper;
 	}
@@ -67,20 +65,12 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
 	public void handle(CloudRuntimeEvent<?, ?> event) {
 		CloudVariableCreatedEvent variableCreatedEvent = (CloudVariableCreatedEvent) event;
 		LOGGER.debug("Handling variableEntity created event: " + variableCreatedEvent.getEntity().getName());
-		Variable variableEntity = new Variable(
-				null,
-				variableCreatedEvent.getEntity().getType(),
-				variableCreatedEvent.getEntity().getName(), 
-				variableCreatedEvent.getEntity().getProcessInstanceId(),
-				variableCreatedEvent.getServiceName(),
-				variableCreatedEvent.getServiceFullName(),
-				variableCreatedEvent.getServiceVersion(),
-				variableCreatedEvent.getAppName(),
-				variableCreatedEvent.getAppVersion(),
-				variableCreatedEvent.getEntity().getTaskId(),
-				new Date(variableCreatedEvent.getTimestamp()),
-				new Date(variableCreatedEvent.getTimestamp()),
-				null);
+		Variable variableEntity = new Variable(null, variableCreatedEvent.getEntity().getType(),
+				variableCreatedEvent.getEntity().getName(), variableCreatedEvent.getEntity().getProcessInstanceId(),
+				variableCreatedEvent.getServiceName(), variableCreatedEvent.getServiceFullName(),
+				variableCreatedEvent.getServiceVersion(), variableCreatedEvent.getAppName(),
+				variableCreatedEvent.getAppVersion(), variableCreatedEvent.getEntity().getTaskId(),
+				new Date(variableCreatedEvent.getTimestamp()), new Date(variableCreatedEvent.getTimestamp()), null);
 		variableEntity.setValue(variableCreatedEvent.getEntity().getValue());
 
 		setProcessInstance(variableCreatedEvent, variableEntity);
