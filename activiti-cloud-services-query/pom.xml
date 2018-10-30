@@ -14,5 +14,8 @@
     <module>activiti-cloud-services-query-model</module>
     <module>activiti-cloud-services-query-repo</module>
     <module>activiti-cloud-services-query-rest</module>
+    <module>activiti-cloud-services-query-model-elastic</module>
+    <module>activiti-cloud-services-query-repo-elastic</module>
+    <module>activiti-cloud-services-query-rest-elastic</module>
   </modules>
 </project>
