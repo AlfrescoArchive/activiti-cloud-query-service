@@ -19,8 +19,10 @@ package org.activiti.cloud.services.query.rest;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
+import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.QVariableEntity;
+import org.activiti.cloud.services.query.model.TaskEntity;
 import org.activiti.cloud.services.query.model.VariableEntity;
 import org.activiti.cloud.services.query.resources.VariableResource;
 import org.activiti.cloud.services.query.rest.assembler.VariableResourceAssembler;
@@ -35,6 +37,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping(
@@ -51,13 +55,17 @@ public class TaskVariableController {
 
     private AlfrescoPagedResourcesAssembler<VariableEntity> pagedResourcesAssembler;
 
+    private final TaskRepository taskRepository;
+
     @Autowired
     public TaskVariableController(VariableRepository variableRepository,
+                                  TaskRepository taskRepository,
                                   VariableResourceAssembler variableResourceAssembler,
                                   AlfrescoPagedResourcesAssembler<VariableEntity> pagedResourcesAssembler) {
         this.variableRepository = variableRepository;
         this.variableResourceAssembler = variableResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
+        this.taskRepository = taskRepository;
     }
 
     @RequestMapping(value = "/variables", method = RequestMethod.GET)
@@ -67,6 +75,12 @@ public class TaskVariableController {
 
         QVariableEntity variable = QVariableEntity.variableEntity;
         BooleanExpression expression = variable.taskId.eq(taskId);
+
+
+        Optional<TaskEntity> task = taskRepository.findById(taskId);
+        if (task.isPresent() && task.get().getProcessInstanceId()!=null) {
+            expression = expression.or(variable.processInstanceId.eq(task.get().getProcessInstanceId()));
+        }
 
         Predicate extendedPredicated = expression;
         if (predicate != null) {
