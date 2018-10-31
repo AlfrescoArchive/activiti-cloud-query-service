@@ -29,10 +29,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.activiti.cloud.alfresco.argument.resolver.AlfrescoPageRequest;
+import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
+import org.activiti.cloud.services.query.model.TaskEntity;
 import org.activiti.cloud.services.query.model.VariableEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,6 +68,8 @@ public class TaskEntityVariableEntityControllerIT {
 
     @MockBean
     private VariableRepository variableRepository;
+    @MockBean
+    private TaskRepository taskRepository;
 
     @Test
     public void getVariablesShouldReturnAllResultsUsingAlfrescoMetadataWhenMediaTypeIsApplicationJson() throws Exception {
@@ -89,6 +94,7 @@ public class TaskEntityVariableEntityControllerIT {
         variableEntity.setValue("John");
         given(variableRepository.findAll(any(), eq(pageRequest)))
                 .willReturn(new PageImpl<>(Collections.singletonList(variableEntity), pageRequest, 12));
+        given(taskRepository.findOne(any())).willReturn(Optional.of(new TaskEntity()));
 
         //when
         MvcResult result = mockMvc.perform(get("/v1/tasks/{taskId}/variables?skipCount=11&maxItems=10",
