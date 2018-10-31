@@ -86,6 +86,8 @@ public class QueryTaskEntityVariablesIT {
 
     private Task task;
 
+    private ProcessInstance runningProcessInstance;
+
     @Before
     public void setUp() {
         eventsAggregator = new EventsAggregator(producer);
@@ -93,7 +95,7 @@ public class QueryTaskEntityVariablesIT {
         taskEventContainedBuilder = new TaskEventContainedBuilder(eventsAggregator);
         variableEventContainedBuilder = new VariableEventContainedBuilder(eventsAggregator);
 
-        ProcessInstance runningProcessInstance = processInstanceEventContainedBuilder.aRunningProcessInstance("Process with variables");
+        runningProcessInstance = processInstanceEventContainedBuilder.aRunningProcessInstance("Process with variables");
 
         task = taskEventContainedBuilder.aCreatedTask("Created task",
                                                       runningProcessInstance);
@@ -156,6 +158,42 @@ public class QueryTaskEntityVariablesIT {
                                     "varDeleted",
                                     "v1",
                                     true)
+                    );
+        });
+    }
+
+    @Test
+    public void shouldRetrieveProcessVariablesForTask() {
+        //given
+
+        variableEventContainedBuilder.aCreatedVariable("varCreated",
+                "v3",
+                "string")
+                .onProcessInstance(runningProcessInstance);
+
+        eventsAggregator.sendAll();
+
+        await().untilAsserted(() -> {
+
+            //when
+            ResponseEntity<PagedResources<VariableEntity>> responseEntity = testRestTemplate.exchange(VARIABLES_URL,
+                    HttpMethod.GET,
+                    keycloakTokenProducer.entityWithAuthorizationHeader(),
+                    PAGED_VARIABLE_RESPONSE_TYPE,
+                    task.getId());
+
+            //then
+            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(responseEntity.getBody().getContent())
+                    .extracting(
+                            VariableEntity::getName,
+                            VariableEntity::getValue,
+                            VariableEntity::getMarkedAsDeleted)
+                    .containsExactly(
+                            tuple(
+                                    "varCreated",
+                                    "v3",
+                                    false)
                     );
         });
     }
