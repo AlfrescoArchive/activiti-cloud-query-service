@@ -16,41 +16,36 @@
 
 package org.activiti.cloud.services.query.events.handlers;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
-import org.activiti.cloud.api.model.shared.events.CloudVariableDeletedEvent;
+import com.querydsl.core.types.Predicate;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskVariableRepository;
-import org.activiti.cloud.services.query.model.QTaskVariableEntity;
 import org.activiti.cloud.services.query.model.TaskVariableEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TaskVariableDeletedEventHandler {
-
-    private final TaskVariableRepository variableRepository;
+public class TaskVariableUpdater {
 
     private final EntityFinder entityFinder;
 
+    private TaskVariableRepository variableRepository;
+
     @Autowired
-    public TaskVariableDeletedEventHandler(TaskVariableRepository variableRepository,
-                                           EntityFinder entityFinder) {
-        this.variableRepository = variableRepository;
+    public TaskVariableUpdater(EntityFinder entityFinder,
+                           TaskVariableRepository variableRepository) {
         this.entityFinder = entityFinder;
+        this.variableRepository = variableRepository;
     }
 
-    public void handle(CloudVariableDeletedEvent event) {
-        String variableName = event.getEntity().getName();
-        String taskId = event.getEntity().getTaskId();
-        BooleanExpression predicate = QTaskVariableEntity.taskVariableEntity.taskId.eq(taskId)
-                .and(
-                        QTaskVariableEntity.taskVariableEntity.name.eq(variableName)
-
-                ).and(QTaskVariableEntity.taskVariableEntity.markedAsDeleted.eq(Boolean.FALSE));
+    public void update(TaskVariableEntity updatedVariableEntity, Predicate predicate, String notFoundMessage) {
         TaskVariableEntity variableEntity = entityFinder.findOne(variableRepository,
                                                              predicate,
-                                                             "Unable to find variableEntity with name '" + variableName + "' for task '" + taskId + "'");
-        variableEntity.setMarkedAsDeleted(true);
+                                                             notFoundMessage);
+        variableEntity.setLastUpdatedTime(updatedVariableEntity.getLastUpdatedTime());
+        variableEntity.setType(updatedVariableEntity.getType());
+        variableEntity.setValue(updatedVariableEntity.getValue());
+
         variableRepository.save(variableEntity);
     }
+
 }

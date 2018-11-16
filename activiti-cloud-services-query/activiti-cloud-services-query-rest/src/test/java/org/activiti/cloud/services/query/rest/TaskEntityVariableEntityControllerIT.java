@@ -32,8 +32,8 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.activiti.cloud.alfresco.argument.resolver.AlfrescoPageRequest;
-import org.activiti.cloud.services.query.app.repository.VariableRepository;
-import org.activiti.cloud.services.query.model.VariableEntity;
+import org.activiti.cloud.services.query.app.repository.TaskVariableRepository;
+import org.activiti.cloud.services.query.model.TaskVariableEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +64,7 @@ public class TaskEntityVariableEntityControllerIT {
     private MockMvc mockMvc;
 
     @MockBean
-    private VariableRepository variableRepository;
+    private TaskVariableRepository variableRepository;
 
     @Test
     public void getVariablesShouldReturnAllResultsUsingAlfrescoMetadataWhenMediaTypeIsApplicationJson() throws Exception {
@@ -73,7 +73,7 @@ public class TaskEntityVariableEntityControllerIT {
                                                                   10,
                                                                   PageRequest.of(0,
                                                                                  20));
-        VariableEntity variableEntity = new VariableEntity(1L,
+        TaskVariableEntity variableEntity = new TaskVariableEntity(1L,
         		                                           String.class.getName(),
                                                            "firstName",
                                                            UUID.randomUUID().toString(),
