@@ -280,4 +280,79 @@ public class QueryAdminVariablesIT {
                     );
         });
     }
+    
+    //Test a case when a processInstance and a task have variable with the same name
+    @Test
+    public void shouldFilterOnProcessAndTaskVariableName() {
+
+        //given
+        variableEventContainedBuilder.aCreatedVariable("var1",
+                                                       "pv1",
+                                                       "string")
+                .onProcessInstance(runningProcessInstance);
+        
+        variableEventContainedBuilder.aCreatedVariable("var2",
+                                                       "pv2",
+                                                       "string")
+                .onProcessInstance(runningProcessInstance);
+        
+        Task task = taskEventContainedBuilder.aCreatedTask("Created task",
+                                                           runningProcessInstance);
+        
+        //One of task variables has same name like processInstance variable
+        variableEventContainedBuilder.aCreatedVariable("var1",
+                                                       "tv1",
+                                                       "string")
+                .onTask(task);
+        variableEventContainedBuilder.aCreatedVariable("var2",
+                                                       "tv2",
+                                                       "string")
+                .onTask(task);
+        variableEventContainedBuilder.aCreatedVariable("var3",
+                                                       "v3",
+                                                       "string")
+                .onTask(task);
+
+        eventsAggregator.sendAll();
+
+        await().untilAsserted(() -> {
+
+            //when
+            ResponseEntity<PagedResources<TaskVariableEntity>> taskResponseEntity = testRestTemplate.exchange(ADMIN_TASK_VARIABLES_URL + "?name={varName}",
+                                                                                                          HttpMethod.GET,
+                                                                                                          keycloakTokenProducer.entityWithAuthorizationHeader(),
+                                                                                                          PAGED_TASKVARIABLE_RESPONSE_TYPE,
+                                                                                                          task.getId(),
+                                                                                                          "var1");
+            //then
+            assertThat(taskResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(taskResponseEntity.getBody().getContent())
+                    .extracting(
+                            TaskVariableEntity::getName,
+                            TaskVariableEntity::getValue)
+                    .containsExactly(
+                            tuple("var1",
+                                   "tv1")
+                    );
+            
+            //when
+            ResponseEntity<PagedResources<VariableEntity>> processResponseEntity = testRestTemplate.exchange(ADMIN_PROCESS_VARIABLES_URL +  "?name={varName}",
+                                                                                                      HttpMethod.GET,
+                                                                                                      keycloakTokenProducer.entityWithAuthorizationHeader(),
+                                                                                                      PAGED_PROCESSVARIABLE_RESPONSE_TYPE,
+                                                                                                      runningProcessInstance.getId(),
+                                                                                                      "var1");
+
+            //then
+            assertThat(processResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(processResponseEntity.getBody().getContent())
+                    .extracting(
+                            VariableEntity::getName,
+                            VariableEntity::getValue)
+                    .containsExactly(
+                            tuple("var1",
+                                   "pv1")
+                    );
+        });
+    }
 }
