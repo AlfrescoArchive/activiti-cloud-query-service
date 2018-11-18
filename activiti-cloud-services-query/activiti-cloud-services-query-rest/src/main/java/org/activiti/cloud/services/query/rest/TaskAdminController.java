@@ -17,12 +17,18 @@
 package org.activiti.cloud.services.query.rest;
 
 import com.querydsl.core.types.Predicate;
+import org.activiti.api.runtime.shared.security.SecurityManager;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
+import org.activiti.cloud.services.query.model.QTaskEntity;
 import org.activiti.cloud.services.query.model.TaskEntity;
 import org.activiti.cloud.services.query.resources.TaskResource;
 import org.activiti.cloud.services.query.rest.assembler.TaskResourceAssembler;
+import org.activiti.cloud.services.security.ActivitiForbiddenException;
+import org.activiti.cloud.services.security.TaskLookupRestrictionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,7 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(
-        value = "/admin/v1/tasks",
+        value = "/admin/v1/" + TaskRelProvider.COLLECTION_RESOURCE_REL,
         produces = {
                 MediaTypes.HAL_JSON_VALUE,
                 MediaType.APPLICATION_JSON_VALUE
@@ -52,8 +58,16 @@ public class TaskAdminController {
     private TaskResourceAssembler taskResourceAssembler;
 
     private AlfrescoPagedResourcesAssembler<TaskEntity> pagedResourcesAssembler;
-    
+
     private EntityFinder entityFinder;
+
+    private EntityFinder entityFinder;
+
+    private TaskLookupRestrictionService taskLookupRestrictionService;
+
+    private SecurityManager securityManager;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskAdminController.class);
 
     @Autowired
     public TaskAdminController(TaskRepository taskRepository,
@@ -65,6 +79,13 @@ public class TaskAdminController {
         this.pagedResourcesAssembler = pagedResourcesAssembler;
         this.entityFinder = entityFinder;
     }
+
+    @ExceptionHandler(ActivitiForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handleAppException(ActivitiForbiddenException ex) {
+        return ex.getMessage();
+    }
+
 
     @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -83,7 +104,7 @@ public class TaskAdminController {
                                                   page,
                                                   taskResourceAssembler);
     }
-    
+
 
     @RequestMapping(value = "/{taskId}", method = RequestMethod.GET)
     public TaskResource findById(@PathVariable String taskId) {
@@ -91,7 +112,7 @@ public class TaskAdminController {
         TaskEntity taskEntity = entityFinder.findById(taskRepository,
                                                       taskId,
                                                       "Unable to find taskEntity for the given id:'" + taskId + "'");
-   
+
         return taskResourceAssembler.toResource(taskEntity);
     }
 
