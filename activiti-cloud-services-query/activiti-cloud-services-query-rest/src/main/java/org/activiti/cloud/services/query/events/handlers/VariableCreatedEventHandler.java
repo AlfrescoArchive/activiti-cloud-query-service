@@ -26,10 +26,10 @@ import org.activiti.cloud.api.model.shared.events.CloudVariableCreatedEvent;
 import org.activiti.cloud.services.query.app.repository.TaskVariableRepository;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
+import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.activiti.cloud.services.query.model.QueryException;
 import org.activiti.cloud.services.query.model.TaskEntity;
 import org.activiti.cloud.services.query.model.TaskVariableEntity;
-import org.activiti.cloud.services.query.model.VariableEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +109,7 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
         ProcessInstanceEntity processInstanceEntity= getProcessInstance(variableCreatedEvent);
         
         //Check that valid
-        VariableEntity variableEntity = new VariableEntity(null, 
+        ProcessVariableEntity variableEntity = new ProcessVariableEntity(null, 
                                                            variableCreatedEvent.getEntity().getType(),
                                                            variableCreatedEvent.getEntity().getName(),
                                                            variableCreatedEvent.getEntity().getProcessInstanceId(),
@@ -118,7 +118,6 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
                                                            variableCreatedEvent.getServiceVersion(),
                                                            variableCreatedEvent.getAppName(),
                                                            variableCreatedEvent.getAppVersion(),
-                                                           variableCreatedEvent.getEntity().getTaskId(),
                                                            new Date(variableCreatedEvent.getTimestamp()),
                                                            new Date(variableCreatedEvent.getTimestamp()),
                                                            null);

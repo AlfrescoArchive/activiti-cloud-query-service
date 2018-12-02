@@ -20,8 +20,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.api.model.shared.events.CloudVariableDeletedEvent;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
-import org.activiti.cloud.services.query.model.QVariableEntity;
-import org.activiti.cloud.services.query.model.VariableEntity;
+import org.activiti.cloud.services.query.model.ProcessVariableEntity;
+import org.activiti.cloud.services.query.model.QProcessVariableEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,12 +42,12 @@ public class ProcessVariableDeletedEventHandler {
     public void handle(CloudVariableDeletedEvent event) {
         String variableName = event.getEntity().getName();
         String processInstanceId = event.getEntity().getProcessInstanceId();
-        BooleanExpression predicate = QVariableEntity.variableEntity.processInstanceId.eq(processInstanceId)
+        BooleanExpression predicate = QProcessVariableEntity.processVariableEntity.processInstanceId.eq(processInstanceId)
                 .and(
-                        QVariableEntity.variableEntity.name.eq(variableName)
+                        QProcessVariableEntity.processVariableEntity.name.eq(variableName)
 
-                ).and(QVariableEntity.variableEntity.markedAsDeleted.eq(Boolean.FALSE));
-        VariableEntity variableEntity = entityFinder.findOne(variableRepository,
+                ).and(QProcessVariableEntity.processVariableEntity.markedAsDeleted.eq(Boolean.FALSE));
+        ProcessVariableEntity variableEntity = entityFinder.findOne(variableRepository,
                                                              predicate,
                                                              "Unable to find variableEntity with name '" + variableName + "' for process instance '" + processInstanceId + "'");
         variableEntity.setMarkedAsDeleted(true);

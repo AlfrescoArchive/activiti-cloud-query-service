@@ -17,7 +17,7 @@
 package org.activiti.cloud.services.query.events.handlers;
 
 import com.querydsl.core.types.Predicate;
-import org.activiti.cloud.services.query.model.VariableEntity;
+import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -45,7 +45,7 @@ public class ProcessVariableEntityUpdateEventHandlerTest {
     @Test
     public void handleShouldUpdateVariable() {
         //given
-        VariableEntity variableEntity = new VariableEntity();
+        ProcessVariableEntity variableEntity = new ProcessVariableEntity();
         variableEntity.setName("var");
         variableEntity.setValue("v1");
         variableEntity.setProcessInstanceId("10");

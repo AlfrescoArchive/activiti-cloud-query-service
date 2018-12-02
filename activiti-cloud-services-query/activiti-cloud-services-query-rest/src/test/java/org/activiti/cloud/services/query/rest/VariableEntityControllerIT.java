@@ -32,7 +32,7 @@ import org.activiti.api.runtime.shared.security.SecurityManager;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
-import org.activiti.cloud.services.query.model.VariableEntity;
+import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.activiti.cloud.services.security.SecurityPoliciesApplicationServiceImpl;
 import org.activiti.cloud.services.security.TaskLookupRestrictionService;
 import org.junit.Test;
@@ -82,7 +82,7 @@ public class VariableEntityControllerIT {
     @Test
     public void findByIdShouldUseAlfrescoMetadataWhenMediaTypeIsApplicationJson() throws Exception {
         //given
-        VariableEntity variableEntity = new VariableEntity(1L,
+        ProcessVariableEntity variableEntity = new ProcessVariableEntity(1L,
                 String.class.getName(),
                 "firstName",
                 UUID.randomUUID().toString(),
@@ -91,7 +91,6 @@ public class VariableEntityControllerIT {
                 "1",
                 null,
                 null,
-                UUID.randomUUID().toString(),
                 new Date(),
                 new Date(),
                 UUID.randomUUID().toString());

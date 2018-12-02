@@ -33,7 +33,7 @@ import java.util.UUID;
 
 import org.activiti.cloud.alfresco.argument.resolver.AlfrescoPageRequest;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
-import org.activiti.cloud.services.query.model.VariableEntity;
+import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,13 +74,12 @@ public class ProcessInstanceEntityVariableEntityControllerIT {
                                                                   PageRequest.of(0,
                                                                                  20));
 
-        VariableEntity variableEntity = new VariableEntity(1L,String.class.getName(),
+        ProcessVariableEntity variableEntity = new ProcessVariableEntity(1L,String.class.getName(),
                                                            "firstName",
                                                            UUID.randomUUID().toString(),
                                                            "My app",
                                                            "My app",
                                                            "1",
-                                                           null,
                                                            null,
                                                            null,
                                                            new Date(),

@@ -17,20 +17,17 @@
 package org.activiti.cloud.services.query.rest;
 
 
+import org.activiti.api.runtime.shared.security.SecurityManager;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
-import org.activiti.cloud.services.query.model.QTaskEntity;
-import org.activiti.cloud.services.query.model.TaskEntity;
-import org.activiti.cloud.services.query.model.VariableEntity;
+import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.activiti.cloud.services.query.resources.VariableResource;
 import org.activiti.cloud.services.query.rest.assembler.VariableResourceAssembler;
 import org.activiti.cloud.services.security.ActivitiForbiddenException;
 import org.activiti.cloud.services.security.SecurityPoliciesApplicationServiceImpl;
 import org.activiti.cloud.services.security.TaskLookupRestrictionService;
-
-import org.activiti.api.runtime.shared.security.SecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +98,7 @@ public class VariableController {
     @RequestMapping(value = "/{variableId}", method = RequestMethod.GET)
     public VariableResource findById(@PathVariable long variableId) {
 
-        VariableEntity variableEntity = entityFinder.findById(variableRepository,
+        ProcessVariableEntity variableEntity = entityFinder.findById(variableRepository,
                                                               variableId,
                                                               "Unable to find variableEntity for the given id:'" + variableId + "'");
 
@@ -111,16 +108,6 @@ public class VariableController {
                                                             processInstanceEntity.getServiceName())) {
                 LOGGER.debug("User " + securityManager.getAuthenticatedUserId() + " not permitted to access definition " + processInstanceEntity.getProcessDefinitionKey());
                 throw new ActivitiForbiddenException("Operation not permitted for " + processInstanceEntity.getProcessDefinitionKey());
-            }
-        }
-
-        if (variableEntity.getTask() != null) {
-            TaskEntity taskEntity = variableEntity.getTask();
-            //do restricted query and check if still able to see it
-            Iterable<TaskEntity> taskIterable = taskRepository.findAll(taskLookupRestrictionService.restrictTaskQuery(QTaskEntity.taskEntity.id.eq(taskEntity.getId())));
-            if (!taskIterable.iterator().hasNext()) {
-                LOGGER.debug("User " + securityManager.getAuthenticatedUserId() + " not permitted to access taskEntity " + taskEntity.getId());
-                throw new ActivitiForbiddenException("Operation not permitted for " + taskEntity.getId());
             }
         }
 

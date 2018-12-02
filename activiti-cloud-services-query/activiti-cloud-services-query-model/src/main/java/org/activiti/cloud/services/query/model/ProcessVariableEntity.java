@@ -18,38 +18,23 @@ package org.activiti.cloud.services.query.model;
 
 import java.util.Date;
 
-import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-@Entity(name="TaskVariable")
-@Table(	name = "TASKVARIABLE",
+@Entity(name="Variable")
+@Table(	name = "VARIABLE",
 		indexes = { 
 				@Index(name = "variable_processInstanceId_idx", columnList = "processInstanceId", unique = false), 
-				@Index(name = "variable_taskId_idx", columnList = "taskId", unique = false),
 				@Index(name = "variable_name_idx", columnList = "name", unique = false), 
 				@Index(name = "variable_executionId_idx", columnList = "executionId", unique = false) 
 		})
-public class TaskVariableEntity extends AbstractVariableEntity {
+public class ProcessVariableEntity extends AbstractVariableEntity {
 
-    private String taskId;
-    
-    @JsonIgnore
-    @ManyToOne(optional = true, fetch=FetchType.LAZY)
-    @JoinColumn(name = "taskId", referencedColumnName = "id", insertable = false, updatable = false, nullable = true
-            , foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
-    private TaskEntity task;
-
-    public TaskVariableEntity() {
+    public ProcessVariableEntity() {
     }
 
-    public TaskVariableEntity(Long id,
+    public ProcessVariableEntity(Long id,
                           String type,
                           String name,
                           String processInstanceId,
@@ -58,7 +43,6 @@ public class TaskVariableEntity extends AbstractVariableEntity {
                           String serviceVersion,
                           String appName,
                           String appVersion,
-                          String taskId,
                           Date createTime,
                           Date lastUpdatedTime,
                           String executionId) {
@@ -74,30 +58,17 @@ public class TaskVariableEntity extends AbstractVariableEntity {
               createTime,
               lastUpdatedTime,
               executionId);
-
-        this.taskId = taskId;
-    }
-
-    public TaskEntity getTask() {
-        return this.task;
-    }
-
-    public void setTask(TaskEntity taskEntity) {
-        this.task = taskEntity;
+        
     }
 
     @Override
     public String getTaskId() {
-        return taskId;
+        return null;
     }
     
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
-    }
-
     @Override
     public boolean isTaskVariable() {
-        return true;
+        return false;
     }
-    
+
 }

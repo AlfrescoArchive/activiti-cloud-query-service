@@ -32,9 +32,9 @@ import org.activiti.cloud.api.model.shared.impl.events.CloudVariableCreatedEvent
 import org.activiti.cloud.services.query.app.repository.TaskVariableRepository;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
+import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.activiti.cloud.services.query.model.TaskEntity;
 import org.activiti.cloud.services.query.model.TaskVariableEntity;
-import org.activiti.cloud.services.query.model.VariableEntity;
 import org.activiti.test.Assertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,17 +75,17 @@ public class VariableEntityCreatedEventHandlerTest {
         handler.handle(event);
 
         //then
-        ArgumentCaptor<VariableEntity> captor = ArgumentCaptor.forClass(VariableEntity.class);
+        ArgumentCaptor<ProcessVariableEntity> captor = ArgumentCaptor.forClass(ProcessVariableEntity.class);
         verify(variableRepository).save(captor.capture());
 
-        VariableEntity variableEntity = captor.getValue();
+        ProcessVariableEntity variableEntity = captor.getValue();
 
         Assertions.assertThat(variableEntity)
                 .hasProcessInstanceId(event.getEntity().getProcessInstanceId())
                 .hasName(event.getEntity().getName())
                 .hasTaskId(event.getEntity().getTaskId())
                 .hasType(event.getEntity().getType())
-                .hasTask(null)
+                .isNotTaskVariable()
                 .hasProcessInstance(processInstanceEntity);
     }
 
