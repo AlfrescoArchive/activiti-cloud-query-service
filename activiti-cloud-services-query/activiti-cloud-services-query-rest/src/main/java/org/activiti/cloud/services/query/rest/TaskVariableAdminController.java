@@ -19,6 +19,7 @@ package org.activiti.cloud.services.query.rest;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
+import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskVariableRepository;
 import org.activiti.cloud.services.query.model.QTaskVariableEntity;
 import org.activiti.cloud.services.query.model.TaskVariableEntity;
@@ -52,14 +53,18 @@ public class TaskVariableAdminController {
     private TaskVariableRepository variableRepository;
 
     private TaskVariableResourceAssembler variableResourceAssembler;
+    
+    private EntityFinder entityFinder;
 
     @Autowired
     public TaskVariableAdminController(TaskVariableRepository variableRepository,
                                    TaskVariableResourceAssembler variableResourceAssembler,
-                                   AlfrescoPagedResourcesAssembler<TaskVariableEntity> pagedVariablesResourcesAssembler) {
+                                   AlfrescoPagedResourcesAssembler<TaskVariableEntity> pagedVariablesResourcesAssembler,
+                                   EntityFinder entityFinder) {
         this.variableRepository = variableRepository;
         this.variableResourceAssembler = variableResourceAssembler;
         this.pagedVariablesResourcesAssembler = pagedVariablesResourcesAssembler;
+        this.entityFinder = entityFinder;
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -87,6 +92,17 @@ public class TaskVariableAdminController {
                                                            variableRepository.findAll(extendedPredicated,
                                                                                       pageable),
                                                            variableResourceAssembler); 
+    }
+    
+    @RequestMapping(value = "/{variableId}", method = RequestMethod.GET)
+    public VariableResource findById(@PathVariable long variableId) {
+
+        TaskVariableEntity variableEntity = entityFinder.findById(variableRepository,
+                                                              variableId,
+                                                              "Unable to find variableEntity for the given id:'" + variableId + "'");
+
+    
+        return variableResourceAssembler.toResource(variableEntity);
     }
 }
 

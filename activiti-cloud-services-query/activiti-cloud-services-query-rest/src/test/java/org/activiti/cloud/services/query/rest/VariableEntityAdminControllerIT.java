@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.activiti.cloud.alfresco.argument.resolver.AlfrescoPageRequest;
+import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskVariableRepository;
 import org.activiti.cloud.services.query.model.TaskVariableEntity;
 import org.junit.Test;
@@ -64,6 +65,9 @@ public class VariableEntityAdminControllerIT {
 
     @MockBean
     private TaskVariableRepository variableRepository;
+    
+    @MockBean
+    private EntityFinder entityFinder;
 
     @Test
     public void findAllShouldReturnAllResultsUsingAlfrescoMetadataWhenMediaTypeIsApplicationJson() throws Exception {

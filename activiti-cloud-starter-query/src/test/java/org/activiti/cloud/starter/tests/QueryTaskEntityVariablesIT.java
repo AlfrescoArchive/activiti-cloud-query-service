@@ -59,6 +59,9 @@ public class QueryTaskEntityVariablesIT {
 
     private static final ParameterizedTypeReference<PagedResources<TaskVariableEntity>> PAGED_VARIABLE_RESPONSE_TYPE = new ParameterizedTypeReference<PagedResources<TaskVariableEntity>>() {
     };
+    
+    private static final ParameterizedTypeReference<TaskVariableEntity> VARIABLE_RESPONSE_TYPE = new ParameterizedTypeReference<TaskVariableEntity>() {
+    };
 
     @Autowired
     private KeycloakTokenProducer keycloakTokenProducer;
@@ -212,4 +215,6 @@ public class QueryTaskEntityVariablesIT {
          //then
          assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
+    
+
 }

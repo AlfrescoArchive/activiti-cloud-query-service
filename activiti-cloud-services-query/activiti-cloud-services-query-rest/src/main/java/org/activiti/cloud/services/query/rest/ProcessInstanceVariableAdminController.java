@@ -19,11 +19,12 @@ package org.activiti.cloud.services.query.rest;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
+import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.activiti.cloud.services.query.model.QProcessVariableEntity;
 import org.activiti.cloud.services.query.resources.VariableResource;
-import org.activiti.cloud.services.query.rest.assembler.VariableResourceAssembler;
+import org.activiti.cloud.services.query.rest.assembler.ProcessInstanceVariableResourceAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
@@ -45,21 +46,25 @@ import org.springframework.web.bind.annotation.RestController;
                 MediaTypes.HAL_JSON_VALUE,
                 MediaType.APPLICATION_JSON_VALUE
         })
-public class VariableAdminController {
+public class ProcessInstanceVariableAdminController {
 
     private AlfrescoPagedResourcesAssembler<ProcessVariableEntity> pagedVariablesResourcesAssembler;
 
     private VariableRepository variableRepository;
 
-    private VariableResourceAssembler variableResourceAssembler;
+    private ProcessInstanceVariableResourceAssembler variableResourceAssembler;
+    
+    private EntityFinder entityFinder;
 
     @Autowired
-    public VariableAdminController(VariableRepository variableRepository,
-                                   VariableResourceAssembler variableResourceAssembler,
-                                   AlfrescoPagedResourcesAssembler<ProcessVariableEntity> pagedVariablesResourcesAssembler) {
+    public ProcessInstanceVariableAdminController(VariableRepository variableRepository,
+                                   ProcessInstanceVariableResourceAssembler variableResourceAssembler,
+                                   AlfrescoPagedResourcesAssembler<ProcessVariableEntity> pagedVariablesResourcesAssembler,
+                                   EntityFinder entityFinder) {
         this.variableRepository = variableRepository;
         this.variableResourceAssembler = variableResourceAssembler;
         this.pagedVariablesResourcesAssembler = pagedVariablesResourcesAssembler;
+        this.entityFinder=entityFinder;
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -85,6 +90,17 @@ public class VariableAdminController {
                                                            variableRepository.findAll(extendedPredicated,
                                                                                       pageable),
                                                            variableResourceAssembler);
+    }
+    
+    @RequestMapping(value = "/{variableId}", method = RequestMethod.GET)
+    public VariableResource findById(@PathVariable long variableId) {
+
+        ProcessVariableEntity variableEntity = entityFinder.findById(variableRepository,
+                                                              variableId,
+                                                              "Unable to find variableEntity for the given id:'" + variableId + "'");
+
+    
+        return variableResourceAssembler.toResource(variableEntity);
     }
    
 }

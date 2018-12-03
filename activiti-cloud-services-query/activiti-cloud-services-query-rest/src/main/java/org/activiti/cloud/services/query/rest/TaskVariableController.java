@@ -19,6 +19,7 @@ package org.activiti.cloud.services.query.rest;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
+import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskVariableRepository;
 import org.activiti.cloud.services.query.model.QTaskVariableEntity;
 import org.activiti.cloud.services.query.model.TaskVariableEntity;
@@ -50,14 +51,18 @@ public class TaskVariableController {
     private TaskVariableResourceAssembler variableResourceAssembler;
 
     private AlfrescoPagedResourcesAssembler<TaskVariableEntity> pagedResourcesAssembler;
+    
+    private EntityFinder entityFinder;
 
     @Autowired
     public TaskVariableController(TaskVariableRepository variableRepository,
                                   TaskVariableResourceAssembler variableResourceAssembler,
-                                  AlfrescoPagedResourcesAssembler<TaskVariableEntity> pagedResourcesAssembler) {
+                                  AlfrescoPagedResourcesAssembler<TaskVariableEntity> pagedResourcesAssembler,
+                                  EntityFinder entityFinder) {
         this.variableRepository = variableRepository;
         this.variableResourceAssembler = variableResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
+        this.entityFinder = entityFinder;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -79,5 +84,16 @@ public class TaskVariableController {
         return pagedResourcesAssembler.toResource(pageable,
                                                   variables,
                                                   variableResourceAssembler);
+    }
+    
+    @RequestMapping(value = "/{variableId}", method = RequestMethod.GET)
+    public VariableResource findById(@PathVariable long variableId) {
+
+        TaskVariableEntity variableEntity = entityFinder.findById(variableRepository,
+                                                              variableId,
+                                                              "Unable to find variableEntity for the given id:'" + variableId + "'");
+
+    
+        return variableResourceAssembler.toResource(variableEntity);
     }
 }

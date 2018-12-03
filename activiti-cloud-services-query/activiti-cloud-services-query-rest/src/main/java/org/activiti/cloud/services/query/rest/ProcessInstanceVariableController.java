@@ -19,11 +19,12 @@ package org.activiti.cloud.services.query.rest;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
+import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.activiti.cloud.services.query.model.QProcessVariableEntity;
 import org.activiti.cloud.services.query.resources.VariableResource;
-import org.activiti.cloud.services.query.rest.assembler.VariableResourceAssembler;
+import org.activiti.cloud.services.query.rest.assembler.ProcessInstanceVariableResourceAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,17 +48,21 @@ public class ProcessInstanceVariableController {
 
     private final VariableRepository variableRepository;
 
-    private VariableResourceAssembler variableResourceAssembler;
+    private ProcessInstanceVariableResourceAssembler variableResourceAssembler;
 
     private AlfrescoPagedResourcesAssembler<ProcessVariableEntity> pagedResourcesAssembler;
+    
+    private EntityFinder entityFinder;
 
     @Autowired
-    public ProcessInstanceVariableController(VariableResourceAssembler variableResourceAssembler,
+    public ProcessInstanceVariableController(ProcessInstanceVariableResourceAssembler variableResourceAssembler,
                                              VariableRepository variableRepository,
-                                             AlfrescoPagedResourcesAssembler<ProcessVariableEntity> pagedResourcesAssembler) {
+                                             AlfrescoPagedResourcesAssembler<ProcessVariableEntity> pagedResourcesAssembler,
+                                             EntityFinder entityFinder) {
         this.variableRepository = variableRepository;
         this.variableResourceAssembler = variableResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
+        this.entityFinder=entityFinder;
     }
 
     @RequestMapping(value = "/variables", method = RequestMethod.GET)
@@ -80,4 +85,16 @@ public class ProcessInstanceVariableController {
                                                   variables,
                                                   variableResourceAssembler);
     }
+    
+  
+    @RequestMapping(value = "/variables/{variableId}", method = RequestMethod.GET)
+    public VariableResource findById(@PathVariable long variableId) {
+
+        ProcessVariableEntity variableEntity = entityFinder.findById(variableRepository,
+                                                              variableId,
+                                                              "Unable to find variableEntity for the given id:'" + variableId + "'");
+
+        return variableResourceAssembler.toResource(variableEntity);
+    }
+    
 }
