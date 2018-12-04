@@ -22,8 +22,8 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
-@Entity(name="Variable")
-@Table(	name = "VARIABLE",
+@Entity(name="ProcessVariable")
+@Table(	name = "PROCESS_VARIABLE",
 		indexes = { 
 				@Index(name = "variable_processInstanceId_idx", columnList = "processInstanceId", unique = false), 
 				@Index(name = "variable_name_idx", columnList = "name", unique = false), 

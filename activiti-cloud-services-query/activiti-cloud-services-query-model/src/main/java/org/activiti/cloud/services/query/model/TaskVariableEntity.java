@@ -29,7 +29,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="TaskVariable")
-@Table(	name = "TASKVARIABLE",
+@Table(	name = "TASK_VARIABLE",
 		indexes = { 
 				@Index(name = "variable_processInstanceId_idx", columnList = "processInstanceId", unique = false), 
 				@Index(name = "variable_taskId_idx", columnList = "taskId", unique = false),

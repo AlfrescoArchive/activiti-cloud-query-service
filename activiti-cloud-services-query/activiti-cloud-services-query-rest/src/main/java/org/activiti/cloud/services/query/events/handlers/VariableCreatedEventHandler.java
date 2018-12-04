@@ -59,12 +59,10 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
         LOGGER.debug("Handling variableEntity created event: " + variableCreatedEvent.getEntity().getName());
         
         try {
-           //Task variable
             if (variableCreatedEvent.getEntity().isTaskVariable()) {           
                 createTaskVariableEntity(variableCreatedEvent); 
             } else { 
-                //Process Variable
-                createVariableEntity(variableCreatedEvent); 
+                createProcessVariableEntity(variableCreatedEvent); 
             }
         
         } catch (Exception cause) {
@@ -74,12 +72,10 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
    
     }
    
-    //Create Task Variable
     private void createTaskVariableEntity(CloudVariableCreatedEvent variableCreatedEvent) {
         ProcessInstanceEntity processInstanceEntity= getProcessInstance(variableCreatedEvent);
         TaskEntity taskEntity = entityManager.getReference(TaskEntity.class,
                                                            variableCreatedEvent.getEntity().getTaskId());
-        //Check that valid
         
         TaskVariableEntity taskVariableEntity = new TaskVariableEntity(null, 
                                                            variableCreatedEvent.getEntity().getType(),
@@ -104,11 +100,9 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
  
     }
     
-    //Create Process Variable
-    private void createVariableEntity(CloudVariableCreatedEvent variableCreatedEvent) {
+    private void createProcessVariableEntity(CloudVariableCreatedEvent variableCreatedEvent) {
         ProcessInstanceEntity processInstanceEntity= getProcessInstance(variableCreatedEvent);
         
-        //Check that valid
         ProcessVariableEntity variableEntity = new ProcessVariableEntity(null, 
                                                            variableCreatedEvent.getEntity().getType(),
                                                            variableCreatedEvent.getEntity().getName(),
