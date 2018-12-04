@@ -35,7 +35,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class VariableEntityUpdaterTest {
 
     @InjectMocks
-    private VariableUpdater updater;
+    private ProcessVariableUpdater updater;
 
     @Mock
     private EntityFinder entityFinder;

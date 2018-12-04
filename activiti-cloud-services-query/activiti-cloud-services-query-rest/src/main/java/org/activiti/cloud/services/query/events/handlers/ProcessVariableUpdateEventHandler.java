@@ -25,10 +25,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProcessVariableUpdateEventHandler {
 
-    private final VariableUpdater variableUpdater;
+    private final ProcessVariableUpdater variableUpdater;
 
     @Autowired
-    public ProcessVariableUpdateEventHandler(VariableUpdater variableUpdater) {
+    public ProcessVariableUpdateEventHandler(ProcessVariableUpdater variableUpdater) {
         this.variableUpdater = variableUpdater;
     }
 

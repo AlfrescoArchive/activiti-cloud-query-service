@@ -35,7 +35,7 @@ public class ProcessVariableEntityUpdateEventHandlerTest {
     private ProcessVariableUpdateEventHandler handler;
 
     @Mock
-    private VariableUpdater variableUpdater;
+    private ProcessVariableUpdater variableUpdater;
 
     @Before
     public void setUp() {

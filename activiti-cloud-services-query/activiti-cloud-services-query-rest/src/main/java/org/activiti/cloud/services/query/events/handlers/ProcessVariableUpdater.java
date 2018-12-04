@@ -17,21 +17,21 @@
 package org.activiti.cloud.services.query.events.handlers;
 
 import com.querydsl.core.types.Predicate;
-import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
+import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class VariableUpdater {
+public class ProcessVariableUpdater {
 
     private final EntityFinder entityFinder;
 
     private VariableRepository variableRepository;
 
     @Autowired
-    public VariableUpdater(EntityFinder entityFinder,
+    public ProcessVariableUpdater(EntityFinder entityFinder,
                            VariableRepository variableRepository) {
         this.entityFinder = entityFinder;
         this.variableRepository = variableRepository;
