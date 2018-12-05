@@ -19,7 +19,6 @@ package org.activiti.cloud.services.query.rest;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
-import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.activiti.cloud.services.query.model.QProcessVariableEntity;
@@ -41,7 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(
-        value = "/admin/v1/process-instances/{processInstanceId}/"+VariableRelProvider.COLLECTION_RESOURCE_REL,
+        value = "/admin/v1/process-instances/{processInstanceId}/variables",
         produces = {
                 MediaTypes.HAL_JSON_VALUE,
                 MediaType.APPLICATION_JSON_VALUE
@@ -53,18 +52,14 @@ public class ProcessInstanceVariableAdminController {
     private VariableRepository variableRepository;
 
     private ProcessInstanceVariableResourceAssembler variableResourceAssembler;
-    
-    private EntityFinder entityFinder;
 
     @Autowired
     public ProcessInstanceVariableAdminController(VariableRepository variableRepository,
                                    ProcessInstanceVariableResourceAssembler variableResourceAssembler,
-                                   AlfrescoPagedResourcesAssembler<ProcessVariableEntity> pagedVariablesResourcesAssembler,
-                                   EntityFinder entityFinder) {
+                                   AlfrescoPagedResourcesAssembler<ProcessVariableEntity> pagedVariablesResourcesAssembler) {
         this.variableRepository = variableRepository;
         this.variableResourceAssembler = variableResourceAssembler;
         this.pagedVariablesResourcesAssembler = pagedVariablesResourcesAssembler;
-        this.entityFinder=entityFinder;
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -92,15 +87,5 @@ public class ProcessInstanceVariableAdminController {
                                                            variableResourceAssembler);
     }
     
-    @RequestMapping(value = "/{variableId}", method = RequestMethod.GET)
-    public VariableResource findById(@PathVariable long variableId) {
-
-        ProcessVariableEntity variableEntity = entityFinder.findById(variableRepository,
-                                                              variableId,
-                                                              "Unable to find variableEntity for the given id:'" + variableId + "'");
-
-    
-        return variableResourceAssembler.toResource(variableEntity);
-    }
-   
+  
 }

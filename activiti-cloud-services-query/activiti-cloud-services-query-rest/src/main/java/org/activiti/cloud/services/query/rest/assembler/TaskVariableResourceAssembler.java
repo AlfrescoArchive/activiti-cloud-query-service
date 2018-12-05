@@ -16,13 +16,8 @@
 
 package org.activiti.cloud.services.query.rest.assembler;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import org.activiti.cloud.services.query.model.TaskVariableEntity;
 import org.activiti.cloud.services.query.resources.VariableResource;
-import org.activiti.cloud.services.query.rest.TaskVariableController;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceAssembler;
 import org.springframework.stereotype.Component;
 
@@ -31,8 +26,7 @@ public class TaskVariableResourceAssembler implements ResourceAssembler<TaskVari
 
     @Override
     public VariableResource toResource(TaskVariableEntity entity) {
-        Link selfRel = linkTo(methodOn(TaskVariableController.class).findById(entity.getId())).withSelfRel();
-        return new VariableResource(entity, selfRel);
+       return new VariableResource(entity);
     }
 
 }

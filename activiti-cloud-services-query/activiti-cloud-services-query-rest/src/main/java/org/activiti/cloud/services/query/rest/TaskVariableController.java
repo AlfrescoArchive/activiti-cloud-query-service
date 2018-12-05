@@ -19,7 +19,6 @@ package org.activiti.cloud.services.query.rest;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
-import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskVariableRepository;
 import org.activiti.cloud.services.query.model.QTaskVariableEntity;
 import org.activiti.cloud.services.query.model.TaskVariableEntity;
@@ -39,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(
-        value = "/v1/tasks/{taskId}/"+VariableRelProvider.COLLECTION_RESOURCE_REL,
+        value = "/v1/tasks/{taskId}/variables",
         produces = {
                 MediaTypes.HAL_JSON_VALUE,
                 MediaType.APPLICATION_JSON_VALUE
@@ -52,17 +51,14 @@ public class TaskVariableController {
 
     private AlfrescoPagedResourcesAssembler<TaskVariableEntity> pagedResourcesAssembler;
     
-    private EntityFinder entityFinder;
 
     @Autowired
     public TaskVariableController(TaskVariableRepository variableRepository,
                                   TaskVariableResourceAssembler variableResourceAssembler,
-                                  AlfrescoPagedResourcesAssembler<TaskVariableEntity> pagedResourcesAssembler,
-                                  EntityFinder entityFinder) {
+                                  AlfrescoPagedResourcesAssembler<TaskVariableEntity> pagedResourcesAssembler) {
         this.variableRepository = variableRepository;
         this.variableResourceAssembler = variableResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
-        this.entityFinder = entityFinder;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -85,15 +81,5 @@ public class TaskVariableController {
                                                   variables,
                                                   variableResourceAssembler);
     }
-    
-    @RequestMapping(value = "/{variableId}", method = RequestMethod.GET)
-    public VariableResource findById(@PathVariable long variableId) {
 
-        TaskVariableEntity variableEntity = entityFinder.findById(variableRepository,
-                                                              variableId,
-                                                              "Unable to find variableEntity for the given id:'" + variableId + "'");
-
-    
-        return variableResourceAssembler.toResource(variableEntity);
-    }
 }

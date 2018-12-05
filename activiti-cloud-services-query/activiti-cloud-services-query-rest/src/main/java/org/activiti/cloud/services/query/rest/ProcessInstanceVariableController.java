@@ -19,7 +19,6 @@ package org.activiti.cloud.services.query.rest;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
-import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.activiti.cloud.services.query.model.QProcessVariableEntity;
@@ -52,17 +51,13 @@ public class ProcessInstanceVariableController {
 
     private AlfrescoPagedResourcesAssembler<ProcessVariableEntity> pagedResourcesAssembler;
     
-    private EntityFinder entityFinder;
-
     @Autowired
     public ProcessInstanceVariableController(ProcessInstanceVariableResourceAssembler variableResourceAssembler,
                                              VariableRepository variableRepository,
-                                             AlfrescoPagedResourcesAssembler<ProcessVariableEntity> pagedResourcesAssembler,
-                                             EntityFinder entityFinder) {
+                                             AlfrescoPagedResourcesAssembler<ProcessVariableEntity> pagedResourcesAssembler) {
         this.variableRepository = variableRepository;
         this.variableResourceAssembler = variableResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
-        this.entityFinder=entityFinder;
     }
 
     @RequestMapping(value = "/variables", method = RequestMethod.GET)
@@ -86,15 +81,5 @@ public class ProcessInstanceVariableController {
                                                   variableResourceAssembler);
     }
     
-  
-    @RequestMapping(value = "/variables/{variableId}", method = RequestMethod.GET)
-    public VariableResource findById(@PathVariable long variableId) {
-
-        ProcessVariableEntity variableEntity = entityFinder.findById(variableRepository,
-                                                              variableId,
-                                                              "Unable to find variableEntity for the given id:'" + variableId + "'");
-
-        return variableResourceAssembler.toResource(variableEntity);
-    }
     
 }
