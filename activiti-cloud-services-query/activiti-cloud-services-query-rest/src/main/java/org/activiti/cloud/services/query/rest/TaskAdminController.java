@@ -17,18 +17,13 @@
 package org.activiti.cloud.services.query.rest;
 
 import com.querydsl.core.types.Predicate;
-import org.activiti.api.runtime.shared.security.SecurityManager;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
-import org.activiti.cloud.services.query.model.QTaskEntity;
 import org.activiti.cloud.services.query.model.TaskEntity;
 import org.activiti.cloud.services.query.resources.TaskResource;
 import org.activiti.cloud.services.query.rest.assembler.TaskResourceAssembler;
 import org.activiti.cloud.services.security.ActivitiForbiddenException;
-import org.activiti.cloud.services.security.TaskLookupRestrictionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,14 +55,6 @@ public class TaskAdminController {
     private AlfrescoPagedResourcesAssembler<TaskEntity> pagedResourcesAssembler;
 
     private EntityFinder entityFinder;
-
-    private EntityFinder entityFinder;
-
-    private TaskLookupRestrictionService taskLookupRestrictionService;
-
-    private SecurityManager securityManager;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TaskAdminController.class);
 
     @Autowired
     public TaskAdminController(TaskRepository taskRepository,
