@@ -17,18 +17,17 @@
 package org.activiti.cloud.services.query.model;
 
 import java.util.Date;
-
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
 @Entity(name="ProcessVariable")
-@Table(	name = "PROCESS_VARIABLE",
-		indexes = { 
-				@Index(name = "variable_processInstanceId_idx", columnList = "processInstanceId", unique = false), 
-				@Index(name = "variable_name_idx", columnList = "name", unique = false), 
-				@Index(name = "variable_executionId_idx", columnList = "executionId", unique = false) 
-		})
+@Table(name = "PROCESS_VARIABLE",
+        indexes = {
+                @Index(name = "proc_var_processInstanceId_idx", columnList = "processInstanceId", unique = false),
+                @Index(name = "proc_var_name_idx", columnList = "name", unique = false),
+                @Index(name = "proc_var_executionId_idx", columnList = "executionId", unique = false)
+        })
 public class ProcessVariableEntity extends AbstractVariableEntity {
 
     public ProcessVariableEntity() {

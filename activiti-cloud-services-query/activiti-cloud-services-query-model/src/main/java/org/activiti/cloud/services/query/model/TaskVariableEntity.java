@@ -17,7 +17,6 @@
 package org.activiti.cloud.services.query.model;
 
 import java.util.Date;
-
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,12 +28,12 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name="TaskVariable")
-@Table(	name = "TASK_VARIABLE",
-		indexes = { 
-				@Index(name = "variable_processInstanceId_idx", columnList = "processInstanceId", unique = false), 
-				@Index(name = "variable_taskId_idx", columnList = "taskId", unique = false),
-				@Index(name = "variable_name_idx", columnList = "name", unique = false), 
-				@Index(name = "variable_executionId_idx", columnList = "executionId", unique = false) 
+@Table(name = "TASK_VARIABLE",
+        indexes = {
+                @Index(name = "task_var_processInstanceId_idx", columnList = "processInstanceId", unique = false),
+                @Index(name = "task_var_taskId_idx", columnList = "taskId", unique = false),
+                @Index(name = "task_var_name_idx", columnList = "name", unique = false),
+                @Index(name = "task_var_executionId_idx", columnList = "executionId", unique = false)
 		})
 public class TaskVariableEntity extends AbstractVariableEntity {
 
