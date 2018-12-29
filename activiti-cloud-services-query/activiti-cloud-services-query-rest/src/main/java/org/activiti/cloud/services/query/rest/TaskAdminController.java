@@ -20,9 +20,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
+import org.activiti.cloud.services.query.model.QTaskEntity;
 import org.activiti.cloud.services.query.model.TaskEntity;
 import org.activiti.cloud.services.query.resources.TaskResource;
 import org.activiti.cloud.services.query.rest.assembler.TaskResourceAssembler;
@@ -87,6 +89,16 @@ public class TaskAdminController {
     public PagedResources<TaskResource> allTasks(@QuerydslPredicate(root = TaskEntity.class) Predicate predicate,
                                                  Pageable pageable) {
 
+        //when request is made for the root tasks only replace (= null) with (is null)
+        String s = predicate !=null ? predicate.toString() : null;
+        if (s != null) {
+            if (s.contains("parentTaskId = null")) {
+                QTaskEntity task = QTaskEntity.taskEntity;
+                BooleanExpression parentTaskNull = task.parentTaskId.isNull();
+                predicate = parentTaskNull;
+            }
+        }
+        
         Page<TaskEntity> page = taskRepository.findAll(predicate,
                                                        pageable);
 

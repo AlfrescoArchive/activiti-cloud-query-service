@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.api.runtime.shared.security.SecurityManager;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
@@ -100,7 +101,16 @@ public class TaskController {
     @RequestMapping(method = RequestMethod.GET)
     public PagedResources<TaskResource> findAll(@QuerydslPredicate(root = TaskEntity.class) Predicate predicate,
                                                 Pageable pageable) {
-
+        //when request is made for the root tasks only replace (= null) with (is null)
+        String s = predicate !=null ? predicate.toString() : null;
+        if (s != null) {
+            if (s.contains("parentTaskId = null")) {
+                QTaskEntity task = QTaskEntity.taskEntity;
+                BooleanExpression parentTaskNull = task.parentTaskId.isNull();
+                predicate = parentTaskNull;
+            }
+        }
+        
         Predicate extendedPredicate = taskLookupRestrictionService.restrictTaskQuery(predicate);
         Page<TaskEntity> page = taskRepository.findAll(extendedPredicate,
                                                        pageable);
