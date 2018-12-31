@@ -266,7 +266,7 @@ public class QueryTasksIT {
     }
     
     @Test
-    public void shouldGetAvailableTasksAndFilterOnParentIdNull() {
+    public void shouldGetAvailableRootTasks() {
         //given
         TaskImpl rootTask = new TaskImpl(UUID.randomUUID().toString(),
                                      "Root task",
@@ -286,7 +286,7 @@ public class QueryTasksIT {
 
         await().untilAsserted(() -> {
             //when
-            ResponseEntity<PagedResources<Task>> responseEntity = testRestTemplate.exchange(TASKS_URL + "?parentTaskId=null",
+            ResponseEntity<PagedResources<Task>> responseEntity = testRestTemplate.exchange(TASKS_URL + "/rootTasksOnly",
                                                                                             HttpMethod.GET,
                                                                                             keycloakTokenProducer.entityWithAuthorizationHeader(),
                                                                                             PAGED_TASKS_RESPONSE_TYPE);

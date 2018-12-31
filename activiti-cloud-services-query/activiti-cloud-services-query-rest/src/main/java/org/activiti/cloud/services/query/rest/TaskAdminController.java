@@ -88,17 +88,6 @@ public class TaskAdminController {
     @RequestMapping(method = RequestMethod.GET)
     public PagedResources<TaskResource> allTasks(@QuerydslPredicate(root = TaskEntity.class) Predicate predicate,
                                                  Pageable pageable) {
-
-        //when request is made for the root tasks only replace (= null) with (is null)
-        String s = predicate !=null ? predicate.toString() : null;
-        if (s != null) {
-            if (s.contains("parentTaskId = null")) {
-                QTaskEntity task = QTaskEntity.taskEntity;
-                BooleanExpression parentTaskNull = task.parentTaskId.isNull();
-                predicate = parentTaskNull;
-            }
-        }
-        
         Page<TaskEntity> page = taskRepository.findAll(predicate,
                                                        pageable);
 
@@ -107,6 +96,20 @@ public class TaskAdminController {
                                                   taskResourceAssembler);
     }
 
+    @RequestMapping(value = "/rootTasksOnly",method = RequestMethod.GET)
+    public PagedResources<TaskResource> getRootTasks(@QuerydslPredicate(root = TaskEntity.class) Predicate predicate,
+                                                     Pageable pageable) {
+        //when request is made for the root tasks set a special condition: parentTaskId is null
+        BooleanExpression parentTaskNull = QTaskEntity.taskEntity.parentTaskId.isNull(); 
+        predicate= predicate !=null ? parentTaskNull.and(predicate) : parentTaskNull;
+              
+        Page<TaskEntity> page = taskRepository.findAll(predicate,
+                                                       pageable);
+
+        return pagedResourcesAssembler.toResource(pageable,
+                                                  page,
+                                                  taskResourceAssembler);
+    }
 
     @RequestMapping(value = "/{taskId}", method = RequestMethod.GET)
     public TaskResource findById(@PathVariable String taskId) {
