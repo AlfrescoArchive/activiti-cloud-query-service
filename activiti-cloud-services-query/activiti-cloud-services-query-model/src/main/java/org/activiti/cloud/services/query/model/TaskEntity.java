@@ -76,9 +76,11 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date lastModified;
 
+    @JsonIgnore
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date lastModifiedTo;
 
+    @JsonIgnore
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date lastModifiedFrom;
 
