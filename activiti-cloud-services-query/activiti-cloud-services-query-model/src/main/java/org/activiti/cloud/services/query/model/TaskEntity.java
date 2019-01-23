@@ -62,7 +62,6 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date claimedDate;
     private int priority;
-    private String category;
     private String processDefinitionId;
     private String processInstanceId;
     @Enumerated(EnumType.STRING)
@@ -119,7 +118,6 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
                       Date createTime,
                       Date dueDate,
                       int priority,
-                      String category,
                       String processDefinitionId,
                       String processInstanceId,
                       String serviceName,
@@ -145,7 +143,6 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
         this.createdDate = createTime;
         this.dueDate = dueDate;
         this.priority = priority;
-        this.category = category;
         this.processDefinitionId = processDefinitionId;
         this.processInstanceId = processInstanceId;
         this.status = status;
@@ -189,10 +186,6 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
     @Override
     public int getPriority() {
         return priority;
-    }
-
-    public String getCategory() {
-        return category;
     }
 
     @Override
@@ -244,10 +237,6 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
 
     public void setPriority(int priority) {
         this.priority = priority;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public void setProcessDefinitionId(String processDefinitionId) {
