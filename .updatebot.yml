@@ -3,8 +3,8 @@ github:
   - name: activiti
     repositories:
     - name: activiti-cloud-dependencies
-      branch: develop
+      branch: 7.0.x
       useSinglePullRequest: true
     - name: activiti-cloud-notifications-service-graphql
-      branch: develop
+      branch: 7.0.x
       useSinglePullRequest: true
