@@ -2,7 +2,6 @@ package org.activiti.cloud.services.query.rest;
 
 import com.querydsl.core.types.Predicate;
 import org.activiti.cloud.alfresco.data.domain.AlfrescoPagedResourcesAssembler;
-import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
 import org.activiti.cloud.services.query.resources.ProcessInstanceResource;
@@ -32,17 +31,13 @@ public class ProcessInstanceCleanUpController {
 
     private AlfrescoPagedResourcesAssembler<ProcessInstanceEntity> pagedResourcesAssembler;
 
-    private EntityFinder entityFinder;
-
     @Autowired
     public ProcessInstanceCleanUpController(ProcessInstanceRepository processInstanceRepository,
                                           ProcessInstanceResourceAssembler processInstanceResourceAssembler,
-                                          AlfrescoPagedResourcesAssembler<ProcessInstanceEntity> pagedResourcesAssembler,
-                                          EntityFinder entityFinder) {
+                                          AlfrescoPagedResourcesAssembler<ProcessInstanceEntity> pagedResourcesAssembler) {
         this.processInstanceRepository = processInstanceRepository;
         this.processInstanceResourceAssembler = processInstanceResourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
-        this.entityFinder=entityFinder;
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/export")
