@@ -105,7 +105,7 @@ public class ProcessInstanceEntityCleanUpControllerIT {
                 11));
 
         //when
-        mockMvc.perform(delete("/admin/v1/process-instances?skipCount=10&maxItems=10")
+        mockMvc.perform(delete("/admin/v1/process-instances/export?skipCount=10&maxItems=10")
                 .accept(MediaType.APPLICATION_JSON))
                 //then
                 .andExpect(status().isOk())
