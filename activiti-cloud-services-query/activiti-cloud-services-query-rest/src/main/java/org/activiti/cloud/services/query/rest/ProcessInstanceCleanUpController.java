@@ -42,13 +42,15 @@ public class ProcessInstanceCleanUpController {
 
     @RequestMapping(method = RequestMethod.DELETE, path = "/export")
     public PagedResources<ProcessInstanceResource> exportProcessInstances (@QuerydslPredicate(root = ProcessInstanceEntity.class) Predicate predicate,
-                                                                           Pageable pageable) {
+                                                                           Pageable pageable,
+                                                                           boolean delete) {
 
         PagedResources<ProcessInstanceResource> result = pagedResourcesAssembler.toResource(pageable,
                 processInstanceRepository.findAll(predicate,
                         pageable),
                 processInstanceResourceAssembler);
 
+        if(delete)
         processInstanceRepository.deleteAll();
 
         return result;

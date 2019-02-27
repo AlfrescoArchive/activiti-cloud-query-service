@@ -41,6 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
@@ -105,7 +106,7 @@ public class ProcessInstanceEntityCleanUpControllerIT {
                 11));
 
         //when
-        mockMvc.perform(delete("/admin/v1/process-instances/export?skipCount=10&maxItems=10")
+        mockMvc.perform(delete("/admin/v1/process-instances/export?skipCount=10&maxItems=10&delete=true")
                 .accept(MediaType.APPLICATION_JSON))
                 //then
                 .andExpect(status().isOk())
@@ -116,6 +117,31 @@ public class ProcessInstanceEntityCleanUpControllerIT {
                 ));
 
         verify(processInstanceRepository).deleteAll();
+
+    }
+
+    @Test
+    public void deleteProcessInstancesShouldReturnAllProcessInstancesAndShouldNotDeleteThem() throws Exception{
+
+        //given
+        given(processInstanceRepository.findAll(any(),
+                ArgumentMatchers.<Pageable>any())).willReturn(new PageImpl<>(Collections.singletonList(buildDefaultProcessInstance()),
+                PageRequest.of(1,
+                        10),
+                11));
+
+        //when
+        mockMvc.perform(delete("/admin/v1/process-instances/export?skipCount=10&maxItems=10&delete=false")
+                .accept(MediaType.APPLICATION_JSON))
+                //then
+                .andExpect(status().isOk())
+                .andDo(document(PROCESS_INSTANCE_ALFRESCO_IDENTIFIER + "/list",
+                        pageRequestParameters(),
+                        pagedResourcesResponseFields()
+
+                ));
+
+        verify(processInstanceRepository, never()).deleteAll();
 
     }
 
