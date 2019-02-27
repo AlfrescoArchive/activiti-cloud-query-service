@@ -7,6 +7,7 @@ import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
 import org.activiti.cloud.services.query.resources.ProcessInstanceResource;
 import org.activiti.cloud.services.query.rest.assembler.ProcessInstanceResourceAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.hateoas.MediaTypes;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+@ConditionalOnProperty(name = "activiti.enable-clean-up", havingValue = "true")
 @RestController
 @RequestMapping(
         value = "/admin/v1/process-instances",
