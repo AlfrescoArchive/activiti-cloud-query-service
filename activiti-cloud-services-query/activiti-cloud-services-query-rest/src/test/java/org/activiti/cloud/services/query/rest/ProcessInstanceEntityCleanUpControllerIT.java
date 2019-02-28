@@ -1,6 +1,7 @@
 package org.activiti.cloud.services.query.rest;
 
 
+import com.querydsl.core.types.Predicate;
 import org.activiti.api.process.model.ProcessInstance;
 import org.activiti.api.runtime.conf.impl.CommonModelAutoConfiguration;
 import org.activiti.api.runtime.shared.security.SecurityManager;
@@ -9,6 +10,7 @@ import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessDefinitionRepository;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
+import org.activiti.cloud.services.query.model.TaskEntity;
 import org.activiti.cloud.services.security.TaskLookupRestrictionService;
 import org.activiti.core.common.spring.security.policies.SecurityPoliciesManager;
 import org.activiti.core.common.spring.security.policies.conf.SecurityPoliciesProperties;
@@ -35,10 +37,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static org.activiti.alfresco.rest.docs.AlfrescoDocumentation.pageRequestParameters;
 import static org.activiti.alfresco.rest.docs.AlfrescoDocumentation.pagedResourcesResponseFields;
+import static org.activiti.alfresco.rest.docs.AlfrescoDocumentation.resourcesResponseFields;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -102,49 +106,21 @@ public class ProcessInstanceEntityCleanUpControllerIT {
     public void deleteProcessInstancesShouldReturnAllProcessInstancesAndDeleteThem() throws Exception{
 
         //given
-        given(processInstanceRepository.findAll(any(),
-                ArgumentMatchers.<Pageable>any())).willReturn(new PageImpl<>(Collections.singletonList(buildDefaultProcessInstance()),
-                PageRequest.of(1,
-                        10),
-                11));
+        List<ProcessInstanceEntity> processInstanceEntities = Collections.singletonList(buildDefaultProcessInstance());
+        given(processInstanceRepository.findAll(ArgumentMatchers.<Predicate>any()))
+                .willReturn(processInstanceEntities);
 
         //when
-        mockMvc.perform(delete("/admin/v1/process-instances/export?skipCount=10&maxItems=10&delete=true")
+        mockMvc.perform(delete("/admin/clean-up/v1/process-instances")
                 .accept(MediaType.APPLICATION_JSON))
                 //then
                 .andExpect(status().isOk())
                 .andDo(document(PROCESS_INSTANCE_ALFRESCO_IDENTIFIER + "/list",
-                        pageRequestParameters(),
-                        pagedResourcesResponseFields()
+                        resourcesResponseFields()
 
                 ));
 
-        verify(processInstanceRepository).deleteAll();
-
-    }
-
-    @Test
-    public void deleteProcessInstancesShouldReturnAllProcessInstancesAndShouldNotDeleteThem() throws Exception{
-
-        //given
-        given(processInstanceRepository.findAll(any(),
-                ArgumentMatchers.<Pageable>any())).willReturn(new PageImpl<>(Collections.singletonList(buildDefaultProcessInstance()),
-                PageRequest.of(1,
-                        10),
-                11));
-
-        //when
-        mockMvc.perform(delete("/admin/v1/process-instances/export?skipCount=10&maxItems=10&delete=false")
-                .accept(MediaType.APPLICATION_JSON))
-                //then
-                .andExpect(status().isOk())
-                .andDo(document(PROCESS_INSTANCE_ALFRESCO_IDENTIFIER + "/list",
-                        pageRequestParameters(),
-                        pagedResourcesResponseFields()
-
-                ));
-
-        verify(processInstanceRepository, never()).deleteAll();
+        verify(processInstanceRepository).deleteAll(processInstanceEntities);
 
     }
 

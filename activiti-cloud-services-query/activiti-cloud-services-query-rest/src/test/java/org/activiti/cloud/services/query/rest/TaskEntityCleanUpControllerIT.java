@@ -103,6 +103,7 @@ public class TaskEntityCleanUpControllerIT {
     @Test
     public void deleteTasksShouldReturnAllTasksAndDeleteThem() throws Exception{
 
+        //given
         List<TaskEntity> taskEntities = Collections.singletonList(buildDefaultTask());
         given(taskRepository.findAll(ArgumentMatchers.<Predicate>any()))
                 .willReturn(taskEntities);
