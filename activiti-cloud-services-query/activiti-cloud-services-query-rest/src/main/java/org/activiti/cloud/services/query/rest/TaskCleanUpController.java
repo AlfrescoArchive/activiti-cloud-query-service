@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,7 +21,7 @@ import java.util.Collection;
 @ConditionalOnProperty(name = "activiti.enable-clean-up", havingValue = "true")
 @RestController
 @RequestMapping(
-        value = "/admin/v1/tasks",
+        value = "/admin/clean-up/v1/tasks",
         produces = {
                 MediaTypes.HAL_JSON_VALUE,
                 MediaType.APPLICATION_JSON_VALUE
@@ -38,8 +39,8 @@ public class TaskCleanUpController {
         this.taskResourceAssembler = taskResourceAssembler;
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, path = "/delete")
-    public Collection<TaskResource> deleteTasks (@QuerydslPredicate(root = TaskEntity.class) Predicate predicate) {
+    @RequestMapping(method = RequestMethod.DELETE)
+    public Resources<TaskResource> deleteTasks (@QuerydslPredicate(root = TaskEntity.class) Predicate predicate) {
 
         Collection <TaskResource> result = new ArrayList<>();
         Iterable <TaskEntity> iterable = taskRepository.findAll(predicate);
@@ -50,7 +51,7 @@ public class TaskCleanUpController {
 
         taskRepository.deleteAll(iterable);
 
-        return result;
+        return new Resources<>(result);
     }
 
 }

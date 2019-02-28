@@ -1,5 +1,6 @@
 package org.activiti.cloud.services.query.rest;
 
+import com.querydsl.core.types.Predicate;
 import org.activiti.api.runtime.conf.impl.CommonModelAutoConfiguration;
 import org.activiti.api.runtime.shared.security.SecurityManager;
 import org.activiti.api.task.model.Task;
@@ -34,10 +35,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static org.activiti.alfresco.rest.docs.AlfrescoDocumentation.pageRequestParameters;
 import static org.activiti.alfresco.rest.docs.AlfrescoDocumentation.pagedResourcesResponseFields;
+import static org.activiti.alfresco.rest.docs.AlfrescoDocumentation.resourcesResponseFields;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -100,51 +103,20 @@ public class TaskEntityCleanUpControllerIT {
     @Test
     public void deleteTasksShouldReturnAllTasksAndDeleteThem() throws Exception{
 
-        //given
-        given(taskRepository.findAll(any(),
-                ArgumentMatchers.<Pageable>any())).willReturn(new PageImpl<>(Collections.singletonList(buildDefaultTask()),
-                PageRequest.of(1,
-                        10),
-                11));
+        List<TaskEntity> taskEntities = Collections.singletonList(buildDefaultTask());
+        given(taskRepository.findAll(ArgumentMatchers.<Predicate>any()))
+                .willReturn(taskEntities);
 
         //when
-        mockMvc.perform(delete("/admin/v1/tasks/export?skipCount=10&maxItems=10&delete=true")
+        mockMvc.perform(delete("/admin/clean-up/v1/tasks")
                 .accept(MediaType.APPLICATION_JSON))
                 //then
                 .andExpect(status().isOk())
                 .andDo(document(TASK_ADMIN_ALFRESCO_IDENTIFIER + "/list",
-                        pageRequestParameters(),
-                        pagedResourcesResponseFields()
-
+                        resourcesResponseFields()
                 ));
 
-        verify(taskRepository).deleteAll();
-
-    }
-
-    @Test
-    public void deleteTasksShouldReturnAllTasksAndShouldNotDeleteThem() throws Exception{
-
-        //given
-        given(taskRepository.findAll(any(),
-                ArgumentMatchers.<Pageable>any())).willReturn(new PageImpl<>(Collections.singletonList(buildDefaultTask()),
-                PageRequest.of(1,
-                        10),
-                11));
-
-        //when
-        mockMvc.perform(delete("/admin/v1/tasks/export?skipCount=10&maxItems=10&delete=false")
-                .accept(MediaType.APPLICATION_JSON))
-                //then
-                .andExpect(status().isOk())
-                .andDo(document(TASK_ADMIN_ALFRESCO_IDENTIFIER + "/list",
-                        pageRequestParameters(),
-                        pagedResourcesResponseFields()
-
-                ));
-
-        verify(taskRepository, never()).deleteAll();
-
+        verify(taskRepository).deleteAll(taskEntities);
     }
 
     private TaskEntity buildDefaultTask() {
