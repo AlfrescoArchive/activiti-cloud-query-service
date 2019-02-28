@@ -38,12 +38,6 @@ import org.springframework.web.bind.annotation.RestController;
         value = "/v1/process-definitions/{processDefinitionId}/model")
 public class ProcessModelController {
 
-    @ExceptionHandler(ActivitiForbiddenException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public String handleAppException(ActivitiForbiddenException ex) {
-        return ex.getMessage();
-    }
-
     private ProcessModelRepository processModelRepository;
 
     private EntityFinder entityFinder;
@@ -56,6 +50,12 @@ public class ProcessModelController {
         this.processModelRepository = processModelRepository;
         this.entityFinder = entityFinder;
         this.securityPoliciesManager = securityPoliciesManager;
+    }
+
+    @ExceptionHandler(ActivitiForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handleAppException(ActivitiForbiddenException ex) {
+        return ex.getMessage();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
