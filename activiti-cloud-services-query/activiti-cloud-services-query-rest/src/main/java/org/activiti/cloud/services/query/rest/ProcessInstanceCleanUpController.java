@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@ConditionalOnProperty(name = "activiti.enable-clean-up", havingValue = "true")
+@ConditionalOnProperty(name = "activiti.rest.enable-clean-up", havingValue = "true")
 @RestController
 @RequestMapping(
         value = "/admin/clean-up/v1/process-instances",

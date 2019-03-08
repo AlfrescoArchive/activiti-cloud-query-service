@@ -43,7 +43,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestPropertySource(properties="activiti.enable-clean-up=true")
+@TestPropertySource(properties="activiti.rest.enable-clean-up=true")
 @RunWith(SpringRunner.class)
 @WebMvcTest(TaskCleanUpController.class)
 @Import({
