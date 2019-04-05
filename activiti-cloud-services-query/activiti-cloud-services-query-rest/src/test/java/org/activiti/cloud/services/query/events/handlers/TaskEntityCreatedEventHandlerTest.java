@@ -58,17 +58,22 @@ public class TaskEntityCreatedEventHandlerTest {
     @Test
     public void handleShouldStoreNewTaskInstance() {
         //given
+        ProcessInstanceEntity processInstanceEntity = mock(ProcessInstanceEntity.class);
+               
         TaskImpl task = new TaskImpl(UUID.randomUUID().toString(),
                                      "task",
                                      Task.TaskStatus.CREATED);
         task.setCreatedDate(new Date());
         task.setProcessInstanceId(UUID.randomUUID().toString());
+        task.setProcessDefinitionId("processDefinitionId");
+        task.setProcessDefinitionVersion(10);
+ 
         CloudTaskCreatedEventImpl event = new CloudTaskCreatedEventImpl(
                 task
         );
         event.setServiceName("runtime-bundle-a");
 
-        ProcessInstanceEntity processInstanceEntity = mock(ProcessInstanceEntity.class);
+        
         when(entityManager.getReference(ProcessInstanceEntity.class,
                                         task.getProcessInstanceId()))
                 .thenReturn(processInstanceEntity);
@@ -83,6 +88,10 @@ public class TaskEntityCreatedEventHandlerTest {
         assertThat(captor.getValue().getLastModified()).isNotNull();
         assertThat(captor.getValue().getProcessInstance()).isEqualTo(processInstanceEntity);
         assertThat(captor.getValue().getServiceName()).isEqualTo("runtime-bundle-a");
+        assertThat(captor.getValue().getProcessInstanceId()).isEqualTo(task.getProcessInstanceId());
+        assertThat(captor.getValue().getProcessDefinitionId()).isEqualTo(task.getProcessDefinitionId());
+        assertThat(captor.getValue().getProcessDefinitionVersion()).isEqualTo(task.getProcessDefinitionVersion());
+        
     }
 
     @Test
