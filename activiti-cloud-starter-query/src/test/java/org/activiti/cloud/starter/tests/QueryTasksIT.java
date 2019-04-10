@@ -944,16 +944,22 @@ public class QueryTasksIT {
     @Test
     public void shouldCheckTaskProcessDefinitionVersion() {
       //given
+        CloudTaskCreatedEventImpl e1,e2;
+        
         TaskImpl task1 = new TaskImpl(UUID.randomUUID().toString(),
                                      "Task1",
                                      Task.TaskStatus.CREATED);
-        task1.setProcessDefinitionVersion(10);
-        eventsAggregator.addEvents(new CloudTaskCreatedEventImpl(task1));
+        
+        e1 = new CloudTaskCreatedEventImpl(task1);
+        e1.setProcessDefinitionVersion(10);
+        eventsAggregator.addEvents(e1);
         
         TaskImpl task2 = new TaskImpl(UUID.randomUUID().toString(),
                                       "Task2",
                                       Task.TaskStatus.CREATED);
-        eventsAggregator.addEvents(new CloudTaskCreatedEventImpl(task2));
+        
+        e2 = new CloudTaskCreatedEventImpl(task2);
+        eventsAggregator.addEvents(e2);
 
         eventsAggregator.sendAll();
 
@@ -974,10 +980,10 @@ public class QueryTasksIT {
                                 Task::getProcessDefinitionVersion)
                     .contains(tuple(task1.getId(),
                                     Task.TaskStatus.CREATED,
-                                    task1.getProcessDefinitionVersion()),
+                                    10),
                               tuple(task2.getId(),
                                     Task.TaskStatus.CREATED,
-                                    task2.getProcessDefinitionVersion()));
+                                    null));
         });
 
         await().untilAsserted(() -> {
@@ -987,7 +993,7 @@ public class QueryTasksIT {
                                                                                             HttpMethod.GET,
                                                                                             keycloakTokenProducer.entityWithAuthorizationHeader(),
                                                                                             PAGED_TASKS_RESPONSE_TYPE,
-                                                                                            task1.getProcessDefinitionVersion());
+                                                                                            10);
 
             //then
             assertThat(responseEntity).isNotNull();
