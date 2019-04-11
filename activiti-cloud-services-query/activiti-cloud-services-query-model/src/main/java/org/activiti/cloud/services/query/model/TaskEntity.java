@@ -226,13 +226,9 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
         return processInstanceId;
     }
     
-    public Integer getProcessDefinitionVersion() {
-        return processDefinitionVersion;
-    }
-
     @Override
     public Integer getProcessDefinitionVersion() {
-        return null;
+        return processDefinitionVersion;
     }
 
     public boolean isStandAlone() {
