@@ -942,24 +942,23 @@ public class QueryTasksIT {
     }
     
     @Test
-    public void shouldCheckTaskProcessDefinitionVersion() {
+    public void shouldSetProcessDefinitionVersionOnTaskWhenThisInformationIsAvailableInTheEvent() {
       //given
-        CloudTaskCreatedEventImpl e1,e2;
-        
+        //event with process definition version set
         TaskImpl task1 = new TaskImpl(UUID.randomUUID().toString(),
                                      "Task1",
                                      Task.TaskStatus.CREATED);
-        
-        e1 = new CloudTaskCreatedEventImpl(task1);
-        e1.setProcessDefinitionVersion(10);
-        eventsAggregator.addEvents(e1);
-        
+
+        CloudTaskCreatedEventImpl task1Created = new CloudTaskCreatedEventImpl(task1);
+        task1Created.setProcessDefinitionVersion(10);
+        eventsAggregator.addEvents(task1Created);
+
+        //event with process definition unset
         TaskImpl task2 = new TaskImpl(UUID.randomUUID().toString(),
                                       "Task2",
                                       Task.TaskStatus.CREATED);
-        
-        e2 = new CloudTaskCreatedEventImpl(task2);
-        eventsAggregator.addEvents(e2);
+
+        eventsAggregator.addEvents(new CloudTaskCreatedEventImpl(task2));
 
         eventsAggregator.sendAll();
 
