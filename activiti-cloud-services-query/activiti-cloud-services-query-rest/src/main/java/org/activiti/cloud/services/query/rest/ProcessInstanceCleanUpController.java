@@ -1,14 +1,15 @@
 package org.activiti.cloud.services.query.rest;
 
 import com.querydsl.core.types.Predicate;
+import org.activiti.cloud.api.process.model.CloudProcessInstance;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
-import org.activiti.cloud.services.query.resources.ProcessInstanceResource;
 import org.activiti.cloud.services.query.rest.assembler.ProcessInstanceResourceAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,9 +41,9 @@ public class ProcessInstanceCleanUpController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public Resources<ProcessInstanceResource> deleteProcessInstances (@QuerydslPredicate(root = ProcessInstanceEntity.class) Predicate predicate) {
+    public Resources<Resource<CloudProcessInstance>> deleteProcessInstances (@QuerydslPredicate(root = ProcessInstanceEntity.class) Predicate predicate) {
 
-        Collection<ProcessInstanceResource> result = new ArrayList<>();
+        Collection<Resource<CloudProcessInstance>> result = new ArrayList<>();
         Iterable <ProcessInstanceEntity> iterable = processInstanceRepository.findAll(predicate);
 
         for(ProcessInstanceEntity entity : iterable){

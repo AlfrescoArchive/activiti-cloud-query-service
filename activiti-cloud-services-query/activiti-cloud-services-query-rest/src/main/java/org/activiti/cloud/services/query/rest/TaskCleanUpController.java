@@ -1,14 +1,15 @@
 package org.activiti.cloud.services.query.rest;
 
 import com.querydsl.core.types.Predicate;
+import org.activiti.cloud.api.task.model.CloudTask;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.model.TaskEntity;
-import org.activiti.cloud.services.query.resources.TaskResource;
 import org.activiti.cloud.services.query.rest.assembler.TaskResourceAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,9 +41,9 @@ public class TaskCleanUpController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public Resources<TaskResource> deleteTasks (@QuerydslPredicate(root = TaskEntity.class) Predicate predicate) {
+    public Resources<Resource<CloudTask>> deleteTasks (@QuerydslPredicate(root = TaskEntity.class) Predicate predicate) {
 
-        Collection <TaskResource> result = new ArrayList<>();
+        Collection <Resource<CloudTask>> result = new ArrayList<>();
         Iterable <TaskEntity> iterable = taskRepository.findAll(predicate);
 
         for(TaskEntity entity : iterable){
