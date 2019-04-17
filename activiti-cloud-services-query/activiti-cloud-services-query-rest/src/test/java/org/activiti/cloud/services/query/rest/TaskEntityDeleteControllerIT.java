@@ -101,7 +101,7 @@ public class TaskEntityDeleteControllerIT {
                 .willReturn(taskEntities);
 
         //when
-        mockMvc.perform(delete("/admin/v1/tasks/delete")
+        mockMvc.perform(delete("/admin/v1/tasks")
                 .accept(MediaType.APPLICATION_JSON))
                 //then
                 .andExpect(status().isOk())

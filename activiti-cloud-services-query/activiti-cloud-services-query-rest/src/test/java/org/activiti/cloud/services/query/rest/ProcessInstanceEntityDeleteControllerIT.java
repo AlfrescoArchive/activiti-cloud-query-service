@@ -102,7 +102,7 @@ public class ProcessInstanceEntityDeleteControllerIT {
                 .willReturn(processInstanceEntities);
 
         //when
-        mockMvc.perform(delete("/admin/v1/process-instances/delete")
+        mockMvc.perform(delete("/admin/v1/process-instances")
                 .accept(MediaType.APPLICATION_JSON))
                 //then
                 .andExpect(status().isOk())
