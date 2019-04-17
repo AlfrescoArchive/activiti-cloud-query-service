@@ -19,23 +19,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@ConditionalOnProperty(name = "activiti.rest.enable-clean-up", havingValue = "true")
+@ConditionalOnProperty(name = "activiti.rest.enable-deletion", havingValue = "true")
 @RestController
 @RequestMapping(
-        value = "/admin/clean-up/v1/tasks",
+        value = "/admin/v1/tasks/delete",
         produces = {
                 MediaTypes.HAL_JSON_VALUE,
                 MediaType.APPLICATION_JSON_VALUE
         })
-public class TaskCleanUpController {
+public class TaskDeleteController {
 
     private final TaskRepository taskRepository;
 
     private TaskResourceAssembler taskResourceAssembler;
 
     @Autowired
-    public TaskCleanUpController(TaskRepository taskRepository,
-                               TaskResourceAssembler taskResourceAssembler) {
+    public TaskDeleteController(TaskRepository taskRepository,
+                                TaskResourceAssembler taskResourceAssembler) {
         this.taskRepository = taskRepository;
         this.taskResourceAssembler = taskResourceAssembler;
     }

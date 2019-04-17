@@ -19,23 +19,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@ConditionalOnProperty(name = "activiti.rest.enable-clean-up", havingValue = "true")
+@ConditionalOnProperty(name = "activiti.rest.enable-deletion", havingValue = "true")
 @RestController
 @RequestMapping(
-        value = "/admin/clean-up/v1/process-instances",
+        value = "/admin/v1/process-instances/delete",
         produces = {
                 MediaTypes.HAL_JSON_VALUE,
                 MediaType.APPLICATION_JSON_VALUE
         })
-public class ProcessInstanceCleanUpController {
+public class ProcessInstanceDeleteController {
 
     private final ProcessInstanceRepository processInstanceRepository;
 
     private ProcessInstanceResourceAssembler processInstanceResourceAssembler;
 
     @Autowired
-    public ProcessInstanceCleanUpController(ProcessInstanceRepository processInstanceRepository,
-                                          ProcessInstanceResourceAssembler processInstanceResourceAssembler) {
+    public ProcessInstanceDeleteController(ProcessInstanceRepository processInstanceRepository,
+                                           ProcessInstanceResourceAssembler processInstanceResourceAssembler) {
         this.processInstanceRepository = processInstanceRepository;
         this.processInstanceResourceAssembler = processInstanceResourceAssembler;
     }

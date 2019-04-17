@@ -44,9 +44,9 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestPropertySource(properties="activiti.rest.enable-clean-up=true")
+@TestPropertySource(properties="activiti.rest.enable-deletion=true")
 @RunWith(SpringRunner.class)
-@WebMvcTest(ProcessInstanceCleanUpController.class)
+@WebMvcTest(ProcessInstanceDeleteController.class)
 @Import({
         QueryRestAutoConfiguration.class,
         CommonModelAutoConfiguration.class,
@@ -55,7 +55,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(secure = false)
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @ComponentScan(basePackages = {"org.activiti.cloud.services.query.rest.assembler", "org.activiti.cloud.alfresco"})
-public class ProcessInstanceEntityCleanUpControllerIT {
+public class ProcessInstanceEntityDeleteControllerIT {
 
     private static final String PROCESS_INSTANCE_ALFRESCO_IDENTIFIER = "process-instance-alfresco";
 
@@ -102,7 +102,7 @@ public class ProcessInstanceEntityCleanUpControllerIT {
                 .willReturn(processInstanceEntities);
 
         //when
-        mockMvc.perform(delete("/admin/clean-up/v1/process-instances")
+        mockMvc.perform(delete("/admin/v1/process-instances/delete")
                 .accept(MediaType.APPLICATION_JSON))
                 //then
                 .andExpect(status().isOk())

@@ -43,9 +43,9 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestPropertySource(properties="activiti.rest.enable-clean-up=true")
+@TestPropertySource(properties="activiti.rest.enable-deletion=true")
 @RunWith(SpringRunner.class)
-@WebMvcTest(TaskCleanUpController.class)
+@WebMvcTest(TaskDeleteController.class)
 @Import({
         QueryRestAutoConfiguration.class,
         CommonModelAutoConfiguration.class,
@@ -54,7 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(secure = false)
 @AutoConfigureRestDocs(outputDir = "target/snippets")
 @ComponentScan(basePackages = {"org.activiti.cloud.services.query.rest.assembler", "org.activiti.cloud.alfresco"})
-public class TaskEntityCleanUpControllerIT {
+public class TaskEntityDeleteControllerIT {
 
     private static final String TASK_ADMIN_ALFRESCO_IDENTIFIER = "task-admin-alfresco";
 
@@ -101,7 +101,7 @@ public class TaskEntityCleanUpControllerIT {
                 .willReturn(taskEntities);
 
         //when
-        mockMvc.perform(delete("/admin/clean-up/v1/tasks")
+        mockMvc.perform(delete("/admin/v1/tasks/delete")
                 .accept(MediaType.APPLICATION_JSON))
                 //then
                 .andExpect(status().isOk())
