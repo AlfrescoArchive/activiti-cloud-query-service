@@ -16,18 +16,26 @@
 
 package org.activiti.cloud.services.query.events.handlers;
 
+import java.util.Optional;
+
+import org.activiti.api.task.model.Task.TaskStatus;
 import org.activiti.api.task.model.events.TaskCandidateGroupEvent;
 import org.activiti.cloud.api.model.shared.events.CloudRuntimeEvent;
 import org.activiti.cloud.api.task.model.events.CloudTaskCandidateGroupRemovedEvent;
 import org.activiti.cloud.services.query.app.repository.TaskCandidateGroupRepository;
+import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.model.QueryException;
 import org.activiti.cloud.services.query.model.TaskCandidateGroup;
+import org.activiti.cloud.services.query.model.TaskEntity;
 
 public class TaskCandidateGroupRemovedEventHandler implements QueryEventHandler {
 
+    private final TaskRepository taskRepository;
     private final TaskCandidateGroupRepository taskCandidateGroupRepository;
 
-    public TaskCandidateGroupRemovedEventHandler(TaskCandidateGroupRepository taskCandidateGroupRepository) {
+    public TaskCandidateGroupRemovedEventHandler(TaskRepository taskRepository,
+                                                 TaskCandidateGroupRepository taskCandidateGroupRepository) {
+        this.taskRepository = taskRepository;
         this.taskCandidateGroupRepository = taskCandidateGroupRepository;
     }
 
@@ -35,10 +43,21 @@ public class TaskCandidateGroupRemovedEventHandler implements QueryEventHandler 
     public void handle(CloudRuntimeEvent<?, ?> event) {
 
         CloudTaskCandidateGroupRemovedEvent taskCandidateGroupRemovedEvent = (CloudTaskCandidateGroupRemovedEvent) event;
-        TaskCandidateGroup taskCandidateGroup = new TaskCandidateGroup(taskCandidateGroupRemovedEvent.getEntity().getTaskId(),
+        String taskId = taskCandidateGroupRemovedEvent.getEntity().getTaskId();
+        TaskCandidateGroup taskCandidateGroup = new TaskCandidateGroup(taskId,
                                                                        taskCandidateGroupRemovedEvent.getEntity().getGroupId());
 
-        // not going to look up task as candidate can be created before task
+        // if a task was cancelled / completed do not handle this event
+        Optional<TaskEntity> findResult = taskRepository.findById(taskId);
+        if (findResult.isPresent()) {
+            TaskStatus taskStatus = findResult.get().getStatus();
+            if (taskStatus != TaskStatus.CREATED &&
+                taskStatus != TaskStatus.ASSIGNED &&
+                taskStatus != TaskStatus.SUSPENDED
+                ) {
+                return;
+            }
+        }
 
         // Persist into database
         try {
