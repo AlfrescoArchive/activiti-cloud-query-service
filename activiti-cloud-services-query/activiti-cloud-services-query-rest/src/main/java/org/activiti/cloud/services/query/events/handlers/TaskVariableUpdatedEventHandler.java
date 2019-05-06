@@ -34,6 +34,9 @@ public class TaskVariableUpdatedEventHandler {
         BooleanExpression predicate = QTaskVariableEntity.taskVariableEntity.name.eq(variableName)
                 .and(
                         QTaskVariableEntity.taskVariableEntity.taskId.eq(String.valueOf(taskId))
+                )
+                .and(
+                        QTaskVariableEntity.taskVariableEntity.markedAsDeleted.eq(Boolean.FALSE)
                 );
         variableUpdater.update(updatedVariableEntity,
                                predicate,

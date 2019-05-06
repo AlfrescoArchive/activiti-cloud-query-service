@@ -46,7 +46,9 @@ public class ProcessVariableDeletedEventHandler {
         ProcessVariableEntity variableEntity = entityFinder.findOne(variableRepository,
                                                              predicate,
                                                              "Unable to find variableEntity with name '" + variableName + "' for process instance '" + processInstanceId + "'");
+        
         variableEntity.setMarkedAsDeleted(true);
         variableRepository.save(variableEntity);
+        
     }
 }

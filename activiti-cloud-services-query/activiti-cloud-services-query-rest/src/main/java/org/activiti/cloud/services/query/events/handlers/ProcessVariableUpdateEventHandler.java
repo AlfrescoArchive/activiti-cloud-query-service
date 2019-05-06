@@ -19,6 +19,7 @@ package org.activiti.cloud.services.query.events.handlers;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.activiti.cloud.services.query.model.QProcessVariableEntity;
+import org.activiti.cloud.services.query.model.QTaskVariableEntity;
 
 public class ProcessVariableUpdateEventHandler {
 
@@ -34,6 +35,9 @@ public class ProcessVariableUpdateEventHandler {
         BooleanExpression predicate = QProcessVariableEntity.processVariableEntity.name.eq(variableName)
                 .and(
                         QProcessVariableEntity.processVariableEntity.processInstanceId.eq(String.valueOf(processInstanceId))
+                )
+                .and(
+                        QProcessVariableEntity.processVariableEntity.markedAsDeleted.eq(Boolean.FALSE)
                 );
         variableUpdater.update(updatedVariableEntity,
                                predicate,

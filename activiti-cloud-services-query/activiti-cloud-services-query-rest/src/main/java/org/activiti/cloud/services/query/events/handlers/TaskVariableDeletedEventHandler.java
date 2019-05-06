@@ -43,9 +43,12 @@ public class TaskVariableDeletedEventHandler {
                         QTaskVariableEntity.taskVariableEntity.name.eq(variableName)
 
                 ).and(QTaskVariableEntity.taskVariableEntity.markedAsDeleted.eq(Boolean.FALSE));
+        
         TaskVariableEntity variableEntity = entityFinder.findOne(variableRepository,
                                                              predicate,
                                                              "Unable to find variableEntity with name '" + variableName + "' for task '" + taskId + "'");
+        
+
         variableEntity.setMarkedAsDeleted(true);
         variableRepository.save(variableEntity);
     }
