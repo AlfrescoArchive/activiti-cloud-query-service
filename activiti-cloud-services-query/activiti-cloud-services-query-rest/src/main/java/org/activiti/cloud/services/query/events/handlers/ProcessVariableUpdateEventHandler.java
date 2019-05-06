@@ -19,7 +19,6 @@ package org.activiti.cloud.services.query.events.handlers;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.activiti.cloud.services.query.model.QProcessVariableEntity;
-import org.activiti.cloud.services.query.model.QTaskVariableEntity;
 
 public class ProcessVariableUpdateEventHandler {
 
