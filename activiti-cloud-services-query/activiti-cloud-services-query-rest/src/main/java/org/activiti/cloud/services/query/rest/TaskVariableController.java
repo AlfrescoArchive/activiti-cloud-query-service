@@ -68,12 +68,17 @@ public class TaskVariableController {
                                                                         Pageable pageable) {
 
         QTaskVariableEntity variable = QTaskVariableEntity.taskVariableEntity;
-        BooleanExpression expression = variable.taskId.eq(taskId);
+        
+        //We will show only not deleted variables 
+        BooleanExpression expression = variable.taskId.eq(taskId)
+                                       .and(variable.markedAsDeleted.eq(Boolean.FALSE));  
 
-        Predicate extendedPredicated = expression;
         if (predicate != null) {
-            extendedPredicated = expression.and(predicate);
+            expression = expression.and(predicate);
         }
+        
+        Predicate extendedPredicated = expression;  
+        
 
         Page<TaskVariableEntity> variables = variableRepository.findAll(extendedPredicated,
                                                                     pageable);

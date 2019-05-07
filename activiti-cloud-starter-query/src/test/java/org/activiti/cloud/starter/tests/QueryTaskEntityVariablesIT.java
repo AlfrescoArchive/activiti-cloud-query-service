@@ -29,7 +29,6 @@ import org.activiti.api.task.model.Task;
 import org.activiti.api.task.model.impl.TaskImpl;
 import org.activiti.cloud.api.model.shared.impl.events.CloudVariableCreatedEventImpl;
 import org.activiti.cloud.api.model.shared.impl.events.CloudVariableDeletedEventImpl;
-import org.activiti.cloud.api.model.shared.impl.events.CloudVariableUpdatedEventImpl;
 import org.activiti.cloud.api.task.model.impl.events.CloudTaskCompletedEventImpl;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
@@ -111,6 +110,7 @@ public class QueryTaskEntityVariablesIT {
         task = taskEventContainedBuilder.aCreatedTask("Created task",
                                                       runningProcessInstance);
         standAloneTask = taskEventContainedBuilder.aCreatedStandaloneTaskWithParent("StandAlone task");
+        
     }
 
     @After
@@ -141,7 +141,7 @@ public class QueryTaskEntityVariablesIT {
 
         eventsAggregator.sendAll();
 
-        await().untilAsserted(() -> {
+        //await().untilAsserted(() -> {
 
             //when
             ResponseEntity<PagedResources<TaskVariableEntity>> responseEntity = getTaskVariables(task.getId());
@@ -161,13 +161,13 @@ public class QueryTaskEntityVariablesIT {
                             tuple(
                                     "varUpdated",
                                     "v2-up",
-                                    false),
-                            tuple(
-                                    "varDeleted",
-                                    "v1",
-                                    true)
+                                    false)
                     );
-        });
+        //});
+            
+            Integer i=0;
+            i=i+1;
+            i=i+2;
     }
 
     @Test
@@ -304,97 +304,17 @@ public class QueryTaskEntityVariablesIT {
                     .containsExactly(
                             tuple( "var",
                                    "value",
-                                   true)
-                    );
-        });
-        
-    }
-    
-    @Test
-    public void shouldNotUpdateDeletedTaskVariable() {
-        //given
-        VariableInstanceImpl<String> var = new VariableInstanceImpl<>("var",
-                                                              "string",
-                                                              "value",
-                                                              null);
-        var.setTaskId(task.getId());
-        
-        eventsAggregator.addEvents(new CloudVariableCreatedEventImpl(var));
-     
-        eventsAggregator.sendAll();
-
-        await().untilAsserted(() -> {
-
-            //when
-            ResponseEntity<PagedResources<TaskVariableEntity>> responseEntity = getTaskVariables(task.getId());
-
-            //then
-            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(responseEntity.getBody().getContent())
-                    .extracting(
-                            TaskVariableEntity::getName,
-                            TaskVariableEntity::getValue,
-                            TaskVariableEntity::getMarkedAsDeleted)
-                    .containsExactly(
-                            tuple( "var",
-                                   "value",
                                    false)
                     );
         });
         
-        producer.send(new CloudVariableDeletedEventImpl(var));
-
-        await().untilAsserted(() -> {
-            //when
-            ResponseEntity<PagedResources<TaskVariableEntity>> responseEntity = getTaskVariables(task.getId());
-
-            //then
-            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(responseEntity.getBody().getContent())
-                    .extracting(
-                            TaskVariableEntity::getName,
-                            TaskVariableEntity::getValue,
-                            TaskVariableEntity::getMarkedAsDeleted)
-                    .containsExactly(
-                            tuple( "var",
-                                   "value",
-                                   true)
-                    );
-        });
-
-        //Try to update variable which is already deleted: should not happen
-        var = new VariableInstanceImpl<>("var",
-                "string",
-                "new value",
-                null);
-        var.setTaskId(task.getId());
-        producer.send(new CloudVariableUpdatedEventImpl(var));
-        
-        await().untilAsserted(() -> {
-            //when
-            ResponseEntity<PagedResources<TaskVariableEntity>> responseEntity = getTaskVariables(task.getId());
-
-            //then
-            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(responseEntity.getBody().getContent())
-                    .extracting(
-                            TaskVariableEntity::getName,
-                            TaskVariableEntity::getValue,
-                            TaskVariableEntity::getMarkedAsDeleted)
-                    .containsExactly(
-                            tuple( "var",
-                                   "value",
-                                   true)
-                    );
-        });
-        
- 
     }
     
+
     @Test
     public void shouldNotCreateTaskVariableWithSameName() {
         //given
-        VariableInstanceImpl<String> var = new VariableInstanceImpl<>("var",
+        VariableInstanceImpl<String> var = new VariableInstanceImpl<>("varCreated",
                                                               "string",
                                                               "value",
                                                               null);
@@ -416,13 +336,13 @@ public class QueryTaskEntityVariablesIT {
                             TaskVariableEntity::getValue,
                             TaskVariableEntity::getMarkedAsDeleted)
                     .containsExactly(
-                            tuple( "var",
+                            tuple( "varCreated",
                                    "value",
                                    false)
                     );
         });
 
-        var = new VariableInstanceImpl<>("var",
+        var = new VariableInstanceImpl<>("varCreated",
                 "string",
                 "new value",
                 null);
@@ -443,7 +363,7 @@ public class QueryTaskEntityVariablesIT {
                           TaskVariableEntity::getValue,
                           TaskVariableEntity::getMarkedAsDeleted)
                   .containsExactly(
-                          tuple( "var",
+                          tuple( "varCreated",
                                  "value",
                                  false)
                   );
@@ -492,19 +412,10 @@ public class QueryTaskEntityVariablesIT {
 
             //then
             assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(responseEntity.getBody().getContent())
-                    .extracting(
-                            TaskVariableEntity::getName,
-                            TaskVariableEntity::getValue,
-                            TaskVariableEntity::getMarkedAsDeleted)
-                    .containsExactly(
-                            tuple( "var",
-                                   "value",
-                                   true)
-                    );
+            assertThat(responseEntity.getBody().getContent().size()).isEqualTo(0);
         });
 
-        //Try to create a variable with the same name
+        //Create a variable with the same name
         var = new VariableInstanceImpl<>("var",
                 "string",
                 "new value",
@@ -524,9 +435,6 @@ public class QueryTaskEntityVariablesIT {
                             TaskVariableEntity::getValue,
                             TaskVariableEntity::getMarkedAsDeleted)
                     .containsExactly(
-                            tuple( "var",
-                                   "value",
-                                   true),
                             tuple( "var",
                                    "new value",
                                    false)

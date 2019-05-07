@@ -78,7 +78,7 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
         String variableName = variableCreatedEvent.getEntity().getName();
         TaskEntity taskEntity = entityManager.getReference(TaskEntity.class,
                                                            taskId);
-        
+           
         BooleanExpression predicate = QTaskVariableEntity.taskVariableEntity.name.eq(variableName)
                 .and(
                         QTaskVariableEntity.taskVariableEntity.taskId.eq(String.valueOf(taskId))
@@ -87,6 +87,7 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
                         QTaskVariableEntity.taskVariableEntity.markedAsDeleted.eq(Boolean.FALSE)
                 );
 
+        //Should we throw exception here?
         if (taskVariableRepository.exists(predicate)) {
             throw new IllegalStateException("Variable " + variableName + " already exists in the task " + taskId + "!");
         }

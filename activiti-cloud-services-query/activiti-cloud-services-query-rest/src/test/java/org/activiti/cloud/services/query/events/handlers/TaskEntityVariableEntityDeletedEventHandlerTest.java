@@ -24,13 +24,17 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import com.querydsl.core.types.Predicate;
 import org.activiti.api.runtime.model.impl.VariableInstanceImpl;
+import org.activiti.api.task.model.Task.TaskStatus;
 import org.activiti.cloud.api.model.shared.impl.events.CloudVariableDeletedEventImpl;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
+import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.app.repository.TaskVariableRepository;
+import org.activiti.cloud.services.query.model.TaskEntity;
 import org.activiti.cloud.services.query.model.TaskVariableEntity;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +51,9 @@ public class TaskEntityVariableEntityDeletedEventHandlerTest {
 
     @Mock
     private EntityFinder entityFinder;
+    
+    @Mock
+    private TaskRepository taskRepository;
 
     @Before
     public void setUp() {
@@ -66,7 +73,11 @@ public class TaskEntityVariableEntityDeletedEventHandlerTest {
         TaskVariableEntity variableEntity = new TaskVariableEntity();
         given(entityFinder.findOne(eq(variableRepository), any(Predicate.class), anyString())).willReturn(variableEntity);
 
-
+        TaskEntity taskEntity = new TaskEntity();
+        taskEntity.setStatus(TaskStatus.CREATED);
+        given(entityFinder.findOne(eq(taskRepository), any(Predicate.class), anyString())).willReturn(taskEntity);
+        
+        
         //when
         handler.handle(event);
 
