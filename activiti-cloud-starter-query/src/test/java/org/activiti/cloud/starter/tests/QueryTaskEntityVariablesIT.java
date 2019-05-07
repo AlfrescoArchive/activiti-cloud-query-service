@@ -141,7 +141,7 @@ public class QueryTaskEntityVariablesIT {
 
         eventsAggregator.sendAll();
 
-        //await().untilAsserted(() -> {
+        await().untilAsserted(() -> {
 
             //when
             ResponseEntity<PagedResources<TaskVariableEntity>> responseEntity = getTaskVariables(task.getId());
@@ -163,11 +163,8 @@ public class QueryTaskEntityVariablesIT {
                                     "v2-up",
                                     false)
                     );
-        //});
-            
-            Integer i=0;
-            i=i+1;
-            i=i+2;
+        });
+        
     }
 
     @Test
