@@ -65,8 +65,8 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
             }
         
         } catch (Exception cause) {
-            throw new QueryException("Error handling VariableCreatedEvent[" + event + "]",
-                                     cause);
+            LOGGER.debug("Error handling VariableCreatedEvent[" + event + "]",
+                         cause);
         }
    
     }
@@ -81,15 +81,12 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
            
         BooleanExpression predicate = QTaskVariableEntity.taskVariableEntity.name.eq(variableName)
                 .and(
-                        QTaskVariableEntity.taskVariableEntity.taskId.eq(String.valueOf(taskId))
-                )
-                .and(
-                        QTaskVariableEntity.taskVariableEntity.markedAsDeleted.eq(Boolean.FALSE)
+                        QTaskVariableEntity.taskVariableEntity.taskId.eq(taskId)
                 );
 
-        //Should we throw exception here?
         if (taskVariableRepository.exists(predicate)) {
-            throw new IllegalStateException("Variable " + variableName + " already exists in the task " + taskId + "!");
+            LOGGER.debug("Variable " + variableName + " already exists in the task " + taskId + "!");
+            return;
         }
         
         TaskVariableEntity taskVariableEntity = new TaskVariableEntity(null, 
@@ -121,14 +118,12 @@ public class VariableCreatedEventHandler implements QueryEventHandler {
         
         BooleanExpression predicate = QProcessVariableEntity.processVariableEntity.name.eq(variableName)
                 .and(
-                        QProcessVariableEntity.processVariableEntity.processInstanceId.eq(String.valueOf(processInstanceId))
-                )
-                .and(
-                        QProcessVariableEntity.processVariableEntity.markedAsDeleted.eq(Boolean.FALSE)
+                        QProcessVariableEntity.processVariableEntity.processInstanceId.eq(processInstanceId)
                 );
         
         if (variableRepository.exists(predicate)) {
-            throw new IllegalStateException("Variable " + variableName + " already exists in the process " + processInstanceId + "!");
+            LOGGER.debug("Variable " + variableName + " already exists in the process " + processInstanceId + "!");
+            return;
         }
  
         ProcessVariableEntity variableEntity = new ProcessVariableEntity(null, 

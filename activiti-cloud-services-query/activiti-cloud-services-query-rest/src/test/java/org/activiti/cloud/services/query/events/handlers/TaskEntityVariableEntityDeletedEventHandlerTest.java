@@ -24,6 +24,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import com.querydsl.core.types.Predicate;
@@ -39,6 +40,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 public class TaskEntityVariableEntityDeletedEventHandlerTest {
 
@@ -60,7 +62,7 @@ public class TaskEntityVariableEntityDeletedEventHandlerTest {
     }
 
     @Test
-    public void handleShouldSoftDeleteIt() {
+    public void handleShouldDeleteIt() {
         //given
         VariableInstanceImpl<String> variableInstance = new VariableInstanceImpl<>("var",
                                                                                    "string",
@@ -70,19 +72,19 @@ public class TaskEntityVariableEntityDeletedEventHandlerTest {
         CloudVariableDeletedEventImpl event = new CloudVariableDeletedEventImpl(variableInstance);
 
         TaskVariableEntity variableEntity = new TaskVariableEntity();
-        given(entityFinder.findOne(eq(variableRepository), any(Predicate.class), anyString())).willReturn(variableEntity);
-
         TaskEntity taskEntity = new TaskEntity();
-        taskEntity.setStatus(TaskStatus.CREATED);
-        given(entityFinder.findOne(eq(taskRepository), any(Predicate.class), anyString())).willReturn(taskEntity);
+        taskEntity.setStatus(TaskStatus.CREATED);     
+        Optional<TaskEntity> optional = Optional.of(taskEntity);
         
+        Mockito.when(taskRepository.findById(anyString())).thenReturn(optional);
+        given(entityFinder.findOne(eq(variableRepository), any(Predicate.class), anyString())).willReturn(variableEntity);
         
         //when
         handler.handle(event);
 
         //then
-        verify(variableRepository).save(variableEntity);
-        assertThat(variableEntity.getMarkedAsDeleted()).isTrue();
+        verify(variableRepository).delete(variableEntity);
+
     }
 
 }

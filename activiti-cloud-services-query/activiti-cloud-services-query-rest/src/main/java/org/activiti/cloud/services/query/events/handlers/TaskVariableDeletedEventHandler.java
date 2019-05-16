@@ -19,18 +19,20 @@ package org.activiti.cloud.services.query.events.handlers;
 import java.util.Optional;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import org.activiti.api.task.model.Task.TaskStatus;
 import org.activiti.cloud.api.model.shared.events.CloudVariableDeletedEvent;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.app.repository.TaskVariableRepository;
-import org.activiti.cloud.services.query.model.QTaskEntity;
 import org.activiti.cloud.services.query.model.QTaskVariableEntity;
 import org.activiti.cloud.services.query.model.TaskEntity;
 import org.activiti.cloud.services.query.model.TaskVariableEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TaskVariableDeletedEventHandler {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(TaskVariableDeletedEventHandler.class);
+    
     private final TaskVariableRepository variableRepository;
 
     private final EntityFinder entityFinder;
@@ -48,33 +50,26 @@ public class TaskVariableDeletedEventHandler {
     public void handle(CloudVariableDeletedEvent event) {
         String variableName = event.getEntity().getName();
         String taskId = event.getEntity().getTaskId();
-        BooleanExpression predicate = QTaskVariableEntity.taskVariableEntity.taskId.eq(taskId)
-                .and(
-                        QTaskVariableEntity.taskVariableEntity.name.eq(variableName)
-
-                ).and(QTaskVariableEntity.taskVariableEntity.markedAsDeleted.eq(Boolean.FALSE));
+        Optional<TaskEntity> findResult = taskRepository.findById(taskId);
         
-        TaskVariableEntity variableEntity = entityFinder.findOne(variableRepository,
-                                                                 predicate,
-                                                                 "Unable to find variableEntity with name '" + variableName + "' for task '" + taskId + "'");
+        // if a task was cancelled / completed do not handle this event
+        if(findResult.isPresent() && !findResult.get().getStatus().isFinalState()) {
+            BooleanExpression predicate = QTaskVariableEntity.taskVariableEntity.taskId.eq(taskId)
+                    .and(
+                            QTaskVariableEntity.taskVariableEntity.name.eq(variableName)
+                    );    
+            TaskVariableEntity variableEntity = entityFinder.findOne(variableRepository,
+                                                                     predicate,
+                                                                     "Unable to find variableEntity with name '" + variableName + "' for task '" + taskId + "'");
         
-        predicate = QTaskEntity.taskEntity.id.eq(taskId);
-        
-        Optional<TaskEntity> taskEntity = taskRepository.findOne(predicate);
-            
-        if (taskEntity.isPresent()) {
-            TaskStatus taskStatus = taskEntity.get().getStatus();
-
-            if (taskStatus != TaskStatus.CREATED &&
-                taskStatus != TaskStatus.ASSIGNED &&
-                taskStatus != TaskStatus.SUSPENDED
-                ) {
-                return;
-            }
-            
+            // Persist into database
+            try {
+                variableRepository.delete(variableEntity);
+            } catch (Exception cause) {
+                LOGGER.debug("Error handling TaskVariableDeletedEvent[" + event + "]",
+                             cause);
+            }                
         }
-        
-        variableEntity.setMarkedAsDeleted(true);
-        variableRepository.save(variableEntity);
+ 
     }
 }

@@ -66,8 +66,7 @@ public class ProcessVariableEntityDeletedHandlerTest {
         handler.handle(event);
 
         //then
-        verify(variableRepository).save(variableEntity);
-        assertThat(variableEntity.getMarkedAsDeleted()).isTrue();
+        verify(variableRepository).delete(variableEntity);
     }
 
     private CloudVariableDeletedEvent buildVariableDeletedEvent() {

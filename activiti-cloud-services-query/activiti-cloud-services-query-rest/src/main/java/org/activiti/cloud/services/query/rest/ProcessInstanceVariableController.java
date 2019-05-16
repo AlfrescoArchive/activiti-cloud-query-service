@@ -69,8 +69,7 @@ public class ProcessInstanceVariableController {
         QProcessVariableEntity variable = QProcessVariableEntity.processVariableEntity;
         
         //We will show only not deleted variables 
-        BooleanExpression expression = variable.processInstanceId.eq(processInstanceId)
-                                       .and(variable.markedAsDeleted.eq(Boolean.FALSE));  
+        BooleanExpression expression = variable.processInstanceId.eq(processInstanceId);  
 
         if (predicate != null) {
             expression = expression.and(predicate);

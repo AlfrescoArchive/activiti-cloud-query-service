@@ -69,8 +69,7 @@ public class TaskVariableAdminController {
         QTaskVariableEntity variable = QTaskVariableEntity.taskVariableEntity;
 
         //We will show only not deleted variables 
-        BooleanExpression expression = variable.taskId.eq(taskId)
-                                       .and(variable.markedAsDeleted.eq(Boolean.FALSE));  
+        BooleanExpression expression = variable.taskId.eq(taskId);  
 
         if (predicate != null) {
             expression = expression.and(predicate);
