@@ -196,10 +196,12 @@ public class EventHandlersAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public VariableDeletedEventHandler variableDeletedEventHandler(TaskRepository taskRepository,
+                                                                   ProcessInstanceRepository processInstanceRepository,
                                                                    VariableRepository variableRepository,
                                                                    EntityFinder entityFinder,
                                                                    TaskVariableRepository taskVariableRepository) {
-        return new VariableDeletedEventHandler(new ProcessVariableDeletedEventHandler(variableRepository,
+        return new VariableDeletedEventHandler(new ProcessVariableDeletedEventHandler(processInstanceRepository,
+                                                                                      variableRepository,
                                                                                       entityFinder),
                                                new TaskVariableDeletedEventHandler(taskRepository,
                                                                                    taskVariableRepository,
