@@ -53,7 +53,7 @@ public class TaskVariableDeletedEventHandler {
         Optional<TaskEntity> findResult = taskRepository.findById(taskId);
         
         // if a task was cancelled / completed do not handle this event
-        if(findResult.isPresent() && !findResult.get().getStatus().isFinalState()) {
+        if(findResult.isPresent() && !findResult.get().isInFinalState()) {
             BooleanExpression predicate = QTaskVariableEntity.taskVariableEntity.taskId.eq(taskId)
                     .and(
                             QTaskVariableEntity.taskVariableEntity.name.eq(variableName)

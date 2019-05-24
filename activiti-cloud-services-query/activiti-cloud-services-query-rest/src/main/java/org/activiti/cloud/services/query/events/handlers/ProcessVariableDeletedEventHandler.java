@@ -55,7 +55,7 @@ public class ProcessVariableDeletedEventHandler {
         Optional<ProcessInstanceEntity> findResult = processRepository.findById(processInstanceId);
         
         // if a task was cancelled / completed do not handle this event
-        if(findResult.isPresent() && !findResult.get().getStatus().isFinalState()) {
+        if(findResult.isPresent() && !findResult.get().isInFinalState()) {
         
             BooleanExpression predicate = QProcessVariableEntity.processVariableEntity.processInstanceId.eq(processInstanceId)
                     .and(
