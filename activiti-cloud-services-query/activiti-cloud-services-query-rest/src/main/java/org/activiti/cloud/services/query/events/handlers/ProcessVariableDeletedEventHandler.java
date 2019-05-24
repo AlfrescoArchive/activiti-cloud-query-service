@@ -22,12 +22,10 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import org.activiti.cloud.api.model.shared.events.CloudVariableDeletedEvent;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
-import org.activiti.cloud.services.query.app.repository.TaskVariableRepository;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
 import org.activiti.cloud.services.query.model.ProcessVariableEntity;
 import org.activiti.cloud.services.query.model.QProcessVariableEntity;
-import org.activiti.cloud.services.query.model.TaskEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
