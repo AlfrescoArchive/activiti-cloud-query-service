@@ -48,7 +48,7 @@ public class TaskCandidateGroupRemovedEventHandler implements QueryEventHandler 
         Optional<TaskEntity> findResult = taskRepository.findById(taskId);
         
         // if a task was cancelled / completed do not handle this event
-        if(findResult.isPresent() && !findResult.get().getStatus().isFinalState()) {
+        if(findResult.isPresent() && !findResult.get().isInFinalState()) {
             
             TaskCandidateGroup taskCandidateGroup = new TaskCandidateGroup(taskId,
                                                                            taskCandidateGroupRemovedEvent.getEntity().getGroupId());

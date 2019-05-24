@@ -47,7 +47,7 @@ public class TaskCandidateUserRemovedEventHandler implements QueryEventHandler {
         Optional<TaskEntity> findResult = taskRepository.findById(taskId);
         
         // if a task was cancelled / completed do not handle this event
-        if(findResult.isPresent() && !findResult.get().getStatus().isFinalState()) {
+        if(findResult.isPresent() && !findResult.get().isInFinalState()) {
             org.activiti.api.task.model.TaskCandidateUser taskCandidateUser = taskCandidateUserRemovedEvent.getEntity();
             
             // Persist into database
