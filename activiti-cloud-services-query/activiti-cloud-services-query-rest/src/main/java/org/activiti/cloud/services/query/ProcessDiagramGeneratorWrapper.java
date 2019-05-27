@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.activiti.bpmn.model.BpmnModel;
-import org.activiti.engine.ActivitiException;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.image.exception.ActivitiImageException;
 import org.apache.commons.io.IOUtils;
@@ -98,7 +97,7 @@ public class ProcessDiagramGeneratorWrapper {
         } catch (ActivitiImageException e) {
             throw e;
         } catch (Exception e) {
-            throw new ActivitiException("Error occurred while getting process diagram for model: " + bpmnModel,
+            throw new RuntimeException("Error occurred while getting process diagram for model: " + bpmnModel,
                                         e);
         }
     }
