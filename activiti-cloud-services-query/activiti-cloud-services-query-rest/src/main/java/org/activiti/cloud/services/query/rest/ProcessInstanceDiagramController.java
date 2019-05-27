@@ -74,7 +74,7 @@ public class ProcessInstanceDiagramController {
         BpmnModel bpmnModel = getBpmnModel(processDefinitionId);
 
         List<String> highLightedActivities = resolveActiveActivitiesIds(processInstanceId);
-        List<String> highLightedFlows = resolveCompletedActivities(bpmnModel, processInstanceId);
+        List<String> highLightedFlows = resolveCompletedFlows(bpmnModel, processInstanceId);
 
         return new String(processDiagramGenerator.generateDiagram(bpmnModel,
                                                                   highLightedActivities,
@@ -83,7 +83,7 @@ public class ProcessInstanceDiagramController {
 
     }
 
-    protected List<String> resolveCompletedActivities(BpmnModel bpmnModel, String processInstanceId) {
+    protected List<String> resolveCompletedFlows(BpmnModel bpmnModel, String processInstanceId) {
         List<String> completedFlows = new LinkedList<String>();
         List<String> activeAndHistorcActivityIds = bpmnActivityRepository.findByProcessInstanceId(processInstanceId)
                                                                          .stream()
@@ -108,7 +108,7 @@ public class ProcessInstanceDiagramController {
     }
 
     protected List<String> resolveActiveActivitiesIds(String processInstanceId) {
-        return bpmnActivityRepository.findByProcessInstanceIdAndStatusNot(processInstanceId, BPMNActivityStatus.COMPLETED)
+        return bpmnActivityRepository.findByProcessInstanceIdAndStatus(processInstanceId, BPMNActivityStatus.COMPLETED)
                                      .stream()
                                      .map(BPMNActivityEntity::getId)
                                      .collect(Collectors.toList());
