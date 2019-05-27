@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -18,9 +19,12 @@ import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.cloud.services.query.ProcessDiagramGeneratorWrapper;
+import org.activiti.cloud.services.query.app.repository.BPMNActivityRepository;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.app.repository.ProcessModelRepository;
+import org.activiti.cloud.services.query.model.BPMNActivityEntity;
+import org.activiti.cloud.services.query.model.BPMNActivityEntity.BPMNActivityStatus;
 import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
 import org.activiti.cloud.services.query.model.ProcessModelEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +43,8 @@ public class ProcessInstanceDiagramController {
     private final EntityFinder entityFinder;
 
     private final ProcessInstanceRepository processInstanceRepository;
+    
+    private final BPMNActivityRepository bpmnActivityRepository;
 
     private final ProcessDiagramGeneratorWrapper processDiagramGenerator;
 
@@ -46,12 +52,14 @@ public class ProcessInstanceDiagramController {
     public ProcessInstanceDiagramController(ProcessModelRepository processModelRepository,
                                             ProcessDiagramGeneratorWrapper processDiagramGenerator,
                                             ProcessInstanceRepository processInstanceRepository,
+                                            BPMNActivityRepository bpmnActivityRepository,
                                             EntityFinder entityFinder) {
         
         this.processInstanceRepository = processInstanceRepository;
         this.processModelRepository = processModelRepository;
         this.entityFinder = entityFinder;
         this.processDiagramGenerator = processDiagramGenerator;
+        this.bpmnActivityRepository = bpmnActivityRepository;
 
     }
 
@@ -77,7 +85,10 @@ public class ProcessInstanceDiagramController {
 
     protected List<String> resolveCompletedActivities(BpmnModel bpmnModel, String processInstanceId) {
         List<String> completedFlows = new LinkedList<String>();
-        List<String> activeAndHistorcActivityIds = processInstanceRepository.findActivitiIds(processInstanceId);
+        List<String> activeAndHistorcActivityIds = bpmnActivityRepository.findByProcessInstanceId(processInstanceId)
+                                                                         .stream()
+                                                                         .map(BPMNActivityEntity::getId)
+                                                                         .collect(Collectors.toList());
 
         for (org.activiti.bpmn.model.Process process : bpmnModel.getProcesses()) {
             for (FlowElement flowElement : process.getFlowElements()) {
@@ -97,13 +108,10 @@ public class ProcessInstanceDiagramController {
     }
 
     protected List<String> resolveActiveActivitiesIds(String processInstanceId) {
-        List<String> activeActivitiesIds = new LinkedList<>();
-        try {
-            activeActivitiesIds.addAll(processInstanceRepository.findByActiveActivityIds(processInstanceId));
-        } catch (Exception ignore) {
-        }
-
-        return activeActivitiesIds;
+        return bpmnActivityRepository.findByProcessInstanceIdAndStatusNot(processInstanceId, BPMNActivityStatus.COMPLETED)
+                                     .stream()
+                                     .map(BPMNActivityEntity::getId)
+                                     .collect(Collectors.toList());
     }
 
     protected String resolveProcessDefinitionId(String processInstanceId) {
@@ -143,11 +151,7 @@ public class ProcessInstanceDiagramController {
 
             XMLStreamReader xtr = xif.createXMLStreamReader(in);
 
-            BpmnXMLConverter converter = new BpmnXMLConverter();
-
-            BpmnModel bpmnModel = converter.convertToBpmnModel(xtr);
-
-            return bpmnModel;
+            return new BpmnXMLConverter().convertToBpmnModel(xtr);
             
         } catch (UnsupportedEncodingException e) {
             throw new XMLException("The bpmn 2.0 xml is not UTF8 encoded", e);
