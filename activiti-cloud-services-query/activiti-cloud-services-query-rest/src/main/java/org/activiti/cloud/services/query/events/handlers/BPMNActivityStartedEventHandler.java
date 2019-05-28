@@ -64,12 +64,15 @@ public class BPMNActivityStartedEventHandler implements QueryEventHandler {
             bpmnActivityEntity.setActivityType(bpmnActivity.getActivityType());
             bpmnActivityEntity.setProcessDefinitionId(bpmnActivity.getProcessDefinitionId());
             bpmnActivityEntity.setProcessInstanceId(bpmnActivity.getProcessInstanceId());
-            bpmnActivityEntity.setStartedDate(new Date(activityEvent.getTimestamp()));
-            bpmnActivityEntity.setStatus(BPMNActivityStatus.STARTED);
-    
-            persistIntoDatabase(event,
-                                bpmnActivityEntity);
         }
+
+        // Activity can be cyclical, so we just update the status and started date anyways
+        bpmnActivityEntity.setStartedDate(new Date(activityEvent.getTimestamp()));
+        bpmnActivityEntity.setStatus(BPMNActivityStatus.STARTED);
+
+        persistIntoDatabase(event,
+                            bpmnActivityEntity);
+        
     }
 
     private void persistIntoDatabase(CloudRuntimeEvent<?, ?> event,
