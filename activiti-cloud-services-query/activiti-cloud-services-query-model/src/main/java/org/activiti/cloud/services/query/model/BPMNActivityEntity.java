@@ -6,13 +6,18 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.activiti.cloud.api.process.model.CloudBPMNActivity;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity(name="BPMNActivity")
-@Table(name="BPMN_ACTIVITY")
+@Table(name="BPMN_ACTIVITY", indexes={
+    @Index(name="bpmn_activity_status_idx", columnList="status", unique=false),
+    @Index(name="bpmn_activity_processInstance_idx", columnList="processInstanceId", unique=false),
+    @Index(name="bpmn_activity_processInstance_elementId_idx", columnList="processInstanceId,elementId", unique=true)
+})
 public class BPMNActivityEntity extends ActivitiEntityMetadata implements CloudBPMNActivity {
     
     public static enum BPMNActivityStatus {
