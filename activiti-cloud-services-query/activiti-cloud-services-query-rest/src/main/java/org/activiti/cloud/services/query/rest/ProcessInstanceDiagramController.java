@@ -1,20 +1,11 @@
 package org.activiti.cloud.services.query.rest;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import org.activiti.bpmn.converter.BpmnXMLConverter;
-import org.activiti.bpmn.exceptions.XMLException;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.SequenceFlow;
@@ -130,43 +121,7 @@ public class ProcessInstanceDiagramController {
 
         String processModelContent = processModelEntity.getProcessModelContent();
 
-        InputStreamReader in = null;
-
-        try {
-            in = new InputStreamReader(new ByteArrayInputStream(processModelContent.getBytes()), "utf-8");
-
-            XMLInputFactory xif = XMLInputFactory.newInstance();
-
-            if (xif.isPropertySupported(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES)) {
-                xif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
-            }
-
-            if (xif.isPropertySupported(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES)) {
-                xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
-            }
-
-            if (xif.isPropertySupported(XMLInputFactory.SUPPORT_DTD)) {
-                xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-            }
-
-            XMLStreamReader xtr = xif.createXMLStreamReader(in);
-
-            return new BpmnXMLConverter().convertToBpmnModel(xtr);
-            
-        } catch (UnsupportedEncodingException e) {
-            throw new XMLException("The bpmn 2.0 xml is not UTF8 encoded", e);
-        } catch (XMLStreamException e) {
-            throw new XMLException("Error while reading the BPMN 2.0 XML", e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // LOGGER.debug("Problem closing BPMN input stream", e);
-                }
-            }
-        }
-
+        return processDiagramGenerator.parseBpmnModelXml(new ByteArrayInputStream(processModelContent.getBytes()));
     }
 
 }

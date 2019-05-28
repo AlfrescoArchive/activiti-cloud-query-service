@@ -19,10 +19,18 @@ package org.activiti.cloud.services.query;
 import static java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
 import static java.util.Collections.emptyList;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.activiti.bpmn.converter.BpmnXMLConverter;
+import org.activiti.bpmn.exceptions.XMLException;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.activiti.image.exception.ActivitiImageException;
@@ -42,13 +50,13 @@ public class ProcessDiagramGeneratorWrapper {
 
     private final ProcessDiagramGenerator processDiagramGenerator;
 
-    @Value("${activiti.diagram.activity.font:Serif}")
+    @Value("${activiti.diagram.activity.font:}")
     private String activityFontName;
 
-    @Value("${activiti.diagram.label.font:Serif}")
+    @Value("${activiti.diagram.label.font:}")
     private String labelFontName;
 
-    @Value("${activiti.diagram.annotation.font:Serif}")
+    @Value("${activiti.diagram.annotation.font:}")
     private String annotationFontName;
 
     @Value("${activiti.diagram.default.image.file:}")
@@ -57,6 +65,9 @@ public class ProcessDiagramGeneratorWrapper {
     @Value("${activiti.diagram.generate.default:false}")
     private boolean generateDefaultDiagram;
 
+    @Value("${activiti.diagram.default.font:Serif}")
+    private String diagramDefaultFont;
+    
     @Autowired
     public ProcessDiagramGeneratorWrapper(ProcessDiagramGenerator processDiagramGenerator) {
         this.processDiagramGenerator = processDiagramGenerator;
@@ -125,7 +136,7 @@ public class ProcessDiagramGeneratorWrapper {
     public String getActivityFontName() {
         return isFontAvailable(activityFontName) ?
                 activityFontName :
-                processDiagramGenerator.getDefaultActivityFontName();
+                getDiagramDefaultFont();
     }
 
     /**
@@ -135,7 +146,7 @@ public class ProcessDiagramGeneratorWrapper {
     public String getLabelFontName() {
         return isFontAvailable(labelFontName) ?
                 labelFontName :
-                processDiagramGenerator.getDefaultLabelFontName();
+                getDiagramDefaultFont();
     }
 
     /**
@@ -145,7 +156,7 @@ public class ProcessDiagramGeneratorWrapper {
     public String getAnnotationFontName() {
         return isFontAvailable(annotationFontName) ?
                 annotationFontName :
-                processDiagramGenerator.getDefaultAnnotationFontName();
+                getDiagramDefaultFont();
     }
 
     /**
@@ -172,4 +183,53 @@ public class ProcessDiagramGeneratorWrapper {
     protected String[] getAvailableFonts() {
         return getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
     }
+
+    
+    public String getDiagramDefaultFont() {
+        return diagramDefaultFont;
+    }
+
+    
+    public void setDiagramDefaultFont(String diagramDefaultFont) {
+        this.diagramDefaultFont = diagramDefaultFont;
+    }
+    
+    public BpmnModel parseBpmnModelXml(InputStream inputStream) {
+        InputStreamReader in = null;
+
+        try {
+            in = new InputStreamReader(inputStream);
+
+            XMLInputFactory xif = XMLInputFactory.newInstance();
+
+            if (xif.isPropertySupported(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES)) {
+                xif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
+            }
+
+            if (xif.isPropertySupported(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES)) {
+                xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+            }
+
+            if (xif.isPropertySupported(XMLInputFactory.SUPPORT_DTD)) {
+                xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            }
+
+            XMLStreamReader xtr = xif.createXMLStreamReader(in);
+
+            return new BpmnXMLConverter().convertToBpmnModel(xtr);
+            
+        } catch (XMLStreamException e) {
+            throw new XMLException("Error while reading the BPMN 2.0 XML", e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    // LOGGER.debug("Problem closing BPMN input stream", e);
+                }
+            }
+        }
+        
+    }
+    
 }
