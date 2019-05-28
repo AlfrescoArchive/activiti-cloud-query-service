@@ -67,9 +67,11 @@ public class TaskLookupRestrictionService {
                     .or(task.taskCandidateUsers.any().userId.eq(userId) //is candidate user and task is not assigned
                                 .and(isNotAssigned));
 
-
-            List<String> groups = null;
-            if (userGroupManager != null) {
+            // Let's try to retrieve user groups for authenticated user from SecurityManager   
+            List<String> groups = securityManager.getAuthenticatedUserGroups(); 
+            
+            // Let's fallback to UserGroupManager if authenticated user groups is empty
+            if (userGroupManager != null && groups.isEmpty()) {
                 groups = userGroupManager.getUserGroups(userId);
             }
             if(groups!=null && groups.size()>0) {
