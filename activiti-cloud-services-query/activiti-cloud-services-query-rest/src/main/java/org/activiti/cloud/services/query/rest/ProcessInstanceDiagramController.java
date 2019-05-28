@@ -2,20 +2,19 @@ package org.activiti.cloud.services.query.rest;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.activiti.bpmn.model.BpmnModel;
-import org.activiti.bpmn.model.FlowElement;
-import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.cloud.services.query.ProcessDiagramGeneratorWrapper;
 import org.activiti.cloud.services.query.app.repository.BPMNActivityRepository;
+import org.activiti.cloud.services.query.app.repository.BPMNSequenceFlowRepository;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.app.repository.ProcessModelRepository;
 import org.activiti.cloud.services.query.model.BPMNActivityEntity;
 import org.activiti.cloud.services.query.model.BPMNActivityEntity.BPMNActivityStatus;
+import org.activiti.cloud.services.query.model.BPMNSequenceFlowEntity;
 import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
 import org.activiti.cloud.services.query.model.ProcessModelEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +25,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/v1/process-instances/{processInstanceId}/diagram")
 public class ProcessInstanceDiagramController {
 
     private final ProcessModelRepository processModelRepository;
 
+    private final BPMNSequenceFlowRepository bpmnSequenceFlowRepository;
+    
     private final EntityFinder entityFinder;
 
     private final ProcessInstanceRepository processInstanceRepository;
@@ -41,6 +41,7 @@ public class ProcessInstanceDiagramController {
 
     @Autowired
     public ProcessInstanceDiagramController(ProcessModelRepository processModelRepository,
+                                            BPMNSequenceFlowRepository bpmnSequenceFlowRepository,
                                             ProcessDiagramGeneratorWrapper processDiagramGenerator,
                                             ProcessInstanceRepository processInstanceRepository,
                                             BPMNActivityRepository bpmnActivityRepository,
@@ -51,10 +52,13 @@ public class ProcessInstanceDiagramController {
         this.entityFinder = entityFinder;
         this.processDiagramGenerator = processDiagramGenerator;
         this.bpmnActivityRepository = bpmnActivityRepository;
+        this.bpmnSequenceFlowRepository = bpmnSequenceFlowRepository;
 
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = "image/svg+xml")
+    @RequestMapping(value = "/v1/process-instances/{processInstanceId}/diagram",
+                    method = RequestMethod.GET, 
+                    produces = "image/svg+xml")
     @ResponseBody
     public String getProcessDiagram(@PathVariable String processInstanceId) {
         return generateDiagram(processInstanceId);
@@ -64,44 +68,48 @@ public class ProcessInstanceDiagramController {
         String processDefinitionId = resolveProcessDefinitionId(processInstanceId);
         BpmnModel bpmnModel = getBpmnModel(processDefinitionId);
 
-        List<String> highLightedActivities = resolveActiveActivitiesIds(processInstanceId);
+        List<String> highLightedActivities = resolveStartedActivitiesIds(processInstanceId);
         List<String> highLightedFlows = resolveCompletedFlows(bpmnModel, processInstanceId);
 
         return new String(processDiagramGenerator.generateDiagram(bpmnModel,
                                                                   highLightedActivities,
                                                                   highLightedFlows),
                           StandardCharsets.UTF_8);
-
     }
 
     protected List<String> resolveCompletedFlows(BpmnModel bpmnModel, String processInstanceId) {
-        List<String> completedFlows = new LinkedList<String>();
-        List<String> activeAndHistorcActivityIds = bpmnActivityRepository.findByProcessInstanceId(processInstanceId)
-                                                                         .stream()
-                                                                         .map(BPMNActivityEntity::getId)
-                                                                         .collect(Collectors.toList());
-
-        for (org.activiti.bpmn.model.Process process : bpmnModel.getProcesses()) {
-            for (FlowElement flowElement : process.getFlowElements()) {
-                if (flowElement instanceof SequenceFlow) {
-                    SequenceFlow sequenceFlow = (SequenceFlow) flowElement;
-                    String from = sequenceFlow.getSourceRef();
-                    String to = sequenceFlow.getTargetRef();
-                    if (activeAndHistorcActivityIds.contains(from) && activeAndHistorcActivityIds.contains(to)) {
-                        completedFlows.add(sequenceFlow.getId());
-                    }
-                }
-            }
-        }
+        List<String> completedFlows = bpmnSequenceFlowRepository.findByProcessInstanceId(processInstanceId)
+                                                                .stream()
+                                                                .map(BPMNSequenceFlowEntity::getElementId)
+                                                                .distinct()
+                                                                .collect(Collectors.toList());
+        
+//        List<String> activeAndHistorcActivityIds = bpmnActivityRepository.findByProcessInstanceId(processInstanceId)
+//                                                                         .stream()
+//                                                                         .map(BPMNActivityEntity::getElementId)
+//                                                                         .collect(Collectors.toList());
+//
+//        for (org.activiti.bpmn.model.Process process : bpmnModel.getProcesses()) {
+//            for (FlowElement flowElement : process.getFlowElements()) {
+//                if (flowElement instanceof SequenceFlow) {
+//                    SequenceFlow sequenceFlow = (SequenceFlow) flowElement;
+//                    String from = sequenceFlow.getSourceRef();
+//                    String to = sequenceFlow.getTargetRef();
+//                    if (activeAndHistorcActivityIds.contains(from) && activeAndHistorcActivityIds.contains(to)) {
+//                        completedFlows.add(sequenceFlow.getId());
+//                    }
+//                }
+//            }
+//        }
 
         return completedFlows;
-
     }
 
-    protected List<String> resolveActiveActivitiesIds(String processInstanceId) {
-        return bpmnActivityRepository.findByProcessInstanceIdAndStatus(processInstanceId, BPMNActivityStatus.COMPLETED)
+    protected List<String> resolveStartedActivitiesIds(String processInstanceId) {
+        return bpmnActivityRepository.findByProcessInstanceIdAndStatus(processInstanceId, BPMNActivityStatus.STARTED)
                                      .stream()
-                                     .map(BPMNActivityEntity::getId)
+                                     .map(BPMNActivityEntity::getElementId)
+                                     .distinct()
                                      .collect(Collectors.toList());
     }
 
