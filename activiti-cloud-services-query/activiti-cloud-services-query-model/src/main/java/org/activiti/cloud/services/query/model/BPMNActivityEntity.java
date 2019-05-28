@@ -1,6 +1,7 @@
 package org.activiti.cloud.services.query.model;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -203,3 +204,84 @@ public class BPMNActivityEntity extends ActivitiEntityMetadata implements CloudB
     public void setBusinessKey(String businessKey) {
         this.businessKey = businessKey;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Objects.hash(activityName,
+                                               activityType,
+                                               businessKey,
+                                               cancelledDate,
+                                               completedDate,
+                                               elementId,
+                                               id,
+                                               processDefinitionId,
+                                               processDefinitionKey,
+                                               processDefinitionVersion,
+                                               processInstanceId,
+                                               startedDate,
+                                               status);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        BPMNActivityEntity other = (BPMNActivityEntity) obj;
+        return Objects.equals(activityName, other.activityName) && 
+               Objects.equals(activityType, other.activityType) && 
+               Objects.equals(businessKey, other.businessKey) && 
+               Objects.equals(cancelledDate, other.cancelledDate) && 
+               Objects.equals(completedDate, other.completedDate) && 
+               Objects.equals(elementId, other.elementId) && 
+               Objects.equals(id, other.id) &&
+               Objects.equals(processDefinitionId, other.processDefinitionId) && 
+               Objects.equals(processDefinitionKey, other.processDefinitionKey) && 
+               Objects.equals(processDefinitionVersion, other.processDefinitionVersion) && 
+               Objects.equals(processInstanceId, other.processInstanceId) && 
+               Objects.equals(startedDate, other.startedDate) && 
+               status == other.status;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("BPMNActivityEntity [id=");
+        builder.append(id);
+        builder.append(", elementId=");
+        builder.append(elementId);
+        builder.append(", activityName=");
+        builder.append(activityName);
+        builder.append(", activityType=");
+        builder.append(activityType);
+        builder.append(", processInstanceId=");
+        builder.append(processInstanceId);
+        builder.append(", processDefinitionId=");
+        builder.append(processDefinitionId);
+        builder.append(", status=");
+        builder.append(status);
+        builder.append(", startedDate=");
+        builder.append(startedDate);
+        builder.append(", completedDate=");
+        builder.append(completedDate);
+        builder.append(", cancelledDate=");
+        builder.append(cancelledDate);
+        builder.append(", processDefinitionKey=");
+        builder.append(processDefinitionKey);
+        builder.append(", processDefinitionVersion=");
+        builder.append(processDefinitionVersion);
+        builder.append(", businessKey=");
+        builder.append(businessKey);
+        builder.append("]");
+        return builder.toString();
+    }
+
+    
+
+}
