@@ -95,7 +95,13 @@ public class ProcessInstanceEntity extends ActivitiEntityMetadata implements Clo
     @OneToMany(fetch=FetchType.LAZY)
     @JoinColumn(name = "processInstanceId", referencedColumnName = "id", insertable = false, updatable = false
         , foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
-    private List<BPMNActivityEntity> bpmnActivities;
+    private Set<BPMNActivityEntity> activities;
+
+    @JsonIgnore
+    @OneToMany(fetch=FetchType.LAZY)
+    @JoinColumn(name = "processInstanceId", referencedColumnName = "id", insertable = false, updatable = false
+        , foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
+    private List<BPMNSequenceFlowEntity> sequenceFlows;
     
     private String parentId;
 
@@ -281,13 +287,23 @@ public class ProcessInstanceEntity extends ActivitiEntityMetadata implements Clo
     }
 
     
-    public List<BPMNActivityEntity> getBpmnActivities() {
-        return bpmnActivities;
+    public Set<BPMNActivityEntity> getActivities() {
+        return activities;
     }
 
     
-    public void setBpmnActivities(List<BPMNActivityEntity> bpmnActivities) {
-        this.bpmnActivities = bpmnActivities;
+    public void setActivities(Set<BPMNActivityEntity> bpmnActivities) {
+        this.activities = bpmnActivities;
+    }
+
+    
+    public List<BPMNSequenceFlowEntity> getSequenceFlows() {
+        return sequenceFlows;
+    }
+
+    
+    public void setSequenceFlows(List<BPMNSequenceFlowEntity> sequenceFlows) {
+        this.sequenceFlows = sequenceFlows;
     }
     
 

@@ -24,6 +24,7 @@ import org.activiti.api.model.shared.event.VariableEvent;
 import org.activiti.api.process.model.events.BPMNActivityEvent;
 import org.activiti.api.process.model.events.ProcessDefinitionEvent;
 import org.activiti.api.process.model.events.ProcessRuntimeEvent;
+import org.activiti.api.process.model.events.SequenceFlowEvent;
 import org.activiti.api.task.model.events.TaskCandidateGroupEvent;
 import org.activiti.api.task.model.events.TaskCandidateUserEvent;
 import org.activiti.api.task.model.events.TaskRuntimeEvent;
@@ -71,7 +72,8 @@ public class QueryEventHandlerContextIT {
                 VariableEvent.VariableEvents.VARIABLE_DELETED.name(),
                 BPMNActivityEvent.ActivityEvents.ACTIVITY_STARTED.name(),
                 BPMNActivityEvent.ActivityEvents.ACTIVITY_COMPLETED.name(),
-                BPMNActivityEvent.ActivityEvents.ACTIVITY_CANCELLED.name()
+                BPMNActivityEvent.ActivityEvents.ACTIVITY_CANCELLED.name(),
+                SequenceFlowEvent.SequenceFlowEvents.SEQUENCE_FLOW_TAKEN.name()
         );
         assertThat(handlers.get(ProcessDefinitionEvent.ProcessDefinitionEvents.PROCESS_DEPLOYED.name())).isInstanceOf(ProcessDeployedEventHandler.class);
         assertThat(handlers.get(ProcessRuntimeEvent.ProcessEvents.PROCESS_CREATED.name())).isInstanceOf(ProcessCreatedEventHandler.class);
@@ -95,5 +97,9 @@ public class QueryEventHandlerContextIT {
         assertThat(handlers.get(VariableEvent.VariableEvents.VARIABLE_CREATED.name())).isInstanceOf(VariableCreatedEventHandler.class);
         assertThat(handlers.get(VariableEvent.VariableEvents.VARIABLE_UPDATED.name())).isInstanceOf(VariableUpdatedEventHandler.class);
         assertThat(handlers.get(VariableEvent.VariableEvents.VARIABLE_DELETED.name())).isInstanceOf(VariableDeletedEventHandler.class);
+        assertThat(handlers.get(BPMNActivityEvent.ActivityEvents.ACTIVITY_STARTED.name())).isInstanceOf(BPMNActivityStartedEventHandler.class);
+        assertThat(handlers.get(BPMNActivityEvent.ActivityEvents.ACTIVITY_COMPLETED.name())).isInstanceOf(BPMNActivityCompletedEventHandler.class);
+        assertThat(handlers.get(BPMNActivityEvent.ActivityEvents.ACTIVITY_CANCELLED.name())).isInstanceOf(BPMNActivityCancelledEventHandler.class);
+        assertThat(handlers.get(SequenceFlowEvent.SequenceFlowEvents.SEQUENCE_FLOW_TAKEN.name())).isInstanceOf(BPMNSequenceFlowTakenEventHandler.class);
     }
 }

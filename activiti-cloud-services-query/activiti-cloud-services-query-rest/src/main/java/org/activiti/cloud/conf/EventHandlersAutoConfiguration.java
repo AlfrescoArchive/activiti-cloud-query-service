@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 
 import org.activiti.cloud.services.query.app.repository.BPMNActivityRepository;
+import org.activiti.cloud.services.query.app.repository.BPMNSequenceFlowRepository;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessDefinitionRepository;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
@@ -33,6 +34,7 @@ import org.activiti.cloud.services.query.app.repository.VariableRepository;
 import org.activiti.cloud.services.query.events.handlers.BPMNActivityCancelledEventHandler;
 import org.activiti.cloud.services.query.events.handlers.BPMNActivityCompletedEventHandler;
 import org.activiti.cloud.services.query.events.handlers.BPMNActivityStartedEventHandler;
+import org.activiti.cloud.services.query.events.handlers.BPMNSequenceFlowTakenEventHandler;
 import org.activiti.cloud.services.query.events.handlers.ProcessCancelledEventHandler;
 import org.activiti.cloud.services.query.events.handlers.ProcessCompletedEventHandler;
 import org.activiti.cloud.services.query.events.handlers.ProcessCreatedEventHandler;
@@ -249,7 +251,15 @@ public class EventHandlersAutoConfiguration {
         return new BPMNActivityCancelledEventHandler(bpmnActivityRepository,
                                                      entityManager);
     }
-        
+
+    @Bean
+    @ConditionalOnMissingBean
+    public BPMNSequenceFlowTakenEventHandler bpmnSequenceFlowTakenEventHandler(BPMNSequenceFlowRepository bpmnSequenceFlowRepository,
+                                                                               EntityManager entityManager) {
+        return new BPMNSequenceFlowTakenEventHandler(bpmnSequenceFlowRepository,
+                                                     entityManager);
+    }
+    
     
     @Bean
     @ConditionalOnMissingBean
