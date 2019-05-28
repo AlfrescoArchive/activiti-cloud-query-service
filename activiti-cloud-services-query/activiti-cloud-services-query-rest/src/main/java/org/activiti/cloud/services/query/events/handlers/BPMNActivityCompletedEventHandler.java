@@ -63,6 +63,9 @@ public class BPMNActivityCompletedEventHandler implements QueryEventHandler {
             bpmnActivityEntity.setActivityType(bpmnActivity.getActivityType());
             bpmnActivityEntity.setProcessDefinitionId(bpmnActivity.getProcessDefinitionId());
             bpmnActivityEntity.setProcessInstanceId(bpmnActivity.getProcessInstanceId());
+            bpmnActivityEntity.setProcessDefinitionKey(activityEvent.getProcessDefinitionKey());
+            bpmnActivityEntity.setProcessDefinitionVersion(activityEvent.getProcessDefinitionVersion());
+            bpmnActivityEntity.setBusinessKey(activityEvent.getBusinessKey());            
         }
         
         bpmnActivityEntity.setCompletedDate(new Date(activityEvent.getTimestamp()));

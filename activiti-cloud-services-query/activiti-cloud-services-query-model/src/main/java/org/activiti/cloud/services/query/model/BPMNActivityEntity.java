@@ -56,13 +56,22 @@ public class BPMNActivityEntity extends ActivitiEntityMetadata implements CloudB
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)    
     private Date cancelledDate;
     
-    public BPMNActivityEntity() {}
+    /** The associated process definition key of the activity as in the process file */
+    private String processDefinitionKey;
+
+    /** The associated deployed process definition version of the activity */
+    private Integer processDefinitionVersion;
+
+    /** The associated business key of the activity as in the process instance */
+    private String businessKey;    
     
+    public BPMNActivityEntity() {}
+
     public BPMNActivityEntity(String serviceName,
-                                   String serviceFullName,
-                                   String serviceVersion,
-                                   String appName,
-                                   String appVersion) {
+                              String serviceFullName,
+                              String serviceVersion,
+                              String appName,
+                              String appVersion) {
         super(serviceName,
               serviceFullName,
               serviceVersion,
@@ -164,4 +173,33 @@ public class BPMNActivityEntity extends ActivitiEntityMetadata implements CloudB
     public void setCancelledDate(Date cancelledDate) {
         this.cancelledDate = cancelledDate;
     }
-}
+
+    
+    public String getProcessDefinitionKey() {
+        return processDefinitionKey;
+    }
+
+    
+    public void setProcessDefinitionKey(String processDefinitionKey) {
+        this.processDefinitionKey = processDefinitionKey;
+    }
+
+    
+    public Integer getProcessDefinitionVersion() {
+        return processDefinitionVersion;
+    }
+
+    
+    public void setProcessDefinitionVersion(Integer processDefinitionVersion) {
+        this.processDefinitionVersion = processDefinitionVersion;
+    }
+
+    
+    public String getBusinessKey() {
+        return businessKey;
+    }
+
+    
+    public void setBusinessKey(String businessKey) {
+        this.businessKey = businessKey;
+    }

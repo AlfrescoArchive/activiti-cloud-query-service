@@ -64,6 +64,9 @@ public class BPMNActivityStartedEventHandler implements QueryEventHandler {
             bpmnActivityEntity.setActivityType(bpmnActivity.getActivityType());
             bpmnActivityEntity.setProcessDefinitionId(bpmnActivity.getProcessDefinitionId());
             bpmnActivityEntity.setProcessInstanceId(bpmnActivity.getProcessInstanceId());
+            bpmnActivityEntity.setProcessDefinitionKey(activityEvent.getProcessDefinitionKey());
+            bpmnActivityEntity.setProcessDefinitionVersion(activityEvent.getProcessDefinitionVersion());
+            bpmnActivityEntity.setBusinessKey(activityEvent.getBusinessKey());
         }
 
         // Activity can be cyclical, so we just update the status and started date anyways
