@@ -45,5 +45,8 @@ public interface BPMNActivityRepository extends PagingAndSortingRepository<BPMNA
                                                               BPMNActivityStatus statuse);
     
     List<BPMNActivityEntity> findByProcessInstanceId(String processInstanceId);
+
+    BPMNActivityEntity findByProcessInstanceIdAndElementId(String processInstanceId, 
+                                                           String elementId);
     
 }

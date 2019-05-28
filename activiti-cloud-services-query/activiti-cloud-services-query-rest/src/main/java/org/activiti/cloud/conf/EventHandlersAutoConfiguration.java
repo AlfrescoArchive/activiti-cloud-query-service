@@ -17,8 +17,10 @@
 package org.activiti.cloud.conf;
 
 import java.util.Set;
+
 import javax.persistence.EntityManager;
 
+import org.activiti.cloud.services.query.app.repository.BPMNActivityRepository;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessDefinitionRepository;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
@@ -28,6 +30,9 @@ import org.activiti.cloud.services.query.app.repository.TaskCandidateUserReposit
 import org.activiti.cloud.services.query.app.repository.TaskRepository;
 import org.activiti.cloud.services.query.app.repository.TaskVariableRepository;
 import org.activiti.cloud.services.query.app.repository.VariableRepository;
+import org.activiti.cloud.services.query.events.handlers.BPMNActivityCancelledEventHandler;
+import org.activiti.cloud.services.query.events.handlers.BPMNActivityCompletedEventHandler;
+import org.activiti.cloud.services.query.events.handlers.BPMNActivityStartedEventHandler;
 import org.activiti.cloud.services.query.events.handlers.ProcessCancelledEventHandler;
 import org.activiti.cloud.services.query.events.handlers.ProcessCompletedEventHandler;
 import org.activiti.cloud.services.query.events.handlers.ProcessCreatedEventHandler;
@@ -220,7 +225,32 @@ public class EventHandlersAutoConfiguration {
                                                new TaskVariableUpdatedEventHandler(new TaskVariableUpdater(entityFinder,
                                                                                                            taskVariableRepository)));
     }
-
+    
+    @Bean
+    @ConditionalOnMissingBean
+    public BPMNActivityStartedEventHandler bpmnActivityStartedEventHandler(BPMNActivityRepository bpmnActivityRepository,
+                                                                           EntityManager entityManager) {
+        return new BPMNActivityStartedEventHandler(bpmnActivityRepository,
+                                                   entityManager);
+    }
+    
+    @Bean
+    @ConditionalOnMissingBean
+    public BPMNActivityCompletedEventHandler bpmnActivityCompletedEventHandler(BPMNActivityRepository bpmnActivityRepository,
+                                                                               EntityManager entityManager) {
+        return new BPMNActivityCompletedEventHandler(bpmnActivityRepository,
+                                                     entityManager);
+    }
+        
+    @Bean
+    @ConditionalOnMissingBean
+    public BPMNActivityCancelledEventHandler bpmnActivityCancelledEventHandler(BPMNActivityRepository bpmnActivityRepository,
+                                                                               EntityManager entityManager) {
+        return new BPMNActivityCancelledEventHandler(bpmnActivityRepository,
+                                                     entityManager);
+    }
+        
+    
     @Bean
     @ConditionalOnMissingBean
     public QueryEventHandlerContext queryEventHandlerContext(Set<QueryEventHandler> handlers) {
