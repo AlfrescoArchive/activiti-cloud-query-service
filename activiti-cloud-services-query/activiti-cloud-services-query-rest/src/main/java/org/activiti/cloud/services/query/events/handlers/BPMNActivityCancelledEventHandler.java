@@ -79,7 +79,7 @@ public class BPMNActivityCancelledEventHandler implements QueryEventHandler {
         try {
             bpmnActivitiyRepository.save(entity);
         } catch (Exception cause) {
-            throw new QueryException("Error handling CloudBPMNActivityStartedEvent[" + event + "]",
+            throw new QueryException("Error handling CloudBPMNActivityCancelledEvent[" + event + "]",
                                      cause);
         }
     }
