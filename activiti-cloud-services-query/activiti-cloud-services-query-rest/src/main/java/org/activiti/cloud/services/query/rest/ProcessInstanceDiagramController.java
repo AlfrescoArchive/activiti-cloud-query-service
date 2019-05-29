@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.activiti.bpmn.BpmnAutoLayout;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.cloud.services.query.ProcessDiagramGeneratorWrapper;
 import org.activiti.cloud.services.query.app.repository.BPMNActivityRepository;
@@ -68,6 +69,9 @@ public class ProcessInstanceDiagramController {
         String processDefinitionId = resolveProcessDefinitionId(processInstanceId);
         BpmnModel bpmnModel = getBpmnModel(processDefinitionId);
 
+        if(!bpmnModel.hasDiagramInterchangeInfo())
+            new BpmnAutoLayout(bpmnModel).execute();
+        
         List<String> highLightedActivities = resolveStartedActivitiesIds(processInstanceId);
         List<String> highLightedFlows = resolveCompletedFlows(bpmnModel, processInstanceId);
 
@@ -83,25 +87,6 @@ public class ProcessInstanceDiagramController {
                                                                 .map(BPMNSequenceFlowEntity::getElementId)
                                                                 .distinct()
                                                                 .collect(Collectors.toList());
-        
-//        List<String> activeAndHistorcActivityIds = bpmnActivityRepository.findByProcessInstanceId(processInstanceId)
-//                                                                         .stream()
-//                                                                         .map(BPMNActivityEntity::getElementId)
-//                                                                         .collect(Collectors.toList());
-//
-//        for (org.activiti.bpmn.model.Process process : bpmnModel.getProcesses()) {
-//            for (FlowElement flowElement : process.getFlowElements()) {
-//                if (flowElement instanceof SequenceFlow) {
-//                    SequenceFlow sequenceFlow = (SequenceFlow) flowElement;
-//                    String from = sequenceFlow.getSourceRef();
-//                    String to = sequenceFlow.getTargetRef();
-//                    if (activeAndHistorcActivityIds.contains(from) && activeAndHistorcActivityIds.contains(to)) {
-//                        completedFlows.add(sequenceFlow.getId());
-//                    }
-//                }
-//            }
-//        }
-
         return completedFlows;
     }
 

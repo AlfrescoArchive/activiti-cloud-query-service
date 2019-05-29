@@ -238,7 +238,8 @@ public class QueryProcessDiagramIT {
             //then
             assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(responseEntity.getBody()).isNotNull();
-            assertThat(responseEntity.getBody()).isXmlEqualToContentOf(new File("src/test/resources/parse-for-test/SimpleProcessWithoutDiagram.svg.xml"));
+            System.out.println(responseEntity.getBody());
+            assertThat(responseEntity.getBody()).isXmlEqualToContentOf(new File("src/test/resources/parse-for-test/SimpleProcessGeneratedDiagram.svg.xml"));
         });
     }
     
