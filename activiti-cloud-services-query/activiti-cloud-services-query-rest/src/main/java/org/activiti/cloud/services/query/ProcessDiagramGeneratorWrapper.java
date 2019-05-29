@@ -62,10 +62,10 @@ public class ProcessDiagramGeneratorWrapper {
     @Value("${activiti.diagram.default.image.file:}")
     private String defaultDiagramImageFileName;
 
-    @Value("${activiti.diagram.generate.default:false}")
+    @Value("${activiti.diagram.generate.default:true}")
     private boolean generateDefaultDiagram;
 
-    @Value("${activiti.diagram.default.font:Serif}")
+    @Value("${activiti.diagram.font.default:Serif}")
     private String diagramDefaultFont;
     
     @Autowired
