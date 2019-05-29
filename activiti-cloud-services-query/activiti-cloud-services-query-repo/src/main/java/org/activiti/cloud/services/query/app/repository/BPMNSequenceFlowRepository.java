@@ -45,6 +45,6 @@ public interface BPMNSequenceFlowRepository extends PagingAndSortingRepository<B
     BPMNSequenceFlowEntity findByProcessInstanceIdAndElementId(String processInstanceId, 
                                                                String elementId);
 
-    BPMNSequenceFlowEntity findByMessageId(String messageId);
+    BPMNSequenceFlowEntity findByEventId(String eventId);
     
 }

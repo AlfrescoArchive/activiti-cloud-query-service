@@ -51,7 +51,7 @@ public class BPMNSequenceFlowTakenEventHandler implements QueryEventHandler {
         BPMNSequenceFlow bpmnSequenceFlow = activityEvent.getEntity();
         
         // Let's find if there an existing record with event's messageId
-        BPMNSequenceFlowEntity bpmnSequenceFlowEntity = bpmnSequenceFlowRepository.findByMessageId(event.getMessageId());
+        BPMNSequenceFlowEntity bpmnSequenceFlowEntity = bpmnSequenceFlowRepository.findByEventId(event.getId());
         
         // Let's add sequence flow record if does not exist
         if(bpmnSequenceFlowEntity == null) {
@@ -75,7 +75,7 @@ public class BPMNSequenceFlowTakenEventHandler implements QueryEventHandler {
             bpmnSequenceFlowEntity.setProcessDefinitionKey(event.getProcessDefinitionKey());
             bpmnSequenceFlowEntity.setProcessDefinitionVersion(event.getProcessDefinitionVersion());
             bpmnSequenceFlowEntity.setBusinessKey(event.getBusinessKey());
-            bpmnSequenceFlowEntity.setMessageId(event.getMessageId());
+            bpmnSequenceFlowEntity.setEventId(event.getId());
     
             persistIntoDatabase(event,
                                 bpmnSequenceFlowEntity);

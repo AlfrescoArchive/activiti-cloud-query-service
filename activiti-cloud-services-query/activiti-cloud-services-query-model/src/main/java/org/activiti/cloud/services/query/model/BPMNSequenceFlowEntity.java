@@ -13,10 +13,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity(name="BPMNSequenceFlow")
 @Table(name="BPMN_SEQUENCE_FLOW", indexes={
-    @Index(name="bpmn_seq_flow_processInstance_idx", columnList="processInstanceId", unique=false),
-    @Index(name="bpmn_seq_flow_elementId_idx", columnList="elementId", unique=false),
-    @Index(name="bpmn_seq_flow_processInstance_elementId_idx", columnList="processInstanceId,elementId", unique=false),
-    @Index(name="bpmn_seq_flow_messageId_idx", columnList="messageId", unique=false)
+    @Index(name="bpmn_sequence_flow_processInstance_idx", columnList="processInstanceId", unique=false),
+    @Index(name="bpmn_sequence_flow_elementId_idx", columnList="elementId", unique=false),
+    @Index(name="bpmn_sequence_flow_processInstance_elementId_idx", columnList="processInstanceId,elementId", unique=false),
+    @Index(name="bpmn_sequence_flow_eventId_idx", columnList="eventId", unique=true)
 })
 public class BPMNSequenceFlowEntity extends ActivitiEntityMetadata implements BPMNSequenceFlow {
     
@@ -64,8 +64,8 @@ public class BPMNSequenceFlowEntity extends ActivitiEntityMetadata implements BP
     /** The associated business key of the activity as in the process instance */
     private String businessKey;
 
-    /** The associated messageId of event */
-    private String messageId;
+    /** The associated eventId of event */
+    private String eventId;
     
     public BPMNSequenceFlowEntity() {}
     
@@ -203,12 +203,12 @@ public class BPMNSequenceFlowEntity extends ActivitiEntityMetadata implements BP
         this.businessKey = businessKey;
     }
 
-    public String getMessageId() {
-        return messageId;
+    public String getEventId() {
+        return eventId;
     }
     
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
     
     @Override
@@ -288,8 +288,8 @@ public class BPMNSequenceFlowEntity extends ActivitiEntityMetadata implements BP
         builder.append(processDefinitionVersion);
         builder.append(", businessKey=");
         builder.append(businessKey);
-        builder.append(", messageId=");
-        builder.append(messageId);
+        builder.append(", eventId=");
+        builder.append(eventId);
         builder.append("]");
         return builder.toString();
     }
