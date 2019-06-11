@@ -1,15 +1,11 @@
 package org.activiti.cloud.services.query.rest;
 
-import org.activiti.api.runtime.shared.security.SecurityManager;
 import org.activiti.cloud.services.query.ProcessDiagramGeneratorWrapper;
 import org.activiti.cloud.services.query.app.repository.BPMNActivityRepository;
 import org.activiti.cloud.services.query.app.repository.BPMNSequenceFlowRepository;
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.app.repository.ProcessModelRepository;
-import org.activiti.core.common.spring.security.policies.SecurityPoliciesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,33 +14,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/v1/process-instances/{processInstanceId}/diagram")
-public class ProcessInstanceDiagramController extends ProcessInstanceDiagramControllerBase {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessInstanceDiagramController.class);
+@RequestMapping(value = "/admin/v1/process-instances/{processInstanceId}/diagram")
+public class ProcessInstanceDiagramAdminController extends ProcessInstanceDiagramControllerBase {
 
-    private final SecurityPoliciesManager securityPoliciesManager;
-    
-    private final SecurityManager securityManager;
-    
     @Autowired
-    public ProcessInstanceDiagramController(ProcessModelRepository processModelRepository,
+    public ProcessInstanceDiagramAdminController(ProcessModelRepository processModelRepository,
                                             BPMNSequenceFlowRepository bpmnSequenceFlowRepository,
                                             ProcessDiagramGeneratorWrapper processDiagramGenerator,
                                             ProcessInstanceRepository processInstanceRepository,
                                             BPMNActivityRepository bpmnActivityRepository,
-                                            EntityFinder entityFinder,
-                                            SecurityPoliciesManager securityPoliciesManager,
-                                            SecurityManager securityManager) {
+                                            EntityFinder entityFinder) {
         super(processModelRepository,
               bpmnSequenceFlowRepository,
               processDiagramGenerator,
               processInstanceRepository,
               bpmnActivityRepository,
               entityFinder);
-        
-        this.securityPoliciesManager = securityPoliciesManager;
-        this.securityManager = securityManager;
     }
 
     @GetMapping(produces = IMAGE_SVG_XML)
