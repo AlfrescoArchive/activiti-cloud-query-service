@@ -273,4 +273,17 @@ public class ProcessInstanceEntity extends ActivitiEntityMetadata implements Clo
     }
     
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ProcessInstanceEntity other = (ProcessInstanceEntity) obj;
+        return Objects.equals(id, other.id);
+    }
+    
+
 }
