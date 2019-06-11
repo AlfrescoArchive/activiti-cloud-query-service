@@ -7,6 +7,8 @@ import org.activiti.cloud.services.query.app.repository.BPMNSequenceFlowReposito
 import org.activiti.cloud.services.query.app.repository.EntityFinder;
 import org.activiti.cloud.services.query.app.repository.ProcessInstanceRepository;
 import org.activiti.cloud.services.query.app.repository.ProcessModelRepository;
+import org.activiti.cloud.services.query.model.ProcessInstanceEntity;
+import org.activiti.core.common.spring.security.policies.ActivitiForbiddenException;
 import org.activiti.core.common.spring.security.policies.SecurityPoliciesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +52,17 @@ public class ProcessInstanceDiagramController extends ProcessInstanceDiagramCont
     @GetMapping(produces = IMAGE_SVG_XML)
     @ResponseBody
     public String getProcessDiagram(@PathVariable String processInstanceId) {
+        
+        ProcessInstanceEntity processInstanceEntity = entityFinder.findById(processInstanceRepository,
+                                                                            processInstanceId,
+                                                                            "Unable to find process for the given id:'" + processInstanceId + "'");
+
+        if (securityPoliciesManager.arePoliciesDefined() && !securityPoliciesManager.canRead(processInstanceEntity.getProcessDefinitionKey(),
+                                                                                             processInstanceEntity.getServiceName())) {
+            LOGGER.debug("User " + securityManager.getAuthenticatedUserId() + " not permitted to access definition " + processInstanceEntity.getProcessDefinitionKey());
+            throw new ActivitiForbiddenException("Operation not permitted for " + processInstanceEntity.getProcessDefinitionKey());
+        }
+
         return generateDiagram(processInstanceId);
     }
 
