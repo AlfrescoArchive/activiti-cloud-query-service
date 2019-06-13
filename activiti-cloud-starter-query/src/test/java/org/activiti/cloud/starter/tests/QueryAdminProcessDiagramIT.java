@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.UUID;
 
 import org.activiti.api.runtime.model.impl.BPMNActivityImpl;
@@ -51,6 +52,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +62,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource("classpath:application-test.properties")
+@TestPropertySource("classpath:application-test-admin.properties")
 @DirtiesContext
 public class QueryAdminProcessDiagramIT {
     
@@ -167,13 +169,14 @@ public class QueryAdminProcessDiagramIT {
         });
         
         await().atMost(Duration.ONE_MINUTE).untilAsserted(() -> {
-            //when
-            ResponseEntity<String> responseEntity = testRestTemplate.exchange(PROC_URL + "/" + process.getId() + "/diagram",
-                                                                                       HttpMethod.GET,
-                                                                                       keycloakTokenProducer.entityWithAuthorizationHeader(),
-                                                                                       String.class);
-            //then
-            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+           //when
+           ResponseEntity<Map<String,Object>> responseEntity = testRestTemplate.exchange(PROC_URL + "/" + process.getId() + "/diagram",
+                                                                                         HttpMethod.GET,
+                                                                                         keycloakTokenProducer.entityWithAuthorizationHeader(),
+                                                                                         new ParameterizedTypeReference<Map<String, Object>>() {
+                                                                                       });
+           //then
+           assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         });
     }    
     
