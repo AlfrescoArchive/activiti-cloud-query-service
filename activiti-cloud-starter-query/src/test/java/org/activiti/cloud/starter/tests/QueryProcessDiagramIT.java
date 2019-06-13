@@ -141,35 +141,12 @@ public class QueryProcessDiagramIT {
     @Test
     public void shouldGetProcessInstanceDiagram() throws InterruptedException {
         //given
-        ProcessInstanceImpl process = new ProcessInstanceImpl();
-        process.setId(UUID.randomUUID().toString());
-        process.setName("process");
-        process.setProcessDefinitionKey("mySimpleProcess");
-        process.setProcessDefinitionId(processDefinitionId);
-        process.setProcessDefinitionVersion(1);
+        ProcessInstanceImpl process = startSimpleProcessInstance();
         
-        BPMNActivityImpl startActivity = new BPMNActivityImpl("startEvent1", "", "startEvent");
-        startActivity.setProcessDefinitionId(process.getProcessDefinitionId());
-        startActivity.setProcessInstanceId(process.getId());
-
-        BPMNSequenceFlowImpl sequenceFlow = new BPMNSequenceFlowImpl("sid-68945AF1-396F-4B8A-B836-FC318F62313F", "startEvent1", "sid-CDFE7219-4627-43E9-8CA8-866CC38EBA94");
-        sequenceFlow.setProcessDefinitionId(process.getProcessDefinitionId());
-        sequenceFlow.setProcessInstanceId(process.getId());
-        
-        BPMNActivityImpl taskActivity = new BPMNActivityImpl("sid-CDFE7219-4627-43E9-8CA8-866CC38EBA94", "Perform Action", "userTask");
-        taskActivity.setProcessDefinitionId(process.getProcessDefinitionId());
-        taskActivity.setProcessInstanceId(process.getId());
-        
-        eventsAggregator.addEvents(new CloudProcessCreatedEventImpl(process),
-                                   new CloudProcessStartedEventImpl(process, null, null),
-                                   new CloudBPMNActivityStartedEventImpl(startActivity, processDefinitionId, process.getId()),
-                                   new CloudBPMNActivityCompletedEventImpl(startActivity, processDefinitionId, process.getId()),
-                                   new CloudSequenceFlowTakenImpl(sequenceFlow),
-                                   new CloudBPMNActivityStartedEventImpl(taskActivity, processDefinitionId, process.getId())
-        );
-        
+        //when
         eventsAggregator.sendAll();
         
+        //then
         await().untilAsserted(() -> {
             assertThat(bpmnActivityRepository.findByProcessInstanceId(process.getId())).hasSize(2);
             assertThat(bpmnSequenceFlowRepository.findByProcessInstanceId(process.getId())).hasSize(1);
@@ -185,43 +162,19 @@ public class QueryProcessDiagramIT {
             //then
             assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(responseEntity.getBody()).isNotNull();
-            // svg coordinates generated in Travis are not same?
-            //assertThat(responseEntity.getBody()).isXmlEqualToContentOf(new File("src/test/resources/parse-for-test/SimpleProcess.svg.xml"));            
+            assertThat(responseEntity.getBody()).contains("<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.0//EN'");              
         });
     }
     
     @Test
     public void shouldGetProcessInstanceGeneratedDiagram() throws InterruptedException {
         //given
-        ProcessInstanceImpl process = new ProcessInstanceImpl();
-        process.setId(UUID.randomUUID().toString());
-        process.setName("process");
-        process.setProcessDefinitionKey("mySimpleProcess2");
-        process.setProcessDefinitionId(processDefinitionId2);
-        process.setProcessDefinitionVersion(1);
+        ProcessInstanceImpl process = startAnotherProcessInstance();
         
-        BPMNActivityImpl startActivity = new BPMNActivityImpl("startEvent1", "", "startEvent");
-        startActivity.setProcessDefinitionId(process.getProcessDefinitionId());
-        startActivity.setProcessInstanceId(process.getId());
-
-        BPMNSequenceFlowImpl sequenceFlow = new BPMNSequenceFlowImpl("sid-68945AF1-396F-4B8A-B836-FC318F62313F", "startEvent1", "sid-CDFE7219-4627-43E9-8CA8-866CC38EBA94");
-        sequenceFlow.setProcessDefinitionId(process.getProcessDefinitionId());
-        sequenceFlow.setProcessInstanceId(process.getId());
-        
-        BPMNActivityImpl taskActivity = new BPMNActivityImpl("sid-CDFE7219-4627-43E9-8CA8-866CC38EBA94", "Perform Action", "userTask");
-        taskActivity.setProcessDefinitionId(process.getProcessDefinitionId());
-        taskActivity.setProcessInstanceId(process.getId());
-        
-        eventsAggregator.addEvents(new CloudProcessCreatedEventImpl(process),
-                                   new CloudProcessStartedEventImpl(process, null, null),
-                                   new CloudBPMNActivityStartedEventImpl(startActivity, processDefinitionId, process.getId()),
-                                   new CloudBPMNActivityCompletedEventImpl(startActivity, processDefinitionId, process.getId()),
-                                   new CloudSequenceFlowTakenImpl(sequenceFlow),
-                                   new CloudBPMNActivityStartedEventImpl(taskActivity, processDefinitionId, process.getId())
-        );
-        
+        //when
         eventsAggregator.sendAll();
         
+        //then
         await().untilAsserted(() -> {
             assertThat(bpmnActivityRepository.findByProcessInstanceId(process.getId())).hasSize(2);
             assertThat(bpmnSequenceFlowRepository.findByProcessInstanceId(process.getId())).hasSize(1);
@@ -238,8 +191,7 @@ public class QueryProcessDiagramIT {
             assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(responseEntity.getBody()).isNotNull();
             System.out.println(responseEntity.getBody());
-            // svg coordinates generated in Travis are not same?
-            //assertThat(responseEntity.getBody()).isXmlEqualToContentOf(new File("src/test/resources/parse-for-test/SimpleProcessGeneratedDiagram.svg.xml"));
+            assertThat(responseEntity.getBody()).contains("<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.0//EN'");              
         });
     }
     
@@ -273,8 +225,10 @@ public class QueryProcessDiagramIT {
                                    new CloudBPMNActivityStartedEventImpl(taskActivity, processDefinitionId, process.getId())
         );
         
+        //when
         eventsAggregator.sendAll();
         
+        //then
         await().untilAsserted(() -> {
             List<BPMNActivityEntity> activities = bpmnActivityRepository.findByProcessInstanceId(process.getId());
             
@@ -290,5 +244,68 @@ public class QueryProcessDiagramIT {
                                      .containsExactly(tuple(sequenceFlow.getElementId(),sequenceFlow.getSourceActivityElementId(),sequenceFlow.getTargetActivityElementId()));
         });
     }    
+    
+    protected ProcessInstanceImpl startSimpleProcessInstance() {
+        ProcessInstanceImpl process = new ProcessInstanceImpl();
+        process.setId(UUID.randomUUID().toString());
+        process.setName("process");
+        process.setProcessDefinitionKey("mySimpleProcess");
+        process.setProcessDefinitionId(processDefinitionId);
+        process.setProcessDefinitionVersion(1);
+        
+        BPMNActivityImpl startActivity = new BPMNActivityImpl("startEvent1", "", "startEvent");
+        startActivity.setProcessDefinitionId(process.getProcessDefinitionId());
+        startActivity.setProcessInstanceId(process.getId());
 
+        BPMNSequenceFlowImpl sequenceFlow = new BPMNSequenceFlowImpl("sid-68945AF1-396F-4B8A-B836-FC318F62313F", "startEvent1", "sid-CDFE7219-4627-43E9-8CA8-866CC38EBA94");
+        sequenceFlow.setProcessDefinitionId(process.getProcessDefinitionId());
+        sequenceFlow.setProcessInstanceId(process.getId());
+        
+        BPMNActivityImpl taskActivity = new BPMNActivityImpl("sid-CDFE7219-4627-43E9-8CA8-866CC38EBA94", "Perform Action", "userTask");
+        taskActivity.setProcessDefinitionId(process.getProcessDefinitionId());
+        taskActivity.setProcessInstanceId(process.getId());
+        
+        eventsAggregator.addEvents(new CloudProcessCreatedEventImpl(process),
+                                   new CloudProcessStartedEventImpl(process, null, null),
+                                   new CloudBPMNActivityStartedEventImpl(startActivity, processDefinitionId, process.getId()),
+                                   new CloudBPMNActivityCompletedEventImpl(startActivity, processDefinitionId, process.getId()),
+                                   new CloudSequenceFlowTakenImpl(sequenceFlow),
+                                   new CloudBPMNActivityStartedEventImpl(taskActivity, processDefinitionId, process.getId())
+        );
+        
+        return process;
+        
+    }    
+    
+    protected ProcessInstanceImpl startAnotherProcessInstance() {
+        ProcessInstanceImpl process = new ProcessInstanceImpl();
+        process.setId(UUID.randomUUID().toString());
+        process.setName("process");
+        process.setProcessDefinitionKey("mySimpleProcess2");
+        process.setProcessDefinitionId(processDefinitionId2);
+        process.setProcessDefinitionVersion(1);
+        
+        BPMNActivityImpl startActivity = new BPMNActivityImpl("startEvent1", "", "startEvent");
+        startActivity.setProcessDefinitionId(process.getProcessDefinitionId());
+        startActivity.setProcessInstanceId(process.getId());
+
+        BPMNSequenceFlowImpl sequenceFlow = new BPMNSequenceFlowImpl("sid-68945AF1-396F-4B8A-B836-FC318F62313F", "startEvent1", "sid-CDFE7219-4627-43E9-8CA8-866CC38EBA94");
+        sequenceFlow.setProcessDefinitionId(process.getProcessDefinitionId());
+        sequenceFlow.setProcessInstanceId(process.getId());
+        
+        BPMNActivityImpl taskActivity = new BPMNActivityImpl("sid-CDFE7219-4627-43E9-8CA8-866CC38EBA94", "Perform Action", "userTask");
+        taskActivity.setProcessDefinitionId(process.getProcessDefinitionId());
+        taskActivity.setProcessInstanceId(process.getId());
+        
+        eventsAggregator.addEvents(new CloudProcessCreatedEventImpl(process),
+                                   new CloudProcessStartedEventImpl(process, null, null),
+                                   new CloudBPMNActivityStartedEventImpl(startActivity, processDefinitionId, process.getId()),
+                                   new CloudBPMNActivityCompletedEventImpl(startActivity, processDefinitionId, process.getId()),
+                                   new CloudSequenceFlowTakenImpl(sequenceFlow),
+                                   new CloudBPMNActivityStartedEventImpl(taskActivity, processDefinitionId, process.getId())
+        );
+        
+        return process;
+        
+    }    
 }
