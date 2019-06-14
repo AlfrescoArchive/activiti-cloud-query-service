@@ -1040,6 +1040,70 @@ public class QueryTasksIT {
     }
     
     @Test
+    public void shouldHandleTaskDefinitionKey() {
+        //given
+        TaskImpl task1 = new TaskImpl(UUID.randomUUID().toString(),
+                                     "Task1",
+                                     Task.TaskStatus.CREATED);
+        task1.setTaskDefinitionKey("taskDefinitionKey");
+
+        CloudTaskCreatedEventImpl task1Created = new CloudTaskCreatedEventImpl(task1);
+        eventsAggregator.addEvents(task1Created);
+        
+        TaskImpl task2 = new TaskImpl(UUID.randomUUID().toString(),
+                                      "Task2",
+                                      Task.TaskStatus.CREATED);
+        CloudTaskCreatedEventImpl task2Created = new CloudTaskCreatedEventImpl(task2);
+        eventsAggregator.addEvents(task2Created);
+
+        eventsAggregator.sendAll();
+
+        await().untilAsserted(() -> {
+
+            //when
+            ResponseEntity<PagedResources<Task>> responseEntity = executeRequestGetTasks();
+
+            //then
+            assertThat(responseEntity).isNotNull();
+            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+            assertThat(responseEntity.getBody()).isNotNull();
+            Collection<Task> tasks = responseEntity.getBody().getContent();
+            assertThat(tasks)
+                    .extracting(Task::getId,
+                                Task::getStatus,
+                                Task::getTaskDefinitionKey)
+                    .contains(tuple(task1.getId(),
+                                    Task.TaskStatus.CREATED,
+                                    "taskDefinitionKey"),
+                              tuple(task2.getId(),
+                                    Task.TaskStatus.CREATED,
+                                    null));
+        });
+
+        await().untilAsserted(() -> {
+
+            //when
+            ResponseEntity<PagedResources<Task>> responseEntity = testRestTemplate.exchange(TASKS_URL + "?taskDefinitionKey={taskDefinitionKey}",
+                                                                                            HttpMethod.GET,
+                                                                                            keycloakTokenProducer.entityWithAuthorizationHeader(),
+                                                                                            PAGED_TASKS_RESPONSE_TYPE,
+                                                                                            "taskDefinitionKey");
+
+            //then
+            assertThat(responseEntity).isNotNull();
+            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+            assertThat(responseEntity.getBody()).isNotNull();
+            Collection<Task> tasks = responseEntity.getBody().getContent();
+            assertThat(tasks)
+                    .extracting(Task::getId)
+                    .containsExactly(task1.getId());
+        });
+        
+    }
+    
+    @Test
     public void shouldGetTaskGroupCandidatesAfterTaskCompleted() {
         //given
         Task task = taskEventContainedBuilder.aTaskWithGroupCandidate("task with group candidate",

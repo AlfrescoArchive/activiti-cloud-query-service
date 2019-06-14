@@ -115,7 +115,8 @@ public class ProcessInstanceEntityTasksControllerIT {
                                                null,
                                                "aFormKey",
                                                10,
-                                               "businessKey"
+                                               "businessKey",
+                                               "taskDefinitionKey"
         );
 
         given(taskRepository.findAll(any(),

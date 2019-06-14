@@ -67,6 +67,7 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
     private String processInstanceId;
     private Integer processDefinitionVersion;
     private String businessKey;
+    private String taskDefinitionKey;
     
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
@@ -160,7 +161,8 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
                       String parentTaskId,
                       String formKey,
                       Integer processDefinitionVersion,
-                      String businessKey) {
+                      String businessKey,
+                      String taskDefinitionKey) {
         super(serviceName,
               serviceFullName,
               serviceVersion,
@@ -183,6 +185,7 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
         this.formKey = formKey;
         this.processDefinitionVersion = processDefinitionVersion;
         this.businessKey = businessKey;
+        this.taskDefinitionKey = taskDefinitionKey;
     }
 
     @Override
@@ -414,6 +417,16 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
         this.formKey = formKey;
     }
 
+    @Override
+    public String getTaskDefinitionKey() {
+        return taskDefinitionKey;
+    }
+
+    public void setTaskDefinitionKey(String taskDefinitionKey) {
+        this.taskDefinitionKey = taskDefinitionKey;
+    }
+
+    
     public Long getDuration() {
         return duration;
     }

@@ -198,7 +198,8 @@ public class TaskEntityAdminControllerIT {
                               null,
                               "aFormKey",
                               10,
-                              "businessKey"
+                              "businessKey",
+                              "taskDefinitionKey"
         );
     }
 
