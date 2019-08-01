@@ -1,6 +1,8 @@
 package org.activiti.cloud.services.security;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -68,12 +70,18 @@ public class TaskLookupRestrictionService {
                                 .and(isNotAssigned));
 
             // Let's try to retrieve user groups for authenticated user from SecurityManager   
-            List<String> groups = securityManager.getAuthenticatedUserGroups(); 
+            Optional<List<String>> authenticatedUserGroups = securityManager.getAuthenticatedUserGroups(); 
             
+            List<String> groups = new LinkedList<>();
+            
+            if(authenticatedUserGroups.isPresent()) {
+                groups = authenticatedUserGroups.get();
+            }
             // Let's fallback to UserGroupManager if authenticated user groups is empty
-            if (userGroupManager != null && groups.isEmpty()) {
+            else if (userGroupManager != null) {
                 groups = userGroupManager.getUserGroups(userId);
             }
+            
             if(groups!=null && groups.size()>0) {
                 //belongs to candidate group and task is not assigned
                 restriction = restriction.or(task.taskCandidateGroups.any().groupId.in(groups)
