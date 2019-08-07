@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.activiti.cloud.build</groupId>
     <artifactId>activiti-cloud-parent</artifactId>
-    <version>7.1.7</version>
+    <version>7.1.M3</version>
     <relativePath/>
   </parent>
   <groupId>org.activiti.cloud.query</groupId>
   <artifactId>activiti-cloud-query-service-parent</artifactId>
   <name>Activiti Cloud Query :: Parent</name>
-  <version>7.1.65</version>
+  <version>7.1.M3</version>
   <packaging>pom</packaging>
   <url>http://activiti.org</url>
   <modules>
@@ -42,10 +42,10 @@
   </repositories>
 
   <properties>
-    <activiti-cloud-build.version>7.1.7</activiti-cloud-build.version>
-    <activiti-dependencies.version>7.1.45</activiti-dependencies.version>
-    <activiti-cloud-service-common.version>7.1.44</activiti-cloud-service-common.version>
-    <activiti-cloud-query-service.version>${project.version}</activiti-cloud-query-service.version>
+    <activiti-cloud-build.version>7.1.M3</activiti-cloud-build.version>
+    <activiti-dependencies.version>7.1.M3</activiti-dependencies.version>
+    <activiti-cloud-service-common.version>7.1.M3</activiti-cloud-service-common.version>
+    <activiti-cloud-query-service.version>7.1.M3</activiti-cloud-query-service.version>
     <json-unit.version>1.24.0</json-unit.version>
   </properties>
 
