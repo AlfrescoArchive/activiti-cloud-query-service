@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-  <changeSet author="activiti-query" id="query-initial/schema">
+  <changeSet author="activiti-query" id="query-initial-schema">
     <sqlFile dbms="h2"
              encoding="utf8"
              path="changelog/initial.h2.schema.sql"
