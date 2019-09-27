@@ -25,7 +25,7 @@
     </preConditions>
     <sqlFile dbms="postgresql"
              encoding="utf8"
-             path="changelog/1-initial.pg.schema.m3.sql"
+             path="changelog/01-initial.pg.schema.m3.sql"
              relativeToChangelogFile="true"
              splitStatements="true"
              stripComments="true"/>
