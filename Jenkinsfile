@@ -56,10 +56,10 @@ pipeline {
             
             sh "jx step git credentials"
             retry(2){
-              sh "updatebot push-version --kind maven org.activiti.cloud.query:activiti-cloud-query-dependencies \$(cat VERSION)"
+              sh "updatebot push-version --kind maven org.activiti.cloud.query:activiti-cloud-query-service.version \$(cat VERSION)"
               sh "rm -rf .updatebot-repos/"
               sh "sleep \$((RANDOM % 10))"
-              sh "updatebot push-version --kind maven org.activiti.cloud.query:activiti-cloud-query-dependencies \$(cat VERSION)"
+              sh "updatebot push-version --kind maven org.activiti.cloud.query:activiti-cloud-query-service.version \$(cat VERSION)"
             }
           }
         }
@@ -95,7 +95,7 @@ pipeline {
             sh "echo pushing with update using version \$(cat VERSION)"
 
             //will need to add updatebot yaml file and specify downtream repos
-            sh "updatebot push-version --kind maven org.activiti.cloud.query:activiti-cloud-query-dependencies \$(cat VERSION)"
+            sh "updatebot push-version --kind maven org.activiti.cloud.query:activiti-cloud-query-service.version \$(cat VERSION)"
           }
         }
       }
