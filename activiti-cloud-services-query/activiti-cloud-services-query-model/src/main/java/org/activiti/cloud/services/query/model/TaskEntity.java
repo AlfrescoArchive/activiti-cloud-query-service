@@ -238,10 +238,12 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
         return processDefinitionVersion;
     }
     
+    @Override
     public String getBusinessKey() {
         return businessKey;
     }
 
+    @Override
     public boolean isStandalone() {
         return getProcessInstanceId() == null;
     }
@@ -425,8 +427,8 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
     public void setTaskDefinitionKey(String taskDefinitionKey) {
         this.taskDefinitionKey = taskDefinitionKey;
     }
-
     
+    @Override
     public Long getDuration() {
         return duration;
     }
@@ -435,6 +437,7 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
         this.duration = duration;
     }
 
+    @Override
     @Transient
     public Date getCompletedDate() {
         return completedDate;
@@ -448,8 +451,7 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
     public Date getCreatedTo() {
         return createdTo;
     }
-
-    
+   
     public void setCreatedTo(Date createdTo) {
         this.createdTo = createdTo;
     }
@@ -458,8 +460,7 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
     public Date getCreatedFrom() {
         return createdFrom;
     }
-
-    
+   
     public void setCreatedFrom(Date createdFrom) {
         this.createdFrom = createdFrom;
     }
@@ -488,8 +489,7 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
     public Date getCompletedTo() {
         return completedTo;
     }
-
-    
+   
     public void setCompletedTo(Date completedTo) {
         this.completedTo = completedTo;
     }
@@ -529,5 +529,4 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
         return Objects.equals(id, other.id);
     }
     
-
 }
