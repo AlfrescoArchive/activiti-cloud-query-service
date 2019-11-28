@@ -308,17 +308,13 @@ public class QueryTasksIT {
             rootTaskNoSubtask.setParentTaskId(null);
             eventsAggregator.addEvents(new CloudTaskCreatedEventImpl(rootTaskNoSubtask));
 
-            
-        TaskImpl rootTask = new TaskImpl(UUID.randomUUID().toString(),
-                                     "Root task",
-                                     Task.TaskStatus.CREATED);
+
+        TaskImpl rootTask = aCreatedTask("Root task");
         rootTask.setProcessInstanceId(runningProcessInstance.getId());
         rootTask.setParentTaskId(null);
         eventsAggregator.addEvents(new CloudTaskCreatedEventImpl(rootTask));
 
-        TaskImpl task = new TaskImpl(UUID.randomUUID().toString(),
-                                     "Task with parent",
-                                     Task.TaskStatus.CREATED);
+        TaskImpl task = aCreatedTask("Task with parent");
         task.setProcessInstanceId(runningProcessInstance.getId());
         task.setParentTaskId(rootTask.getId());
         eventsAggregator.addEvents(new CloudTaskCreatedEventImpl(task));
@@ -353,10 +349,8 @@ public class QueryTasksIT {
         processTask.setProcessInstanceId(runningProcessInstance.getId());
         eventsAggregator.addEvents(new CloudTaskCreatedEventImpl(processTask));
 
-            
-        TaskImpl standAloneTask = new TaskImpl(UUID.randomUUID().toString(),
-                                               "Task2",
-                                               Task.TaskStatus.CREATED);
+
+        TaskImpl standAloneTask = aCreatedTask("Task2");
         eventsAggregator.addEvents(new CloudTaskCreatedEventImpl(standAloneTask));
 
         eventsAggregator.sendAll();
@@ -917,10 +911,8 @@ public class QueryTasksIT {
         
         Task task3 = taskEventContainedBuilder.aCreatedTask("Task 3 for filter standalone",
                                                             null);
-    
-        TaskImpl task4 = new TaskImpl(UUID.randomUUID().toString(),
-                                      "Task 4 for filter description",
-                                      Task.TaskStatus.CREATED);
+
+        TaskImpl task4 = aCreatedTask("Task 4 for filter description");
         task4.setDescription("My task description");
         eventsAggregator.addEvents(new CloudTaskCreatedEventImpl(task4));
 
@@ -972,9 +964,7 @@ public class QueryTasksIT {
     public void shouldSetProcessDefinitionVersionAndBusinessKeyOnTaskWhenThisInformationIsAvailableInTheEvent() {
       //given
         //event with process definition version set
-        TaskImpl task1 = new TaskImpl(UUID.randomUUID().toString(),
-                                     "Task1",
-                                     Task.TaskStatus.CREATED);
+        TaskImpl task1 = aCreatedTask("Task1");
 
         CloudTaskCreatedEventImpl task1Created = new CloudTaskCreatedEventImpl(task1);
         task1Created.setProcessDefinitionVersion(10);
@@ -983,9 +973,7 @@ public class QueryTasksIT {
         eventsAggregator.addEvents(task1Created);
 
         //event with process definition unset
-        TaskImpl task2 = new TaskImpl(UUID.randomUUID().toString(),
-                                      "Task2",
-                                      Task.TaskStatus.CREATED);
+        TaskImpl task2 = aCreatedTask("Task2");
 
         eventsAggregator.addEvents(new CloudTaskCreatedEventImpl(task2));
 
@@ -1042,20 +1030,12 @@ public class QueryTasksIT {
     @Test
     public void should_getTask_when_queryFilteredByTaskDefinitionKey() {
         //given
-        TaskImpl task1 = new TaskImpl(UUID.randomUUID().toString(),
-                                     "Task1",
-                                     Task.TaskStatus.CREATED);
-        task1.setTaskDefinitionKey("taskDefinitionKey");
-
-        CloudTaskCreatedEventImpl task1Created = new CloudTaskCreatedEventImpl(task1);
+        CloudTaskCreatedEventImpl task1Created = buildTaskCreatedEvent("Task1",
+                                                                       "taskDefinitionKey");
+        CloudTaskCreatedEventImpl task2Created = buildTaskCreatedEvent("Task2",
+                                                                       null);
         eventsAggregator.addEvents(task1Created);
-        
-        TaskImpl task2 = new TaskImpl(UUID.randomUUID().toString(),
-                                      "Task2",
-                                      Task.TaskStatus.CREATED);
-        CloudTaskCreatedEventImpl task2Created = new CloudTaskCreatedEventImpl(task2);
         eventsAggregator.addEvents(task2Created);
-
         eventsAggregator.sendAll();
 
         await().untilAsserted(() -> {
@@ -1073,10 +1053,10 @@ public class QueryTasksIT {
                     .extracting(Task::getId,
                                 Task::getStatus,
                                 Task::getTaskDefinitionKey)
-                    .contains(tuple(task1.getId(),
+                    .contains(tuple(task1Created.getEntity().getId(),
                                     Task.TaskStatus.CREATED,
                                     "taskDefinitionKey"),
-                              tuple(task2.getId(),
+                              tuple(task2Created.getEntity().getId(),
                                     Task.TaskStatus.CREATED,
                                     null));
         });
@@ -1098,11 +1078,32 @@ public class QueryTasksIT {
             Collection<Task> tasks = responseEntity.getBody().getContent();
             assertThat(tasks)
                     .extracting(Task::getId)
-                    .containsExactly(task1.getId());
+                    .containsExactly(task1Created.getEntity().getId());
         });
         
     }
-    
+
+    private CloudTaskCreatedEventImpl buildTaskCreatedEvent(String taskName,
+                                                            String taskDefinitionKey) {
+        TaskImpl task1 = aCreatedTask(taskName,
+                                      taskDefinitionKey);
+
+        return new CloudTaskCreatedEventImpl(task1);
+    }
+
+    private TaskImpl aCreatedTask(String taskName,
+                                  String taskDefinitionKey) {
+        TaskImpl task = aCreatedTask(taskName);
+        task.setTaskDefinitionKey(taskDefinitionKey);
+        return task;
+    }
+
+    private TaskImpl aCreatedTask(String taskName) {
+        return new TaskImpl(UUID.randomUUID().toString(),
+                            taskName,
+                            Task.TaskStatus.CREATED);
+    }
+
     @Test
     public void shouldGetTaskGroupCandidatesAfterTaskCompleted() {
         //given
