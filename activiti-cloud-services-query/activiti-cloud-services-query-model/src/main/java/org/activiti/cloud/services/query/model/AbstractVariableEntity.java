@@ -16,29 +16,19 @@
 
 package org.activiti.cloud.services.query.model;
 
-import java.util.Date;
-import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.ConstraintMode;
-import javax.persistence.Convert;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.activiti.cloud.api.model.shared.CloudVariableInstance;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.*;
+import java.util.Date;
+import java.util.Objects;
 
 @MappedSuperclass
 public abstract class AbstractVariableEntity extends ActivitiEntityMetadata implements CloudVariableInstance {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     private String type;
@@ -54,35 +44,35 @@ public abstract class AbstractVariableEntity extends ActivitiEntityMetadata impl
     private String executionId;
 
     @Convert(converter = VariableValueJsonConverter.class)
-    @Column(columnDefinition="text")
+    @Lob
     private VariableValue<?> value;
 
     private Boolean markedAsDeleted = false;
-    
+
     private String processInstanceId;
 
     @JsonIgnore
-    @ManyToOne(optional = true, fetch=FetchType.LAZY)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "processInstanceId", referencedColumnName = "id", insertable = false, updatable = false
             , foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
     private ProcessInstanceEntity processInstance;
-    
+
 
     public AbstractVariableEntity() {
     }
 
     public AbstractVariableEntity(Long id,
-                          String type,
-                          String name,
-                          String processInstanceId,
-                          String serviceName,
-                          String serviceFullName,
-                          String serviceVersion,
-                          String appName,
-                          String appVersion,
-                          Date createTime,
-                          Date lastUpdatedTime,
-                          String executionId) {
+                                  String type,
+                                  String name,
+                                  String processInstanceId,
+                                  String serviceName,
+                                  String serviceFullName,
+                                  String serviceVersion,
+                                  String appName,
+                                  String appVersion,
+                                  Date createTime,
+                                  Date lastUpdatedTime,
+                                  String executionId) {
         super(serviceName,
               serviceFullName,
               serviceVersion,
@@ -160,23 +150,23 @@ public abstract class AbstractVariableEntity extends ActivitiEntityMetadata impl
         this.markedAsDeleted = markedAsDeleted;
     }
 
-    
+
     @Override
     public String getProcessInstanceId() {
         return processInstanceId;
     }
 
-    
+
     public void setProcessInstanceId(String processInstanceId) {
         this.processInstanceId = processInstanceId;
     }
 
-    
+
     public ProcessInstanceEntity getProcessInstance() {
         return processInstance;
     }
 
-    
+
     public void setProcessInstance(ProcessInstanceEntity processInstance) {
         this.processInstance = processInstance;
     }
@@ -201,4 +191,4 @@ public abstract class AbstractVariableEntity extends ActivitiEntityMetadata impl
         return Objects.equals(id, other.id);
     }
 
- }
+}

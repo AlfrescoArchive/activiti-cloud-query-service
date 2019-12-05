@@ -16,15 +16,8 @@
 
 package org.activiti.cloud.services.query.model;
 
+import javax.persistence.*;
 import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 @Entity(name = "ProcessModel")
 @Table(name = "PROCESS_MODEL")
@@ -37,7 +30,7 @@ public class ProcessModelEntity {
     @MapsId
     private ProcessDefinitionEntity processDefinition;
 
-    @Column(columnDefinition="text")
+    @Lob
     private String processModelContent;
 
     //used by persistence framework
