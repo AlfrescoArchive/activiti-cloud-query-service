@@ -16,6 +16,8 @@
 
 package org.activiti.cloud.services.query.model;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -31,6 +33,7 @@ public class ProcessModelEntity {
     private ProcessDefinitionEntity processDefinition;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String processModelContent;
 
     //used by persistence framework
