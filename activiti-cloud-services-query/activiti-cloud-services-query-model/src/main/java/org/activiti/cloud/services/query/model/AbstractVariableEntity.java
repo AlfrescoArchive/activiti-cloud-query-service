@@ -28,7 +28,7 @@ import java.util.Objects;
 public abstract class AbstractVariableEntity extends ActivitiEntityMetadata implements CloudVariableInstance {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String type;
