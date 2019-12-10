@@ -16,13 +16,23 @@
 
 package org.activiti.cloud.services.query.model;
 
+import java.util.Date;
+import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
+import javax.persistence.Convert;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.activiti.cloud.api.model.shared.CloudVariableInstance;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
-import java.util.Date;
-import java.util.Objects;
 
 @MappedSuperclass
 public abstract class AbstractVariableEntity extends ActivitiEntityMetadata implements CloudVariableInstance {
@@ -44,7 +54,7 @@ public abstract class AbstractVariableEntity extends ActivitiEntityMetadata impl
     private String executionId;
 
     @Convert(converter = VariableValueJsonConverter.class)
-    @Lob
+    @Column(columnDefinition="text")
     private VariableValue<?> value;
 
     private Boolean markedAsDeleted = false;
