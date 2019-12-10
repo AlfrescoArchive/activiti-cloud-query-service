@@ -89,7 +89,7 @@ create table process_instance
 );
 create table process_model
 (
-    process_model_content LONG,
+    process_model_content CLOB,
     process_definition_id varchar(255) not null,
     primary key (process_definition_id)
 );
@@ -109,7 +109,7 @@ create table process_variable
     name                varchar(255),
     process_instance_id varchar(255),
     type                varchar(255),
-    value               LONG,
+    value               CLOB,
     primary key (id)
 );
 create table task
@@ -132,7 +132,7 @@ create table task
     created_to                 timestamp,
     description                varchar(255),
     due_date                   timestamp,
-    duration                   bigint,
+    duration                   integer,
     form_key                   varchar(255),
     last_claimed_from          timestamp,
     last_claimed_to            timestamp,
@@ -178,7 +178,7 @@ create table task_variable
     name                varchar(255),
     process_instance_id varchar(255),
     type                varchar(255),
-    value               LONG,
+    value               CLOB,
     task_id             varchar(255),
     primary key (id)
 );
