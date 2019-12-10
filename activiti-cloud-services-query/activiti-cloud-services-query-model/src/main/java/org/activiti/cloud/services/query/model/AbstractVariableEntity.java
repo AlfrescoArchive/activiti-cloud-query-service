@@ -62,7 +62,7 @@ public abstract class AbstractVariableEntity extends ActivitiEntityMetadata impl
     private String processInstanceId;
 
     @JsonIgnore
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @ManyToOne(optional = true, fetch=FetchType.LAZY)
     @JoinColumn(name = "processInstanceId", referencedColumnName = "id", insertable = false, updatable = false
             , foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT, name = "none"))
     private ProcessInstanceEntity processInstance;
@@ -72,17 +72,17 @@ public abstract class AbstractVariableEntity extends ActivitiEntityMetadata impl
     }
 
     public AbstractVariableEntity(Long id,
-                                  String type,
-                                  String name,
-                                  String processInstanceId,
-                                  String serviceName,
-                                  String serviceFullName,
-                                  String serviceVersion,
-                                  String appName,
-                                  String appVersion,
-                                  Date createTime,
-                                  Date lastUpdatedTime,
-                                  String executionId) {
+                          String type,
+                          String name,
+                          String processInstanceId,
+                          String serviceName,
+                          String serviceFullName,
+                          String serviceVersion,
+                          String appName,
+                          String appVersion,
+                          Date createTime,
+                          Date lastUpdatedTime,
+                          String executionId) {
         super(serviceName,
               serviceFullName,
               serviceVersion,
@@ -201,4 +201,4 @@ public abstract class AbstractVariableEntity extends ActivitiEntityMetadata impl
         return Objects.equals(id, other.id);
     }
 
-}
+ }
