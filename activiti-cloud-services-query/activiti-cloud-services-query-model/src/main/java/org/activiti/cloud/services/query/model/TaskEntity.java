@@ -16,10 +16,7 @@
 
 package org.activiti.cloud.services.query.model;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
@@ -369,18 +366,18 @@ public class TaskEntity extends ActivitiEntityMetadata implements CloudTask {
         this.taskCandidateUsers = taskCandidateUsers;
     }
 
-    public Set<String> getCandidateUsers(){
+    public List<String> getCandidateUsers(){
         return this.taskCandidateUsers != null ? this.taskCandidateUsers
                        .stream()
                        .map(TaskCandidateUser::getUserId)
-                       .collect(Collectors.toSet()) : Collections.emptySet();
+                       .collect(Collectors.toList()) : Collections.emptyList();
     }
 
-    public Set<String> getCandidateGroups(){
+    public List<String> getCandidateGroups(){
         return this.taskCandidateGroups != null ? this.taskCandidateGroups
                        .stream()
                        .map(TaskCandidateGroup::getGroupId)
-                       .collect(Collectors.toSet()): Collections.emptySet();
+                       .collect(Collectors.toList()): Collections.emptyList();
     }
 
     /**
