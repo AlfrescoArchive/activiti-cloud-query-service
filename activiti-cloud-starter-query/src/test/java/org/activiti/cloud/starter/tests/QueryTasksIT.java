@@ -577,7 +577,6 @@ public class QueryTasksIT {
         assertThat(responseEntity.getBody()).isNotNull();
         assertThat(responseEntity.getBody().size()).isEqualTo(1);
         assertThat(responseEntity.getBody()).containsExactly("testgroup");
-        assertThat(taskResponseEntity.getBody().getCandidateGroups()).hasSize(1);
         assertThat(taskResponseEntity.getBody().getCandidateGroups()).containsExactly("testgroup");
 
         //Check adding group candidate
@@ -595,7 +594,6 @@ public class QueryTasksIT {
         assertThat(responseEntity.getBody()).isNotNull();
         assertThat(responseEntity.getBody().size()).isEqualTo(2);
         assertThat(responseEntity.getBody()).containsExactlyInAnyOrder("hrgroup","testgroup");
-        assertThat(taskResponseEntity.getBody().getCandidateGroups()).hasSize(2);
         assertThat(taskResponseEntity.getBody().getCandidateGroups()).containsExactlyInAnyOrder("hrgroup","testgroup");
 
         //Check deleting group candidate
@@ -613,7 +611,6 @@ public class QueryTasksIT {
         assertThat(responseEntity.getBody()).isNotNull();
         assertThat(responseEntity.getBody().size()).isEqualTo(1);
         assertThat(responseEntity.getBody()).containsExactly("testgroup");
-        assertThat(taskResponseEntity.getBody().getCandidateGroups()).hasSize(1);
         assertThat(taskResponseEntity.getBody().getCandidateGroups()).containsExactly("testgroup");
     }
 
@@ -1132,7 +1129,6 @@ public class QueryTasksIT {
             assertThat(response.getBody()).isNotNull();
             assertThat(response.getBody()).hasSize(1);
             assertThat(response.getBody()).containsExactly("testgroup");
-            assertThat(taskResponseEntity.getBody().getCandidateGroups()).hasSize(1);
             assertThat(taskResponseEntity.getBody().getCandidateGroups()).containsExactly("testgroup");
         });
         
@@ -1154,7 +1150,6 @@ public class QueryTasksIT {
             assertThat(response.getBody()).isNotNull();
             assertThat(response.getBody()).hasSize(1);
             assertThat(response.getBody()).containsExactly("testgroup");
-            assertThat(taskResponseEntity.getBody().getCandidateGroups()).hasSize(1);
             assertThat(taskResponseEntity.getBody().getCandidateGroups()).containsExactly("testgroup");
         });
 
@@ -1177,7 +1172,6 @@ public class QueryTasksIT {
             assertThat(response.getBody()).isNotNull();
             assertThat(response.getBody()).hasSize(1);
             assertThat(response.getBody()).containsExactly("testgroup");
-            assertThat(taskResponseEntity.getBody().getCandidateGroups()).hasSize(1);
             assertThat(taskResponseEntity.getBody().getCandidateGroups()).containsExactly("testgroup");
         });
       

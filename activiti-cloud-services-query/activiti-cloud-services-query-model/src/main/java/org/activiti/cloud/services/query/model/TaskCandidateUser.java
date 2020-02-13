@@ -2,7 +2,15 @@ package org.activiti.cloud.services.query.model;
 
 import com.fasterxml.jackson.annotation.*;
 
-import javax.persistence.*;
+import javax.persistence.ConstraintMode;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity(name="TaskCandidateUser")
